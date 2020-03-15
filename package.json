@@ -1,0 +1,23 @@
+{
+  "name": "vue-elm",
+  "version": "1.0.0",
+  "description": "elm移动端完整应用",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/linzowo/vue-elm.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/linzowo/vue-elm/issues"
+  },
+  "homepage": "https://github.com/linzowo/vue-elm#readme",
+  "dependencies": {
+    "@dcloudio/uni-ui": "^1.1.8"
+  }
+}

@@ -16,6 +16,11 @@
 				class="city_head_search"
 			></uni-search-bar>
 		</view>
+		<view class="ciyt_body">
+			<image src="../../static/city_cover.gif" mode="aspectFill"></image>
+			<h3>输入地址后才能订餐哦！</h3>
+			<button type="primary">手动选择地址</button>
+		</view>
 	</view>
 </template>
 
@@ -60,6 +65,36 @@ export default {
 	}
 	::v-deep span {
 		color: #999;
+	}
+}
+
+.ciyt_body{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	
+	image{
+		width: 400rpx;
+		height: 400rpx;
+		margin: 0 auto;
+	}
+	
+	h3{
+		margin: 25rpx 0 20rpx;
+		color: #6a6a6a;
+		font-size: 34rpx;
+	}
+	
+	button{
+		background-color: #56d176;
+		width: 240rpx;
+		height: 78rpx;
+		line-height: 78rpx;
+		min-height: 78rpx;
+		min-width: 240rpx;
+		font-size: 29rpx;
+		border-radius: 5rpx;
+		// padding: 10rpx;
 	}
 }
 </style>

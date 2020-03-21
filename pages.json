@@ -4,10 +4,25 @@
 			"path": "pages/city/city",
 			"style": {
 				"navigationBarTitleText": "elm-city",
-				"navigationStyle":"custom"
+				"navigationStyle": "custom"
 			}
 		}, {
 			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "uni-app"
+			}
+		}, {
+			"path": "pages/discover/discover",
+			"style": {
+				"navigationBarTitleText": "uni-app"
+			}
+		}, {
+			"path": "pages/order/order",
+			"style": {
+				"navigationBarTitleText": "uni-app"
+			}
+		}, {
+			"path": "pages/user/user",
 			"style": {
 				"navigationBarTitleText": "uni-app"
 			}
@@ -18,5 +33,37 @@
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#3190e8",
 		"backgroundColor": "#3190e8"
+	},
+	"tabBar": {
+		"color": "#7A7E83",
+		"selectedColor": "#3cc51f",
+		"borderStyle": "black",
+		"backgroundColor": "#ffffff",
+		"list": [{
+			"pagePath": "pages/city/city",
+			"iconPath": "static/image/logo.png",
+			"selectedIconPath": "static/image/logo.png",
+			"text": "组件"
+		},{
+			"pagePath": "pages/index/index",
+			"iconPath": "static/image/logo.png",
+			"selectedIconPath": "static/image/logo.png",
+			"text": "组件"
+		}, {
+			"pagePath": "pages/discover/discover",
+			"iconPath": "static/image/logo.png",
+			"selectedIconPath": "static/image/logo.png",
+			"text": "接口"
+		}, {
+			"pagePath": "pages/order/order",
+			"iconPath": "static/image/logo.png",
+			"selectedIconPath": "static/image/logo.png",
+			"text": "接口"
+		}, {
+			"pagePath": "pages/user/user",
+			"iconPath": "static/image/logo.png",
+			"selectedIconPath": "static/image/logo.png",
+			"text": "接口"
+		}]
 	}
 }

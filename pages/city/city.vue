@@ -1,64 +1,26 @@
 <template>
 	<view class="content">
-		<uni-nav-bar title="ele.me" color="white" background-color="#3190e8"><view slot="right">登录</view></uni-nav-bar>
-
 		<view class="city_head">
-			<uni-combox label="所在城市:" :candidates="candidates" placeholder="请选择所在城市" v-model="city" labelWidth="150px" class="city_head_input"></uni-combox>
-
-			<text class="text_size_small text_color_gray">定位不准时，请在城市列表中选择</text>
-		</view>
-		<view class="city_hot">
-			<h2>热门城市</h2>
-			<uni-grid :column="4">
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-			</uni-grid>
-			<uni-grid :column="4">
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-			</uni-grid>
-		</view>
-		<view class="city_list">
-			<h2>选择城市</h2>
-			<uni-grid :column="13">
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-				<uni-grid-item><text class="text">文本</text></uni-grid-item>
-			</uni-grid>
-			
+			<view class="city_position">
+				<svg class="icon_svg" aria-hidden="true"><use xlink:href="#icon-location"></use></svg>
+				<text class="city_text">未能获取地址</text>
+				<svg class="icon_svg" aria-hidden="true"><use xlink:href="#icon-sanjiao"></use></svg>
+			</view>
+			<uni-search-bar
+				bgColor="#fff"
+				placeholder="搜索饿了么商家、商品名称"
+				radius="2"
+				@confirm="search"
+				@input="input"
+				cancelButton="none"
+				class="city_head_search"
+			></uni-search-bar>
 		</view>
 	</view>
 </template>
 
 <script>
-import { uniNavBar, uniCombox, uniGrid, uniGridItem } from '@dcloudio/uni-ui';
+import { uniSearchBar } from '@dcloudio/uni-ui';
 export default {
 	data() {
 		return {
@@ -68,19 +30,36 @@ export default {
 	},
 	onLoad() {},
 	methods: {},
-	components: { uniNavBar, uniCombox, uniGrid, uniGridItem }
+	components: { uniSearchBar }
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+/* 首页定位及位置搜索 */
 .city_head {
-	// border-bottom: 1px solid #ccc;
+	background-image: linear-gradient(90deg, #0af, #0085ff);
+	padding: 15px 15px 10px;
+
+	.city_position {
+		color: #fff;
+		font-size: 17px;
+		font-weight: 700;
+		margin-bottom: 15px;
+
+		.city_text {
+			margin: 0 2px;
+		}
+	}
 }
-.city_head_input {
-	padding: 0 10px;
-	border-top: 1px solid #ccc;
-	border-bottom: 1px solid #ccc;
-}
-.city_head_tips {
+.city_head_search {
+	background-color: transparent;
+	padding: 0;
+	::v-deep .uni-searchbar__box{
+		padding: 0;
+		height: 40px;
+	}
+	::v-deep span {
+		color: #999;
+	}
 }
 </style>

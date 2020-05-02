@@ -74,3 +74,253 @@ $uni-color-subtitle: #555555; // 二级标题颜色
 $uni-font-size-subtitle:36rpx;
 $uni-color-paragraph: #3F536E; // 文章段落颜色
 $uni-font-size-paragraph:30rpx;
+
+/**
+ * 布局
+ * 
+ */
+view,
+.flex{
+	display: flex;
+}
+.vs-flex-item {
+	flex: 1;
+}
+.vs-space-between {
+	justify-content: space-between;
+}
+.vs-space-around {
+	justify-content: space-around;
+}
+.vs-space-center {
+	justify-content: center;
+}
+.vs-space-end {
+	justify-content: flex-end;
+}
+.vs-row {
+	flex-direction: row;
+}
+.vs-column {
+	flex-direction: column;
+}
+.vs-align-end {
+	align-items: flex-end;
+}
+.vs-align-center {
+	align-items: center;
+}
+.vs-item-hover {
+	background-color: rgba(0, 0, 0, 0.05);
+}
+.vs-btn-hover {
+	opacity: 0.8;
+}
+
+
+/**
+ * 基础背景颜色
+ * 
+ */
+// 基础背景色
+.bg-base {background-color: #0097FD}
+.bg-page {background-color: #F5F5F5}
+.bg-white {background-color: #ffffff}
+
+.text {
+	&-left {
+		text-align: left;
+	}
+	&-right {
+		text-align: right;
+	}
+	&-center {
+		text-align: center
+	}
+}
+
+/**
+ * 基础文本颜色 
+ * 
+ */
+.color-base{color: #AB6FF6}
+.color-white {color: white}
+.color-red {color: #E84A54}
+// 黑色色阶向下
+.color-black2 {color: #222222}
+.color-black3 {color: #333333}
+.color-black4 {color: #444444}
+.color-black6 {color: #666666}
+.color-black7 {color: #777777}
+.color-black8 {color: #888888}
+.color-black9 {color: #999999}
+
+// 基础蓝色色阶向下
+.color-blue1 {color: #226FD1}
+.color-blue2 {color: #5CA3FC}
+.color-blue3 {color: #4399fc}
+
+// 绿色
+.bg-green1 {color: #2CB98E}
+
+.font-20 {
+	font-style: normal;
+	font-size: 20rpx;
+	font-family: Droid Sans Fallback;
+}
+.font-22 {
+	font-style: normal;
+	font-size: 22rpx;
+	font-family: Droid Sans Fallback;
+}
+.font-24 {
+	font-style: normal;
+	font-size: 24rpx;
+	font-family: Droid Sans Fallback;
+}
+.font-26 {
+	font-style: normal;
+	font-size: 26rpx;
+	font-family: Droid Sans Fallback;
+}
+.font-28 {
+	font-style: normal;
+	font-size: 28rpx;
+	font-family: Droid Sans Fallback;
+}
+.font-30 {
+	font-style: normal;
+	font-size: 30rpx;
+	font-family: Droid Sans Fallback;
+}
+.font-32 {
+	font-style: normal;
+	font-size: 32rpx;
+	font-family: Droid Sans Fallback;
+}
+.font-34 {
+	font-style: normal;
+	font-size: 34rpx;
+	font-family: Droid Sans Fallback;
+}
+.font-36 {
+	font-style: normal;
+	font-size: 36rpx;
+	font-family: Droid Sans Fallback;
+}
+.font-38 {
+	font-style: normal;
+	font-size: 38rpx;
+	font-family: Droid Sans Fallback;
+}
+.font-40 {
+	font-style: normal;
+	font-size: 40rpx;
+	font-family: Droid Sans Fallback;
+}
+.font-42 {
+	font-style: normal;
+	font-size: 42rpx;
+	font-family: Droid Sans Fallback;
+}
+.font-44 {
+	font-style: normal;
+	font-size: 44rpx;
+	font-family: Droid Sans Fallback;
+}
+.font-46 {
+	font-style: normal;
+	font-size: 46rpx;
+	font-family: Droid Sans Fallback;
+}
+.font-48 {
+	font-style: normal;
+	font-size: 48rpx;
+	font-family: Droid Sans Fallback;
+}
+.font-60 {
+	font-style: normal;
+	font-size: 60rpx;
+	font-family: Droid Sans Fallback;
+}
+
+.font-w400 {
+	font-style: normal;
+	font-weight: 400;
+}
+.font-w500 {
+	font-style: normal;
+	font-weight: bold;
+	font-family: DroidSans-Bold;
+}
+.font-w600 {
+	font-style: normal;
+	font-weight: 600;
+	font-family: DroidSans-Bold;
+}
+.font-w700 {
+	font-style: normal;
+	font-weight: 700;
+	font-family: DroidSans-Bold;
+}
+.line20 {
+	line-height: 20;
+}
+.line16 {
+	line-height: 16;
+}
+
+// 1px边框
+.vun-hairline,
+.vun-hairline--bottom,
+.vun-hairline--left,
+.vun-hairline--right,
+.vun-hairline--surround,
+.vun-hairline--top,
+.vun-hairline--top-bottom {
+	position: relative;
+	border-style: solid;
+	border-color: #F5F5F5;
+}
+.vun-hairline--top {
+	border-top-width: 1rpx;
+}
+.vun-hairline--left {
+	border-left-width: 1rpx;
+}
+.vun-hairline--right {
+	border-right-width: 1rpx;
+}
+.vun-hairline--bottom {
+	border-bottom-width: 1rpx;
+}
+.vun-hairline--top-bottom {
+	border-top-width: 1rpx;
+	border-bottom-width: 1rpx;
+}
+.vun-hairline--surround {
+	border-width: 1rpx;
+}
+
+.margin-b5 { margin-bottom: 5rpx; }
+.margin-b10 { margin-bottom: 10rpx; }
+.margin-b15 { margin-bottom: 15rpx; }
+.margin-b20 { margin-bottom: 20rpx; }
+.margin-b25 { margin-bottom: 25rpx; }
+.margin-b30 { margin-bottom: 30rpx; }
+.margin-b35 { margin-bottom: 35rpx; }
+.margin-b40 { margin-bottom: 40rpx; }
+.margin-b50 { margin-bottom: 50rpx; }
+.margin-b60 { margin-bottom: 60rpx; }
+.margin-b70 { margin-bottom: 70rpx; }
+.margin-b80 { margin-bottom: 80rpx; }
+
+.whitespace-s {
+	padding-left: 15rpx;
+	padding-right: 15rpx;
+}
+
+.whitespace {
+	padding-left: 30rpx;
+	padding-right: 30rpx;
+}

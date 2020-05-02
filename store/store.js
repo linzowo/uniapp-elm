@@ -14,7 +14,7 @@ const store = new Vuex.Store({
 				name:"admin",
 				password:"123456",
 				phone:123456789,
-				city:"",
+				city:"成都",
 				balance:0,
 				points:0,
 				coupons:0,

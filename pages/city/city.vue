@@ -1,10 +1,10 @@
 <template>
 	<view class="content">
-		<view class="city_head">
-			<view class="city_position">
-				<svg class="icon_svg" aria-hidden="true"><use xlink:href="#icon-location"></use></svg>
-				<text class="city_text">未能获取地址</text>
-				<svg class="icon_svg" aria-hidden="true"><use xlink:href="#icon-sanjiao"></use></svg>
+		<view class="city-head">
+			<view class="city-position">
+				<svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-location"></use></svg>
+				<text class="city-text">{{city?city:'未能获取地址'}}</text>
+				<svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-sanjiao"></use></svg>
 			</view>
 			<uni-search-bar
 				bgColor="#fff"
@@ -13,11 +13,11 @@
 				@confirm="search"
 				@input="input"
 				cancelButton="none"
-				class="city_head_search"
+				class="city-head_search"
 			></uni-search-bar>
 		</view>
-		<view class="ciyt_body">
-			<image src="../../static/city_cover.gif" mode="aspectFill"></image>
+		<view class="ciyt-body">
+			<image src="/static/image/city_cover.gif" mode="aspectFill"></image>
 			<h3>输入地址后才能订餐哦！</h3>
 			<button type="primary">手动选择地址</button>
 		</view>
@@ -29,7 +29,7 @@ import { uniSearchBar } from '@dcloudio/uni-ui';
 export default {
 	data() {
 		return {
-			city: '',
+			city: this.$store.getters.getCity,
 			candidates: []
 		};
 	},
@@ -40,23 +40,27 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/* 首页定位及位置搜索 */
-.city_head {
-	background-image: linear-gradient(90deg, #0af, #0085ff);
-	padding: 15px 15px 10px;
-
-	.city_position {
-		color: #fff;
-		font-size: 17px;
-		font-weight: 700;
-		margin-bottom: 15px;
-
-		.city_text {
-			margin: 0 2px;
-		}
+	page{
+		background-color: #fff;
 	}
+/* 首页定位及位置搜索 */
+.city-head {
+	background-image: linear-gradient(90deg, #0af, #0085ff);
+	width: 100%;
+	padding: 15px 15px 10px;
 }
-.city_head_search {
+.city-position {
+	color: #fff;
+	font-size: 17px;
+	font-weight: 700;
+	margin-bottom: 15px;
+}
+
+.city-text {
+	margin: 0 2px;
+}
+	
+.city-head_search {
 	background-color: transparent;
 	padding: 0;
 	::v-deep .uni-searchbar__box{
@@ -68,10 +72,11 @@ export default {
 	}
 }
 
-.ciyt_body{
+.ciyt-body{
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	width: 100%;
 	
 	image{
 		width: 400rpx;

@@ -1,0 +1,49 @@
+
+/*每个页面公共css */
+
+view {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+/* 字体图标 */
+/* @font-face {
+  font-family: 'iconfont';
+  src: url('//at.alicdn.com/t/font_1704517_avvq7ii12y5.eot');
+  src: url('//at.alicdn.com/t/font_1704517_avvq7ii12y5.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_1704517_avvq7ii12y5.woff2') format('woff2'),
+  url('//at.alicdn.com/t/font_1704517_avvq7ii12y5.woff') format('woff'),
+  url('//at.alicdn.com/t/font_1704517_avvq7ii12y5.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_1704517_avvq7ii12y5.svg#iconfont') format('svg');
+}
+.icon {
+	font-family: "iconfont" !important;
+	font-size: 16px;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+} */
+.icon-svg {
+	width: 1em;
+	height: 1em;
+	vertical-align: -0.15em;
+	fill: currentColor;
+	overflow: hidden;
+}
+/* 字体样式 */
+
+/* 字体大小 */
+.text-size-small {
+	font-size: 12px;
+}
+.text-size-default {
+	font-size: 14px;
+}
+.text-size-big {
+	font-size: 20px;
+}
+/* 字体颜色 */
+.text-color-gray {
+	color: #808080;
+}

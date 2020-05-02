@@ -3,12 +3,7 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "uni-app"
-			}
-		}, {
-			"path": "pages/city/city",
-			"style": {
-				"navigationBarTitleText": "elm-city",
+				"navigationBarTitleText": "uni-app",
 				"navigationStyle": "custom"
 			}
 		}, {
@@ -26,6 +21,16 @@
 			"style": {
 				"navigationBarTitleText": "uni-app"
 			}
+		}, {
+			"path": "pages/address/address",
+			"style": {
+				"navigationBarTitleText": "地址管理页"
+			}
+		}, {
+			"path": "pages/search/search",
+			"style": {
+				"navigationBarTitleText": "搜索页"
+			}
 		}
 	],
 	"globalStyle": {
@@ -35,30 +40,30 @@
 		"backgroundColor": "#3190e8"
 	},
 	"tabBar": {
-		"color": "#7A7E83",
-		"selectedColor": "#3cc51f",
+		"color": "#8e8e93",
+		"selectedColor": "#0089dc",
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
 		"list": [{
 			"pagePath": "pages/index/index",
-			"iconPath": "static/image/logo.png",
-			"selectedIconPath": "static/image/logo.png",
-			"text": "组件"
+			"iconPath": "static/image/sy.png",
+			"selectedIconPath": "static/image/sy-hover.png",
+			"text": "首页"
 		}, {
 			"pagePath": "pages/discover/discover",
-			"iconPath": "static/image/logo.png",
-			"selectedIconPath": "static/image/logo.png",
-			"text": "接口"
+			"iconPath": "static/image/fx.png",
+			"selectedIconPath": "static/image/fx-hover.png",
+			"text": "发现"
 		}, {
 			"pagePath": "pages/order/order",
-			"iconPath": "static/image/logo.png",
-			"selectedIconPath": "static/image/logo.png",
-			"text": "接口"
+			"iconPath": "static/image/dd.png",
+			"selectedIconPath": "static/image/dd-hover.png",
+			"text": "订单"
 		}, {
 			"pagePath": "pages/user/user",
-			"iconPath": "static/image/logo.png",
-			"selectedIconPath": "static/image/logo.png",
-			"text": "接口"
+			"iconPath": "static/image/wd.png",
+			"selectedIconPath": "static/image/wd-hover.png",
+			"text": "我的"
 		}]
 	}
 }

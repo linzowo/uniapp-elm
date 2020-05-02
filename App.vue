@@ -18,7 +18,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import 'colorui/main.css';
-@import 'colorui/icon.css';
 @import "app.css";
+@import 'colorui/icon.css';
+@import 'colorui/main.css';
 </style>

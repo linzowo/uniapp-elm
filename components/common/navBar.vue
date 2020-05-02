@@ -3,7 +3,7 @@
 		<!-- 当前位置信息 S -->
 		<navigator url="/pages/address/address" class="add-box font-34 font-w700">
 			<svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-Locationpinmarker"></use></svg>
-			<text class="add-content">{{city?city:'未能获取地址'}}</text>
+			<text class="add-content">{{address?address:'未能获取地址'}}</text>
 			<svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-sanjiao"></use></svg>
 		</navigator>
 		<!-- 当前位置信息 E -->
@@ -24,21 +24,21 @@
 				key: 'value'
 			}
 		},
-		props:['city']
+		props:['address']
 	}
 </script>
 
 <style lang="scss" scoped>
 	.content{
 		background-image: linear-gradient(90deg, #0af, #0085ff);
-		padding: 15rpx 30rpx 0;
+		padding: 30rpx 30rpx 0;
 		position: sticky;
-		top: -56rpx;
+		top: -75rpx;
 		z-index: 999;
 	}
 	.add-box{
 		color: #fff;
-		margin-bottom: 10rpx;
+		margin-bottom: 15rpx;
 		height: 30rpx;
 	}
 	.add-content{

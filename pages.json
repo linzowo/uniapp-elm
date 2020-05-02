@@ -31,6 +31,11 @@
 			"style": {
 				"navigationBarTitleText": "搜索页"
 			}
+		}, {
+			"path": "pages/categoryList/categoryList",
+			"style": {
+				"navigationBarTitleText": "分类列表页"
+			}
 		}
 	],
 	"globalStyle": {

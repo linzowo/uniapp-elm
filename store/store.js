@@ -14,7 +14,7 @@ const store = new Vuex.Store({
 				name:"admin",
 				password:"123456",
 				phone:123456789,
-				city:"成都",
+				address:"成都",
 				balance:0,
 				points:0,
 				coupons:0,
@@ -27,8 +27,8 @@ const store = new Vuex.Store({
 	getters:{
 		
 		// 返回所在城市信息
-		getCity(state){
-			return state.userList.admin.city;
+		getAddress(state){
+			return state.userList.admin.address;
 		}
 	}
 })

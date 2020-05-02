@@ -1,25 +1,11 @@
 <template>
 	<view class="content">
-		<view class="city-head">
-			<view class="city-position">
-				<svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-location"></use></svg>
-				<text class="city-text">{{city?city:'未能获取地址'}}</text>
-				<svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-sanjiao"></use></svg>
-			</view>
-			<uni-search-bar
-				bgColor="#fff"
-				placeholder="搜索饿了么商家、商品名称"
-				radius="2"
-				@confirm="search"
-				@input="input"
-				cancelButton="none"
-				class="city-head_search"
-			></uni-search-bar>
-		</view>
 		<view class="ciyt-body">
 			<image src="/static/image/city_cover.gif" mode="aspectFill"></image>
 			<h3>输入地址后才能订餐哦！</h3>
+		<navigator url="/pages/address/address" class="add-box font-34 font-w700">
 			<button type="primary">手动选择地址</button>
+		</navigator>
 		</view>
 	</view>
 </template>

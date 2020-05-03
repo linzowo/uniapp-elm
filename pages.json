@@ -41,6 +41,11 @@
 			"style": {
 				"navigationBarTitleText": "品质套餐页"
 			}
+		}, {
+			"path": "pages/member/member",
+			"style": {
+				"navigationBarTitleText": "会员页"
+			}
 		}
 	],
 	"globalStyle": {

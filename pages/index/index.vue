@@ -48,9 +48,19 @@
 				<!-- 广告区 E -->
 				
 				<!-- 会员区 S -->
-				<view class="member vs-flex-item">
-					member
-				</view>
+				<navigator 
+				url="/pages/combo/combo"
+				class="member padding-sm flex flex-sub justify-between margin-sm margin-top-xs align-center">
+					<view class="left align-center">
+						<svg class="icon-svg member-icon margin-right-xs" aria-hidden="true"><use xlink:href="#icon-huangguan"></use></svg>
+						<h3 class="text">超级会员</h3>
+						<svg class="icon-svg text-xs " aria-hidden="true"><use xlink:href="#icon-dian"></use></svg>
+						<text class="text-xs">每月享超值权益</text>
+					</view>
+					<text class="right text-xs">
+						立即开通 >
+					</text>
+				</navigator>
 				<!-- 会员区 E -->
 				
 				<!-- 店铺列表区 S -->
@@ -171,6 +181,18 @@ export default {
 	&-img{
 		width: 282rpx;
 		height: 188rpx;
+	}
+}
+
+.member{
+	// margin: 0 20rpx;
+	background-image: linear-gradient(90deg,#ffefc4,#f3dda0);
+	color: #644f1b;
+	
+	&-icon{
+		width: 34rpx;
+		height: 34rpx;
+		color: #D8B266;
 	}
 }
 </style>

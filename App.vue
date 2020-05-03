@@ -11,7 +11,7 @@ export default {
 	},
 	mounted() {
 		let ele = document.createElement('script');
-		ele.src = '//at.alicdn.com/t/font_1704517_ycm7nev7ez.js';
+		ele.src = '//at.alicdn.com/t/font_1704517_wdvao8saor.js';
 		document.head.appendChild(ele);
 	}
 };

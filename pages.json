@@ -46,6 +46,11 @@
 			"style": {
 				"navigationBarTitleText": "会员页"
 			}
+		}, {
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录页"
+			}
 		}
 	],
 	"globalStyle": {

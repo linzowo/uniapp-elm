@@ -49,8 +49,8 @@
 				
 				<!-- 会员区 S -->
 				<navigator 
-				url="/pages/combo/combo"
-				class="member padding-sm flex flex-sub justify-between margin-sm margin-top-xs align-center">
+				url="/pages/member/member"
+				class="member padding-sm flex flex-sub justify-between margin-sm margin-top-xs align-center margin-bottom">
 					<view class="left align-center">
 						<svg class="icon-svg member-icon margin-right-xs" aria-hidden="true"><use xlink:href="#icon-huangguan"></use></svg>
 						<h3 class="text">超级会员</h3>
@@ -64,8 +64,50 @@
 				<!-- 会员区 E -->
 				
 				<!-- 店铺列表区 S -->
-				<view class="content-list vs-flex-item">
-					content-list
+				<view class="content-list margin-sm flex-direction">
+					<view class="content-list-title flex-sub justify-center margin-bottom-sm">
+						<text class="content-list-title-text font-30">推荐商家</text>
+					</view>
+					<view class="content-list-tab-box">
+						<scroll-view scroll-x class="bg-white nav">
+							<view class="flex text-center">
+								<view class="cu-item flex-sub" :class="item.selected?'text-orange cur':''" v-for="(item,index) in storeNavList" :key="index" @tap="tabSelect" :data-id="index">
+									{{item.title}}
+									<svg 
+									v-if="index == 0"
+									class="icon-svg text-xs " aria-hidden="true"><use xlink:href="#icon-sanjiao"></use></svg>
+									<text 
+									v-if="index == 3"
+									class="lg" :class="'cuIcon-filter'"></text>
+								</view>
+							</view>
+						</scroll-view>
+					</view>
+					<view class="content-list-body justify-center">
+						
+						<!-- 已登录 S -->
+						<view 
+						v-if="loggedIn"
+						class="logged-in"></view>
+						<!-- 已登录 E -->
+						
+						<!-- 未登录 S -->
+						<view 
+						v-if="!loggedIn"
+						class="logged-out flex-direction align-center justify-center text-grey">
+							<image 
+							class="logged-img"
+							src="//fuss10.elemecdn.com/d/60/70008646170d1f654e926a2aaa3afpng.png" mode="aspectFit"></image>
+							<h3 class="margin-bottom-sm">没有结果</h3>
+							<text class="margin-bottom-sm text-xs">登录后查看更多商家</text>
+							<navigator 
+							url="/pages/login/login"
+							class="logged-btn cu-btn lg">登录</navigator>
+						</view>
+						<!-- 未登录 E -->
+						
+						
+					</view>
 				</view>
 				<!-- 店铺列表区 E -->
 				
@@ -100,11 +142,42 @@ export default {
 					img: "https://cube.elemecdn.com/a/7b/b02bd836411c016935d258b300cfejpeg.jpeg?x-oss-process=image/format,webp/resize,w_90,h_90,m_fixed",
 					title: "大牌惠吃"
 				}
-			]
+			],
+			storeNavList: [
+				{
+					selected:true,
+					title:'通用排序'
+				},
+				{
+					selected:false,
+					title:'距离最近'
+				},
+				{
+					selected:false,
+					title:'销量最高'
+				},
+				{
+					selected:false,
+					title:'筛选'
+				}],
+			loggedIn: false, // 登录状态 true-登录 false-未登录
 		};
 	},
 	onLoad() {},
-	methods: {},
+	methods: {
+		/**
+		 * 切换推荐商家分类选择
+		 * @param {Object} e
+		 */
+		tabSelect(e) {
+			this.storeNavList.forEach(ele=>{
+				ele.selected = false;
+			})
+			this.$set(this.storeNavList[e.currentTarget.dataset.id],'selected',true);
+			this.scrollLeft = (e.currentTarget.dataset.id - 1) * 60
+		}
+		
+	},
 	components: { city,navBar },
 	created() {
 		// 判断当前是否已经获取到了城市
@@ -113,7 +186,8 @@ export default {
 		// 		url: '../city/city'
 		// 	});
 		// }
-	}
+	},
+	watch:{}
 };
 </script>
 
@@ -194,5 +268,36 @@ export default {
 		height: 34rpx;
 		color: #D8B266;
 	}
+}
+
+.content-list{
+	// background-color: pink;
+}
+.content-list-title{
+	// background-color: blue;
+}
+.content-list-title-text{
+	
+}
+.content-list-title-text::before,
+.content-list-title-text::after{
+	content: "";
+	display: inline-block;
+    vertical-align: middle;
+	width: 50rpx;
+	height: 1rpx;
+	background-color: #999;
+	margin: 0 30rpx;
+}
+
+.logged-img{
+	width: 426rpx;
+	height: 426rpx;
+}
+.logged-btn{
+	width: 256rpx;
+	border-radius: 6rpx;
+	background-color: #56d176;
+	color: #fff;
 }
 </style>

@@ -7,14 +7,14 @@
 		<!-- 主体内容部分 S -->
 		<view class="content-body vs-flex-item">
 			<!-- 获取到城市时显示 S -->
-			<view v-if="address" class="vs-column vs-space-center vs-align-center">
+			<view v-if="address" class="vs-column vs-space-center">
 				<!-- 导航区 S -->
 				<view class="nav vs-flex-item vs-column">
 					<view class="bg-white vs-flex-item vs-column">
 						<view class="grid margin-bottom text-center" :class="'col-5'">
 							<navigator 
 							url="/pages/categoryList/categoryList"
-							class="padding flex vs-column vs-align-center" 
+							class="padding-xs flex vs-column vs-align-center" 
 							:style="{width:'150rpx'}"
 							v-for="(item,index) in navList.length*5" 
 							:key="index">
@@ -23,7 +23,9 @@
 									mode="aspectFill"
 									class="nav-img"
 									></image>
-									<text class="nav-title">{{navList[item%2==0?1:0].title}}</text>
+									<text 
+									class="nav-title font-20 color-black6"
+									>{{navList[item%2==0?1:0].title}}</text>
 							</navigator>
 						</view>
 					</view>
@@ -31,9 +33,18 @@
 				<!-- 导航区 E -->
 				
 				<!-- 广告区 S -->
-				<view class="banner vs-flex-item">
-					banner
-				</view>
+				<navigator 
+				url="/pages/combo/combo"
+				class="banner flex vs-flex-item vs-row vs-space-between">
+					<view class="banner-text vs-column">
+						<h3 class="banner-title margin-bottom-xs">品质套餐</h3>
+						<text class="banner-info font-28 color-black7 margin-bottom-sm">搭配齐全吃得好</text>
+						<text class="banner-link font-20 text-orange">立即抢购></text>
+					</view>
+					<image 
+					class="banner-img"
+					src="https://cube.elemecdn.com/e/ee/df43e7e53f6e1346c3fda0609f1d3png.png?x-oss-process=image/format,webp/resize,w_282,h_188,m_fixed" mode="aspectFit"></image>
+				</navigator>
 				<!-- 广告区 E -->
 				
 				<!-- 会员区 S -->
@@ -100,7 +111,7 @@ export default {
 .container {
 	// background-color: #FFFFFF;
 	// background-color: pink;
-	height: 1800px;
+	// height: 1800px;
 }
 .content-body{
 	// display: flex;
@@ -131,8 +142,35 @@ export default {
 .city-page {
 	width: 100%;
 }
+.nav{}
 .nav-img{
 	width: 90rpx;
 	height: 90rpx;
+}
+.banner{
+	background-color: #fafafa;
+	margin: 0 20rpx;
+	padding: 24rpx 0 0 30rpx;
+	
+	&-text{
+		height: 220rpx;
+	}
+	
+	&-title{
+		// margin-bottom: 1.33333 * 7.5rpx;
+	}
+	
+	&-info{
+		// margin-bottom: 2.4 * 7.5rpx;
+	}
+	
+	&-link{
+		
+	}
+	
+	&-img{
+		width: 282rpx;
+		height: 188rpx;
+	}
 }
 </style>

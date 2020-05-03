@@ -20,5 +20,13 @@
   "dependencies": {
     "@dcloudio/uni-ui": "^1.1.8",
     "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "cz-conventional-changelog": "^3.1.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }

@@ -36,6 +36,11 @@
 			"style": {
 				"navigationBarTitleText": "分类列表页"
 			}
+		}, {
+			"path": "pages/combo/combo",
+			"style": {
+				"navigationBarTitleText": "品质套餐页"
+			}
 		}
 	],
 	"globalStyle": {

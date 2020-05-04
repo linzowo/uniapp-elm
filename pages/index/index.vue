@@ -5,11 +5,11 @@
 		<!-- 导航栏 S -->
 		
 		<!-- 主体内容部分 S -->
-		<view class="content-body vs-flex-item">
+		<view class="content-body">
 			<!-- 获取到城市时显示 S -->
 			<view v-if="address" class="vs-column vs-space-center">
 				<!-- 导航区 S -->
-				<view class="nav vs-flex-item vs-column">
+				<view class="nav vs-column">
 					<view class="bg-white vs-flex-item vs-column">
 						<view class="grid margin-bottom text-center" :class="'col-5'">
 							<navigator 
@@ -35,7 +35,7 @@
 				<!-- 广告区 S -->
 				<navigator 
 				url="/pages/combo/combo"
-				class="banner flex vs-flex-item vs-row vs-space-between">
+				class="banner flex vs-row vs-space-between">
 					<view class="banner-text vs-column">
 						<h3 class="banner-title margin-bottom-xs">品质套餐</h3>
 						<text class="banner-info font-28 color-black7 margin-bottom-sm">搭配齐全吃得好</text>
@@ -50,7 +50,7 @@
 				<!-- 会员区 S -->
 				<navigator 
 				url="/pages/member/member"
-				class="member padding-sm flex flex-sub justify-between margin-sm margin-top-xs align-center margin-bottom">
+				class="member padding-sm flex justify-between margin-sm margin-top-xs align-center margin-bottom">
 					<view class="left align-center">
 						<svg class="icon-svg member-icon margin-right-xs" aria-hidden="true"><use xlink:href="#icon-huangguan"></use></svg>
 						<h3 class="text">超级会员</h3>
@@ -68,11 +68,21 @@
 					<view class="content-list-title flex-sub justify-center margin-bottom-sm">
 						<text class="content-list-title-text font-30">推荐商家</text>
 					</view>
-					<view class="content-list-tab-box">
+					
+					<!-- nav S -->
+					<view 
+					class="content-list-tab-box bg-white"
+					:style="{top:elementInfo['nav-bar-container'].bottom + 'px'}"
+					>
 						<scroll-view scroll-x class="bg-white nav">
 							<view class="flex text-center">
-								<view class="cu-item flex-sub" :class="item.selected?'text-orange cur':''" v-for="(item,index) in storeNavList" :key="index" @tap="tabSelect" :data-id="index">
-									{{item.title}}
+								<view 
+								class="cu-item flex-sub" 
+								:class="item.selected?'text-orange cur':''" v-for="(item,index) in storeNavList" 
+								:key="index" 
+								@tap="tabSelect" 
+								:data-id="index">
+									<text>{{item.title}}</text>
 									<svg 
 									v-if="index == 0"
 									class="icon-svg text-xs " aria-hidden="true"><use xlink:href="#icon-sanjiao"></use></svg>
@@ -83,6 +93,9 @@
 							</view>
 						</scroll-view>
 					</view>
+					<!-- nav E -->
+					
+					<!-- body S -->
 					<view class="content-list-body justify-center">
 						
 						<!-- 已登录 S -->
@@ -108,6 +121,8 @@
 						
 						
 					</view>
+					<!-- body E -->
+					
 				</view>
 				<!-- 店铺列表区 E -->
 				
@@ -129,6 +144,10 @@
 import city from '@/pages/city/city.vue';
 // 引入顶部导航栏模块
 import navBar from '@/components/common/navBar.vue';
+
+// 引入工具
+import utils from '@/common/utils.js';
+
 export default {
 	data() {
 		return {
@@ -159,11 +178,47 @@ export default {
 				{
 					selected:false,
 					title:'筛选'
-				}],
+				}], // 商铺导航栏数据
 			loggedIn: false, // 登录状态 true-登录 false-未登录
+			elementInfo:{
+				'nav-bar-container':{
+					bottom:0
+				},
+				'content-list':{},
+				'content-list-tab-box':{
+					bottom:0,
+				},
+				'add-box':{},
+				'content-body':{}
+			}, // 元素位置信息，key该元素的class
 		};
 	},
 	onLoad() {},
+	onPageScroll(e) {
+		
+		// 当页面滚动到顶部导航栏缩进后，获取其位置信息，用于设置商铺分类导航栏的定位设置
+		if(e.scrollTop > 30 && 
+				this.elementInfo['nav-bar-container'].bottom >
+						utils.getElementInfo('.nav-bar-container').bottom)
+		{
+							
+				this.$set(this.elementInfo,'nav-bar-container', 
+								utils.getElementInfo('.nav-bar-container'));
+								
+		}
+	}
+	,
+	beforeMount() { }
+	,
+	mounted() {
+		
+		// 动态获取需要使用的元素的位置信息
+		for (let key in this.elementInfo) {
+			this.elementInfo[key] = utils.getElementInfo('.'+key);
+		}
+		// console.log(this.elementInfo);
+	}
+	,
 	methods: {
 		/**
 		 * 切换推荐商家分类选择
@@ -172,9 +227,33 @@ export default {
 		tabSelect(e) {
 			this.storeNavList.forEach(ele=>{
 				ele.selected = false;
-			})
+			});
+			
 			this.$set(this.storeNavList[e.currentTarget.dataset.id],'selected',true);
-			this.scrollLeft = (e.currentTarget.dataset.id - 1) * 60
+			this.scrollLeft = (e.currentTarget.dataset.id - 1) * 60;
+			
+			// console.log(e.currentTarget);
+			// 通用排序被点击
+			if(e.currentTarget.dataset.id==0){
+				
+				// 获取元素位置，将元素置顶
+				uni.pageScrollTo({
+					duration:50,
+					scrollTop: this.elementInfo['content-list'].top
+				})
+			}
+			
+			// 筛选被点击
+			if(e.currentTarget.dataset.id==3){
+				
+				// 获取元素位置，将元素置顶
+				uni.pageScrollTo({
+					duration:50,
+					scrollTop: this.elementInfo['content-list'].top
+				})
+				
+			}
+			
 		}
 		
 	},
@@ -290,6 +369,14 @@ export default {
 	margin: 0 30rpx;
 }
 
+.content-list-tab-box{
+	position: sticky;
+	// top: 120rpx;
+	z-index: 999;
+}
+.content-list-body{
+	height: 1800px;
+}
 .logged-img{
 	width: 426rpx;
 	height: 426rpx;

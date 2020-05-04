@@ -1,5 +1,5 @@
 <template>
-	<view class="content vs-column">
+	<view class="nav-bar-container vs-column">
 		<!-- 当前位置信息 S -->
 		<navigator url="/pages/address/address" class="add-box font-34 font-w700">
 			<svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-Locationpinmarker"></use></svg>
@@ -29,7 +29,7 @@
 </script>
 
 <style lang="scss" scoped>
-	.content{
+	.nav-bar-container{
 		background-image: linear-gradient(90deg, #0af, #0085ff);
 		padding: 30rpx 30rpx 0;
 		position: sticky;
@@ -48,6 +48,7 @@
 		background-color: #fff;
 		padding: 20rpx 0;
 		margin: 20rpx 0;
+		height: 80rpx;
 		
 		&-text{
 			margin-left: 20rpx;

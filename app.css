@@ -50,3 +50,14 @@ view {
 .text-color-gray {
 	color: #808080;
 }
+
+
+/* 背景颜色 */
+.bg-grey-fa{
+	background-color: #fafafa;
+}
+.cur-item{
+	background-color: #edf5fe;
+	color: #3190E8;
+	font-weight: 700;
+}

@@ -1,7 +1,9 @@
 <template>
 	<view class="nav-bar-container vs-column">
 		<!-- 当前位置信息 S -->
-		<navigator url="/pages/address/address" class="add-box font-34 font-w700">
+		<navigator
+		v-if="!hideAddress"
+		 url="/pages/address/address" class="add-box font-34 font-w700">
 			<svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-Locationpinmarker"></use></svg>
 			<text class="add-content">{{address?address:'未能获取地址'}}</text>
 			<svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-sanjiao"></use></svg>
@@ -24,7 +26,7 @@
 				key: 'value'
 			}
 		},
-		props:['address']
+		props:['address','hideAddress']
 	}
 </script>
 
@@ -34,7 +36,7 @@
 		padding: 30rpx 30rpx 0;
 		position: sticky;
 		top: -75rpx;
-		z-index: 999;
+		z-index: 99;
 	}
 	.add-box{
 		color: #fff;

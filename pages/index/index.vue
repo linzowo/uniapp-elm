@@ -64,7 +64,7 @@
 				<!-- 会员区 E -->
 				
 				<!-- 店铺列表区 S -->
-				<view class="content-list margin-sm flex-direction">
+				<view class="content-list flex-direction">
 					<view class="content-list-title flex-sub justify-center margin-bottom-sm">
 						<text class="content-list-title-text font-30">推荐商家</text>
 					</view>
@@ -97,11 +97,10 @@
 					
 					<!-- body S -->
 					<view class="content-list-body justify-center">
-						
 						<!-- 已登录 S -->
 						<view 
 						v-if="loggedIn"
-						class="logged-in"></view>
+						class="logged-in margin-lr-sm"></view>
 						<!-- 已登录 E -->
 						
 						<!-- 未登录 S -->
@@ -135,6 +134,115 @@
 		</view>
 		<!-- 主体内容部分 E -->
 		
+		<!-- 弹窗部分 S -->
+		
+		<!-- 筛选弹窗 S -->
+		<uni-popup 
+		ref="showpopup" 
+		:type="'top'"
+		@change="popupChange"
+		:animation="false"
+		>
+		
+			<view class="showpopup-box bg-white flex-sub flex-direction">
+				<!-- 搜索框 S -->
+				<navBar class="nav-bar" ></navBar>
+				<!-- 搜索框 E -->
+				
+				<!-- 筛选nav S -->
+				<view 
+				class="popup-content bg-white"
+				>
+					<scroll-view scroll-x class="bg-white nav">
+						<view class="flex text-center">
+							<view 
+							class="cu-item flex-sub" 
+							:class="item.selected?'text-orange cur':''" v-for="(item,index) in storeNavList" 
+							:key="index" 
+							@tap="tabSelect" 
+							:data-id="index">
+								<text>{{item.title}}</text>
+								<svg 
+								v-if="index == 0"
+								class="icon-svg text-xs " aria-hidden="true"><use xlink:href="#icon-sanjiao"></use></svg>
+								<text 
+								v-if="index == 3"
+								class="lg" :class="'cuIcon-filter'"></text>
+							</view>
+						</view>
+					</scroll-view>
+				</view>
+				<!-- 筛选nav E -->
+				
+				<!-- 弹窗主体 S -->
+				<view class="filter-list flex-sub solids-top">
+					
+					<!-- 排序选项 S -->
+					<view
+					v-if="storeNavList[0].selected"
+					 class="cu-list menu flex-sub">
+						<view 
+						v-for="(item,index) in storeNavList[0].list"
+						:key="item+index"
+						class="cu-item"
+						:class="storeNavList[0].listSelected ? 
+										(storeNavList[0].listSelectedIndex == index ? 
+												'text-blue':'' ) : ''"
+						>
+							<view class="content">
+								<text class="text-sm">{{item}}</text>
+							</view>
+							<view 
+							v-if="storeNavList[0].listSelected"
+							class="action">
+								<text class="cuIcon-check text-lg"></text>
+							</view>
+						</view>
+					</view>
+					<!-- 排序选项 S -->
+					<!-- 筛选选项 S -->
+					<view 
+					v-else
+					class="flex-sub flex-direction">
+						<view class="margin-lr-sm flex-direction">
+							<text class="text-sm padding-top-sm">商家服务（可多选）</text>
+							<view class="cu-list grid col-3 no-border" :style="{paddingLeft:0,paddingRight:0}">
+								<view 
+								v-for="(item,index) in filterDataSupports"
+								:key="index"
+								class="cu-item"
+								:style="{padding:0}"
+								>
+									<view 
+									class="margin-tb-xs align-center bg-grey-fa margin-right-xs padding-tb-sm justify-center" 
+									:class="[index == 0?'cur-item':'']">
+										<image 
+										v-if="item.icon_url"
+										class="bar-icon"
+										:src="item.icon_url" mode="aspectFit"></image>
+										{{item.text || item.name}}
+									</view>
+								</view>
+							</view>
+						</view>
+						<view class="">优惠</view>
+						<view class="">价格</view>
+						<view class="flex-sub">
+							<text class="flex-sub bg-white padding solid shadow text-center">取消</text>
+							<text class="flex-sub bg-green padding solid shadow text-center">确定</text>
+						</view>
+					</view>
+					<!-- 筛选选项 E -->
+					
+				</view>
+				<!-- 弹窗主体 S -->
+			</view>
+			
+		</uni-popup>
+		<!-- 筛选弹窗 E -->
+		
+		<!-- 弹窗部分 E -->
+		
 	</view>
 </template>
 
@@ -145,13 +253,19 @@ import city from '@/pages/city/city.vue';
 // 引入顶部导航栏模块
 import navBar from '@/components/common/navBar.vue';
 
+// 引入官方组件
+import uniPopup from '@/components/uni-popup/uni-popup.vue';
 // 引入工具
 import utils from '@/common/utils.js';
+// 配置文件
+import {TEST_DATA} from '@/config.js';
 
 export default {
 	data() {
 		return {
-			address: this.$store.getters.getAddress, // 顶部地址栏地址
+			// 顶部地址栏地址
+			address: this.$store.getters.getAddress,
+			// 顶部分类导航栏数据
 			navList: [
 				{
 					img: "https://cube.elemecdn.com/7/d8/a867c870b22bc74c87c348b75528djpeg.jpeg?x-oss-process=image/format,webp/resize,w_90,h_90,m_fixed",
@@ -162,10 +276,14 @@ export default {
 					title: "大牌惠吃"
 				}
 			],
+			// 商铺分类列表
 			storeNavList: [
 				{
 					selected:true,
-					title:'通用排序'
+					list:['综合排序','好评优先','起送价最低','配送最快','配送费最低','人均从低到高','人均从高到低','通用排序'],
+					listSelected:false,
+					listSelectedIndex:0,
+					title:'通用排序',
 				},
 				{
 					selected:false,
@@ -180,20 +298,41 @@ export default {
 					title:'筛选'
 				}], // 商铺导航栏数据
 			loggedIn: false, // 登录状态 true-登录 false-未登录
+			// 一些需要的元素信息
 			elementInfo:{
 				'nav-bar-container':{
 					bottom:0
 				},
-				'content-list':{},
 				'content-list-tab-box':{
 					bottom:0,
 				},
-				'add-box':{},
-				'content-body':{}
+				'container':{}
 			}, // 元素位置信息，key该元素的class
+			// 记录当前页面状态
+			pageState:{
+				login:false, // 登录状态
+				storeNavSelected:false, // 店铺导航栏的nav是否被选中
+			}, 
+			// 系统信息宽高尺寸等
+			systemInfo:null, 
+			// 弹窗栈用于帮助用户关闭多个弹窗
+			popupStack:[],
+			// 筛选数据
+			filterDataSupports:[TEST_DATA.bar.delivery_mode,...TEST_DATA.bar.supports],
+			filterDataActivity:TEST_DATA.bar.activity_types
 		};
 	},
-	onLoad() {},
+	components: { city,navBar,uniPopup },
+	onLoad() {
+		
+		// 获取系统信息备用
+		uni.getSystemInfo({
+			success:(e)=>{
+				console.log(e);
+				this.systemInfo = e;
+			}
+		})
+	},
 	onPageScroll(e) {
 		
 		// 当页面滚动到顶部导航栏缩进后，获取其位置信息，用于设置商铺分类导航栏的定位设置
@@ -204,11 +343,20 @@ export default {
 							
 				this.$set(this.elementInfo,'nav-bar-container', 
 								utils.getElementInfo('.nav-bar-container'));
+				console.log(this.elementInfo);
 								
 		}
 	}
 	,
-	beforeMount() { }
+	onBackPress(e) {
+		
+		// 当存在打开的弹窗时通过返回键可以关闭弹窗
+		if(this.popupStack.length > 0){
+			this.closePopup(this.popupStack[this.popupStack.length-1]);
+			return true;
+		}
+		
+	}
 	,
 	mounted() {
 		
@@ -216,7 +364,7 @@ export default {
 		for (let key in this.elementInfo) {
 			this.elementInfo[key] = utils.getElementInfo('.'+key);
 		}
-		// console.log(this.elementInfo);
+		console.log(this.elementInfo);
 	}
 	,
 	methods: {
@@ -234,30 +382,62 @@ export default {
 			
 			// console.log(e.currentTarget);
 			// 通用排序被点击
-			if(e.currentTarget.dataset.id==0){
+			if(e.currentTarget.dataset.id==0 || e.currentTarget.dataset.id==3){
+				this.openPopup('showpopup');
+				// 改变页面状态
+				this.changePageState({storeNavSelected:true});
 				
 				// 获取元素位置，将元素置顶
 				uni.pageScrollTo({
-					duration:50,
-					scrollTop: this.elementInfo['content-list'].top
-				})
-			}
-			
-			// 筛选被点击
-			if(e.currentTarget.dataset.id==3){
+					duration:0,
+					scrollTop: this.elementInfo['content-list-tab-box'].top
+				});
 				
-				// 获取元素位置，将元素置顶
-				uni.pageScrollTo({
-					duration:50,
-					scrollTop: this.elementInfo['content-list'].top
-				})
-				
+			}else{
+				this.closePopup('showpopup');
 			}
-			
+		},
+		/**
+		 * 改变页面状态的方法，页面所有的状态改变都在这里进行
+		 * @param {Object} state
+		 */
+		changePageState(state){
+			Object.assign(this.pageState,state);
 		}
+		,
+		/**
+		 * 弹窗状态变化完成时触发的方法
+		 * @param {Object} e 事件参数对象
+		 */
+		popupChange(e){
+			console.log(e);
+			
+			if(e.show == false){
+				this.popupStack.pop();
+			}
+		}
+		,
+		/**
+		 * 打开弹窗
+		 * @param {String} ref 弹窗的ref值
+		 */
+		openPopup(ref){
+			if(this.popupStack.includes(ref)) return;
+			
+			this.popupStack.push(ref);
+			this.$refs[ref].open();
+		}
+		,
+		/**
+		 * 关闭弹窗
+		 * @param {String} ref 弹窗的ref值
+		 */
+		closePopup(ref){
+			this.$refs[ref].close();
+		}
+		,
 		
 	},
-	components: { city,navBar },
 	created() {
 		// 判断当前是否已经获取到了城市
 		// if (!this.$store.getters.getCity) {
@@ -371,11 +551,11 @@ export default {
 
 .content-list-tab-box{
 	position: sticky;
-	// top: 120rpx;
-	z-index: 999;
+	// z-index: 999;
 }
 .content-list-body{
-	height: 1800px;
+	// height: 1800px;
+	position: relative;
 }
 .logged-img{
 	width: 426rpx;
@@ -386,5 +566,21 @@ export default {
 	border-radius: 6rpx;
 	background-color: #56d176;
 	color: #fff;
+}
+
+.popup-content{
+	width: 750rpx;
+}
+.filter-list{
+	height: 200px;
+}
+.showpopup-box{
+	position: relative;
+	top: -75rpx;
+}
+.bar-icon{
+	width: 24rpx;
+	height: 24rpx;
+	margin-right: 10rpx;
 }
 </style>

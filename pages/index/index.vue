@@ -192,7 +192,9 @@
 				<!-- 筛选nav E -->
 				
 				<!-- 弹窗主体 S -->
-				<view class="filter-list flex-sub solids-top">
+				<view 
+				class="filter-list flex-sub solids-top"
+				>
 					
 					<!-- 排序选项 S -->
 					<view
@@ -271,6 +273,10 @@
 </template>
 
 <script>
+/**
+ * @module index-项目首页
+ * @description 项目首页
+ */
 	
 // 引入为获取到城市时的提示页面
 import city from '@/pages/city/city.vue';
@@ -285,6 +291,19 @@ import utils from '@/common/utils.js';
 import {TEST_DATA} from '@/config.js';
 
 export default {
+	/**
+	 * @static 
+	 * @description index模块下的数据
+	 * @property {String} address 顶部地址栏地址
+	 * @property {Array} navList 顶部分类导航栏数据
+	 * @property {Array} storeNavList 商铺分类列表数据
+	 * @property {Object} elementInfo 部分元素的位置信息-可以根据需要自行添加类样式获取其他元素
+	 * @property {Object} pageState 当前页面的状态信息，用于控制页面的呈现状态
+	 * @property {Object} systemInfo 系统信息：宽高尺寸等
+	 * @property {Array} popupStack 弹窗栈用于关闭多个弹窗时使用
+	 * @property {Number} scrollTop content-body控制滑动需要的数据
+	 * @property {Object} old content-body控制滑动需要的数据
+	 */
 	data() {
 		return {
 			// 顶部地址栏地址
@@ -354,13 +373,20 @@ export default {
 			
 		};
 	},
+	/**
+	 * @static 
+	 * @description index模块下包含的子组件
+	 * @property {Component} city 未获取到用户城市时显示的页面
+	 * @property {Component} navBar 自定义navbar模块
+	 * @property {Component} uniPopup uni组件-弹出层
+	 */
 	components: { city,navBar,uniPopup },
 	onLoad() {
 		
 		// 获取系统信息备用
 		uni.getSystemInfo({
 			success:(e)=>{
-				console.log(e);
+				// console.log(e);
 				this.systemInfo = e;
 			}
 		})
@@ -375,7 +401,7 @@ export default {
 							
 				this.$set(this.elementInfo,'nav-bar-container', 
 								utils.getElementInfo('.nav-bar-container'));
-				console.log(this.elementInfo);
+				// console.log(this.elementInfo);
 								
 		}
 	}
@@ -396,7 +422,6 @@ export default {
 		for (let key in this.elementInfo) {
 			this.elementInfo[key] = utils.getElementInfo('.'+key);
 		}
-		console.log(this.elementInfo);
 	}
 	,
 	methods: {
@@ -405,25 +430,32 @@ export default {
 		 * @param {Object} e
 		 */
 		tabSelect(e) {
+			
+			// 用户唤起弹窗后再次点击相同的元素时，直接关闭弹窗
+			if(this.storeNavList[e.currentTarget.dataset.id].selected && this.pageState.storeNavSelected){
+				// 改变页面状态
+				this.changePageState({storeNavSelected:false});
+				return;
+			}
+			
+			// 将所有nav的状态切换为未选中
 			this.storeNavList.forEach(ele=>{
 				ele.selected = false;
 			});
 			
+			// 将用户选择的元素设置为选中状态
 			this.$set(this.storeNavList[e.currentTarget.dataset.id],'selected',true);
 			this.scrollLeft = (e.currentTarget.dataset.id - 1) * 60;
 			
 			// console.log(e.currentTarget);
+			// 开关筛选弹窗
 			// 通用排序被点击
 			if(e.currentTarget.dataset.id==0 || e.currentTarget.dataset.id==3){
-				this.openPopup('filterBarPopup');
 				// 改变页面状态
 				this.changePageState({storeNavSelected:true});
-				
-				// 获取元素位置，将元素置顶
-				this.goTop();
-				
 			}else{
-				this.closePopup('filterBarPopup');
+				// 改变页面状态
+				this.changePageState({storeNavSelected:false});
 			}
 		},
 		/**
@@ -431,7 +463,7 @@ export default {
 		 * @param {Object} state
 		 */
 		changePageState(state){
-			Object.assign(this.pageState,state);
+			this.pageState = Object.assign({},this.pageState,state);
 		}
 		,
 		/**
@@ -439,7 +471,7 @@ export default {
 		 * @param {Object} e 事件参数对象
 		 */
 		popupChange(e){
-			console.log(e);
+			// console.log(e);
 			
 			if(e.show == false){
 				this.popupStack.pop();
@@ -465,13 +497,12 @@ export default {
 			this.$refs[ref].close();
 		}
 		,
+		// 监听content-body盒子的滑动事件
 		scroll: function(e) {
+			// 为了实现点击滑动到指定位置效果，存储的滑动数据
 			this.old.scrollTop = e.detail.scrollTop;
-			
-			if(this.old.scrollTop > 10 && this.elementInfo['nav-bar-container'].bottom > utils.getElementInfo('.nav-bar-container')){
-				this.$set(this.elementInfo,'nav-bar-container',utils.getElementInfo('.nav-bar-container'));
-			}
 		},
+		// content-body盒子中的内容滑动到指定位置
 		goTop: function(e) {
 			if(this.old.scrollTop > this.elementInfo['content-list-tab-box'].top) return;
 			this.scrollTop = this.old.scrollTop;
@@ -480,7 +511,23 @@ export default {
 			});
 		}
 	},
-	watch:{}
+	watch:{
+		/**
+		 * 监听页面状态变化，根据状态设置对应的操作
+		 * @param {Object} n
+		 * @param {Object} o
+		 */
+		pageState(n,o){
+			if(n.storeNavSelected){
+				// 打开筛选弹窗
+				this.openPopup('filterBarPopup');
+				// 获取元素位置，将元素置顶
+				this.goTop();
+			}else{
+				this.closePopup('filterBarPopup');
+			}
+		}
+	}
 };
 </script>
 
@@ -607,7 +654,7 @@ export default {
 	width: 750rpx;
 }
 .filter-list{
-	height: 200px;
+	// height: 200px;
 }
 .filter-bar-popup-box{
 	top: -75rpx;

@@ -183,14 +183,14 @@
 					 class="cu-list menu flex-sub">
 						<view 
 						v-for="(item,index) in storeNavList[0].list"
-						:key="item+index"
+						:key="item.name+index"
 						class="cu-item"
 						:class="storeNavList[0].listSelected ? 
 										(storeNavList[0].listSelectedIndex == index ? 
 												'text-blue':'' ) : ''"
 						>
 							<view class="content">
-								<text class="text-sm">{{item}}</text>
+								<text class="text-sm">{{item.name}}</text>
 							</view>
 							<view 
 							v-if="storeNavList[0].listSelected"
@@ -204,34 +204,41 @@
 					<view 
 					v-else
 					class="flex-sub flex-direction">
-						<view class="margin-lr-sm flex-direction">
-							<text class="text-sm padding-top-sm">商家服务（可多选）</text>
-							<view class="cu-list grid col-3 no-border" :style="{paddingLeft:0,paddingRight:0}">
+						<view 
+						v-for="(fliterValue,name,index) in storeNavList[3].list"
+						:key="index"
+						class="margin-lr-sm flex-direction flex-sub">
+							<text class="text-sm padding-tb-sm">
+								{{['商家服务（可多选）','优惠活动（单选）','人均消费'][index]}}
+							</text>
+							<view class="cu-list grid col-3 no-border" :style="{paddingLeft:0,paddingRight:0,paddingTop:0}">
 								<view 
-								v-for="(item,index) in filterDataSupports"
-								:key="index"
+								v-for="(item,i) in fliterValue"
+								:key="i"
 								class="cu-item"
 								:style="{padding:0}"
 								>
 									<view 
-									class="margin-tb-xs align-center bg-grey-fa margin-right-xs padding-tb-sm justify-center" 
-									:class="[index == 0?'cur-item':'']">
+									class="margin-top-xs align-center bg-grey-fa margin-right-xs padding-tb-xs justify-center" 
+									:class="[i == 0?'cur-item':'']">
 										<image 
 										v-if="item.icon_url"
 										class="bar-icon"
 										:src="item.icon_url" mode="aspectFit"></image>
-										{{item.text || item.name}}
+										{{item.text || item.name || item}}
 									</view>
 								</view>
 							</view>
 						</view>
-						<view class="">优惠</view>
-						<view class="">价格</view>
+						
+						<!-- 按钮 S -->
 						<view class="flex-sub">
 							<text class="flex-sub bg-white padding solid shadow text-center">取消</text>
 							<text class="flex-sub bg-green padding solid shadow text-center">确定</text>
 						</view>
+						<!-- 按钮 E-->
 					</view>
+					
 					<!-- 筛选选项 E -->
 					
 				</view>
@@ -280,7 +287,7 @@ export default {
 			storeNavList: [
 				{
 					selected:true,
-					list:['综合排序','好评优先','起送价最低','配送最快','配送费最低','人均从低到高','人均从高到低','通用排序'],
+					list:TEST_DATA.outside.inside_sort_filter,
 					listSelected:false,
 					listSelectedIndex:0,
 					title:'通用排序',
@@ -295,6 +302,12 @@ export default {
 				},
 				{
 					selected:false,
+					list:{
+						// 筛选数据
+						filterDataSupports:[TEST_DATA.bar.delivery_mode,...TEST_DATA.bar.supports],
+						filterDataActivity:TEST_DATA.bar.activity_types,
+						averagePrice:['￥20以下','￥20-￥40','￥40-￥60','￥60-￥80','￥80-￥100','￥100以上']
+					},
 					title:'筛选'
 				}], // 商铺导航栏数据
 			loggedIn: false, // 登录状态 true-登录 false-未登录
@@ -317,9 +330,7 @@ export default {
 			systemInfo:null, 
 			// 弹窗栈用于帮助用户关闭多个弹窗
 			popupStack:[],
-			// 筛选数据
-			filterDataSupports:[TEST_DATA.bar.delivery_mode,...TEST_DATA.bar.supports],
-			filterDataActivity:TEST_DATA.bar.activity_types
+			
 		};
 	},
 	components: { city,navBar,uniPopup },

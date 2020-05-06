@@ -1,11 +1,28 @@
 <template>
-	<view class="container vs-flex-item vs-column">
+	<scroll-view 
+	class="container vs-flex-item vs-column" 
+	:style="{
+		height:systemInfo.windowHeight+'px',
+		paddingTop:(old.scrollTop>10?120:195) + 'rpx'
+		}" 
+	scroll-y="true"
+	:scroll-top="scrollTop"
+	>
 		<!-- 导航栏 S -->
-		<navBar class="nav-bar" :address="address"></navBar>
+		<navBar 
+		:address="address"
+		:style="{top:old.scrollTop>10?'-75rpx':0}"
+		></navBar>
 		<!-- 导航栏 S -->
 		
 		<!-- 主体内容部分 S -->
-		<view class="content-body">
+		<scroll-view 
+		class="content-body flex flex-sub"
+		scroll-y="true"
+		:scroll-top="scrollTop" 
+		@scroll="scroll"
+		:style="{height:'100%'}"
+		>
 			<!-- 获取到城市时显示 S -->
 			<view v-if="address" class="vs-column vs-space-center">
 				<!-- 导航区 S -->
@@ -72,7 +89,6 @@
 					<!-- nav S -->
 					<view 
 					class="content-list-tab-box bg-white"
-					:style="{top:elementInfo['nav-bar-container'].bottom + 'px'}"
 					>
 						<scroll-view scroll-x class="bg-white nav">
 							<view class="flex text-center">
@@ -131,22 +147,23 @@
 			<!-- 未获取到城市时显示 S -->
 			<city v-else class="city-page"></city>
 			<!-- 未获取到城市时显示 E -->
-		</view>
+		</scroll-view>
 		<!-- 主体内容部分 E -->
 		
 		<!-- 弹窗部分 S -->
 		
 		<!-- 筛选弹窗 S -->
 		<uni-popup 
-		ref="showpopup" 
+		ref="filterBarPopup" 
 		:type="'top'"
 		@change="popupChange"
 		:animation="false"
+		class="filter-bar-popup-box"
 		>
 		
-			<view class="showpopup-box bg-white flex-sub flex-direction">
+			<view class="bg-white flex-sub flex-direction">
 				<!-- 搜索框 S -->
-				<navBar class="nav-bar" ></navBar>
+				<navBar class="nav-bar"></navBar>
 				<!-- 搜索框 E -->
 				
 				<!-- 筛选nav S -->
@@ -205,7 +222,7 @@
 					v-else
 					class="flex-sub flex-direction">
 						<view 
-						v-for="(fliterValue,name,index) in storeNavList[3].list"
+						v-for="(filterValue,name,index) in storeNavList[3].list"
 						:key="index"
 						class="margin-lr-sm flex-direction flex-sub">
 							<text class="text-sm padding-tb-sm">
@@ -213,7 +230,7 @@
 							</text>
 							<view class="cu-list grid col-3 no-border" :style="{paddingLeft:0,paddingRight:0,paddingTop:0}">
 								<view 
-								v-for="(item,i) in fliterValue"
+								v-for="(item,i) in filterValue"
 								:key="i"
 								class="cu-item"
 								:style="{padding:0}"
@@ -250,7 +267,7 @@
 		
 		<!-- 弹窗部分 E -->
 		
-	</view>
+	</scroll-view>
 </template>
 
 <script>
@@ -330,6 +347,10 @@ export default {
 			systemInfo:null, 
 			// 弹窗栈用于帮助用户关闭多个弹窗
 			popupStack:[],
+            scrollTop: 0,
+            old: {
+                scrollTop: 0
+            }
 			
 		};
 	},
@@ -394,18 +415,15 @@ export default {
 			// console.log(e.currentTarget);
 			// 通用排序被点击
 			if(e.currentTarget.dataset.id==0 || e.currentTarget.dataset.id==3){
-				this.openPopup('showpopup');
+				this.openPopup('filterBarPopup');
 				// 改变页面状态
 				this.changePageState({storeNavSelected:true});
 				
 				// 获取元素位置，将元素置顶
-				uni.pageScrollTo({
-					duration:0,
-					scrollTop: this.elementInfo['content-list-tab-box'].top
-				});
+				this.goTop();
 				
 			}else{
-				this.closePopup('showpopup');
+				this.closePopup('filterBarPopup');
 			}
 		},
 		/**
@@ -447,15 +465,20 @@ export default {
 			this.$refs[ref].close();
 		}
 		,
-		
-	},
-	created() {
-		// 判断当前是否已经获取到了城市
-		// if (!this.$store.getters.getCity) {
-		// 	uni.navigateTo({
-		// 		url: '../city/city'
-		// 	});
-		// }
+		scroll: function(e) {
+			this.old.scrollTop = e.detail.scrollTop;
+			
+			if(this.old.scrollTop > 10 && this.elementInfo['nav-bar-container'].bottom > utils.getElementInfo('.nav-bar-container')){
+				this.$set(this.elementInfo,'nav-bar-container',utils.getElementInfo('.nav-bar-container'));
+			}
+		},
+		goTop: function(e) {
+			if(this.old.scrollTop > this.elementInfo['content-list-tab-box'].top) return;
+			this.scrollTop = this.old.scrollTop;
+			this.$nextTick(function() {
+				this.scrollTop = this.elementInfo['content-list-tab-box'].top;
+			});
+		}
 	},
 	watch:{}
 };
@@ -470,10 +493,10 @@ export default {
 .content-body{
 	// display: flex;
 }
-// .nav-bar{
-// 	display: sticky;
-// 	top: 10px;
-// }
+.nav-bar{
+	position: relative;
+	top: 0;
+}
 .logo {
 	height: 200rpx;
 	width: 200rpx;
@@ -562,7 +585,8 @@ export default {
 
 .content-list-tab-box{
 	position: sticky;
-	// z-index: 999;
+	top: 0;
+	z-index: 9;
 }
 .content-list-body{
 	// height: 1800px;
@@ -585,8 +609,7 @@ export default {
 .filter-list{
 	height: 200px;
 }
-.showpopup-box{
-	position: relative;
+.filter-bar-popup-box{
 	top: -75rpx;
 }
 .bar-icon{

@@ -203,6 +203,7 @@
 						<view 
 						v-for="(item,index) in storeNavList[0].list"
 						:key="item.name+index"
+						@tap="orderTap(index)"
 						class="cu-item"
 						:class="storeNavList[0].listSelected ? 
 										(storeNavList[0].listSelectedIndex == index ? 
@@ -212,7 +213,7 @@
 								<text class="text-sm">{{item.name}}</text>
 							</view>
 							<view 
-							v-if="storeNavList[0].listSelected"
+							v-if="storeNavList[0].listSelected && storeNavList[0].listSelectedIndex == index"
 							class="action">
 								<text class="cuIcon-check text-lg"></text>
 							</view>
@@ -230,16 +231,24 @@
 							<text class="text-sm padding-tb-sm">
 								{{['商家服务（可多选）','优惠活动（单选）','人均消费'][index]}}
 							</text>
-							<view class="cu-list grid col-3 no-border" :style="{paddingLeft:0,paddingRight:0,paddingTop:0}">
+							<view 
+							class="cu-list grid col-3 no-border" 
+							:style="{paddingLeft:0,paddingRight:0,paddingTop:0}">
 								<view 
 								v-for="(item,i) in filterValue"
 								:key="i"
+								@tap="filterTap(name,i)"
 								class="cu-item"
 								:style="{padding:0}"
 								>
 									<view 
 									class="margin-top-xs align-center bg-grey-fa margin-right-xs padding-tb-xs justify-center" 
-									:class="[i == 0?'cur-item':'']">
+									:class="[
+										index == 0 ? 
+										(storeNavList[3].selectedIndex[name].includes(i) ? 'cur-item':'') : 
+										(i == storeNavList[3].selectedIndex[name] ? 'cur-item':'')
+										]"
+										>
 										<image 
 										v-if="item.icon_url"
 										class="bar-icon"
@@ -252,8 +261,18 @@
 						
 						<!-- 按钮 S -->
 						<view class="flex-sub">
-							<text class="flex-sub bg-white padding solid shadow text-center">取消</text>
-							<text class="flex-sub bg-green padding solid shadow text-center">确定</text>
+							<text 
+							class="flex-sub bg-white padding solid shadow text-center"
+							:class="
+							storeNavList[3].selectedIndex.filterDataSupports.length ||
+							storeNavList[3].selectedIndex.filterDataActivity != -1 || 
+							storeNavList[3].selectedIndex.averagePrice != -1 ? 
+							'' : 'ban-click'"
+							@tap="storeNavBtnTap"
+							>清空</text>
+							<text 
+							class="flex-sub bg-green padding solid shadow text-center"
+							>确定</text>
 						</view>
 						<!-- 按钮 E-->
 					</view>
@@ -343,6 +362,11 @@ export default {
 						filterDataSupports:[TEST_DATA.bar.delivery_mode,...TEST_DATA.bar.supports],
 						filterDataActivity:TEST_DATA.bar.activity_types,
 						averagePrice:['￥20以下','￥20-￥40','￥40-￥60','￥60-￥80','￥80-￥100','￥100以上']
+					},
+					selectedIndex:{
+						filterDataSupports:[],
+						filterDataActivity:-1,
+						averagePrice:-1
 					},
 					title:'筛选'
 				}], // 商铺导航栏数据
@@ -475,6 +499,10 @@ export default {
 			
 			if(e.show == false){
 				this.popupStack.pop();
+				
+				if(this.pageState.storeNavSelected){
+					this.pageState.storeNavSelected = false;
+				}
 			}
 		}
 		,
@@ -495,6 +523,65 @@ export default {
 		 */
 		closePopup(ref){
 			this.$refs[ref].close();
+		}
+		,
+		/**
+		 * 点击选择排序方式
+		 * @param {Number} index 当前选中元素索引值
+		 */
+		orderTap(index){
+			this.storeNavList[0].listSelected = true;
+			this.storeNavList[0].listSelectedIndex = index;
+			this.storeNavList[0].title = this.storeNavList[0].list[index].name;
+		}
+		,
+		/**
+		 * 点击选择筛选方式
+		 * @param {String} key 当前的分类名
+		 * @param {Number} index 当前选中元素索引值
+		 */
+		filterTap(key,index){
+			// 判断是否是多选
+			if(key == 'filterDataSupports'){
+				
+				// 判断当期选中的元素是否已经存在了 存在就将其删除
+				let eleIndex = this.storeNavList[3].selectedIndex[key].findIndex(ele=>{
+					return ele == index;
+				});
+				
+				if(eleIndex !== -1){
+					this.storeNavList[3].selectedIndex[key].splice(eleIndex,1);
+					return;
+				}
+				
+				// 不存在就加入数组
+				if(this.storeNavList[3].selectedIndex[key][0] == -1){
+					this.$set(this.storeNavList[3].selectedIndex[key],0,index);
+				}else{
+					this.storeNavList[3].selectedIndex[key].push(index);
+				}
+				
+				return;
+			}
+			
+			// 非多选操作
+			if(this.storeNavList[3].selectedIndex[key] == index) {
+				this.storeNavList[3].selectedIndex[key] = -1;
+				return;
+			}
+			
+			this.storeNavList[3].selectedIndex[key] = index;
+		}
+		,
+		/**
+		 * 筛选弹窗中的清空按钮点击事件
+		 */
+		storeNavBtnTap(){
+			
+			// 将已经选择的选项都清空
+			this.storeNavList[3].selectedIndex.filterDataSupports = [];
+			this.storeNavList[3].selectedIndex.filterDataActivity = -1;
+			this.storeNavList[3].selectedIndex.averagePrice = -1;
 		}
 		,
 		// 监听content-body盒子的滑动事件
@@ -521,6 +608,7 @@ export default {
 			if(n.storeNavSelected){
 				// 打开筛选弹窗
 				this.openPopup('filterBarPopup');
+				
 				// 获取元素位置，将元素置顶
 				this.goTop();
 			}else{
@@ -663,5 +751,8 @@ export default {
 	width: 24rpx;
 	height: 24rpx;
 	margin-right: 10rpx;
+}
+.ban-click{
+	color: #ddd;
 }
 </style>

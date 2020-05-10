@@ -61,3 +61,43 @@ view {
 	color: #3190E8;
 	font-weight: 700;
 }
+
+.border{
+	border-width: 1px;
+	border-style: solid;
+	border-color: #333333;
+}
+.border-lg{
+	border-width: 3px;
+}
+.border-xl{
+	border-width: 5px;
+}
+.border-style-da{
+	border-style: dashed;
+}
+.border-color-0{
+	border-color: #000;
+}
+.border-color-3{
+	border-color: #333;
+}
+.border-color-6{
+	border-color: #666;
+}
+.border-color-9{
+	border-color: #999;
+}
+.border-color-c{
+	border-color: #ccc;
+}
+.border-color-e{
+	border-color: #eee;
+}
+.border-color-f{
+	border-color: #fff;
+}
+
+.link-blue{
+	color: #2395ff;
+}

@@ -49,7 +49,13 @@
 		}, {
 			"path": "pages/login/login",
 			"style": {
+				"navigationStyle":"custom",
 				"navigationBarTitleText": "登录页"
+			}
+		}, {
+			"path": "pages/file/file",
+			"style": {
+				"navigationBarTitleText": "文件展示页"
 			}
 		}
 	],

@@ -268,10 +268,11 @@
 							storeNavList[3].selectedIndex.filterDataActivity != -1 || 
 							storeNavList[3].selectedIndex.averagePrice != -1 ? 
 							'' : 'ban-click'"
-							@tap="storeNavBtnTap"
+							@tap="storeNavBtnTap('clear')"
 							>清空</text>
 							<text 
 							class="flex-sub bg-green padding solid shadow text-center"
+							@tap="storeNavBtnTap('ok')"
 							>确定</text>
 						</view>
 						<!-- 按钮 E-->
@@ -454,7 +455,7 @@ export default {
 		 * @param {Object} e
 		 */
 		tabSelect(e) {
-			
+			console.log('tabSelect:切换商家排序筛选导航的选项');
 			// 用户唤起弹窗后再次点击相同的元素时，直接关闭弹窗
 			if(this.storeNavList[e.currentTarget.dataset.id].selected && this.pageState.storeNavSelected){
 				// 改变页面状态
@@ -487,6 +488,7 @@ export default {
 		 * @param {Object} state
 		 */
 		changePageState(state){
+			console.log('changePageState:改变页面状态：',state);
 			this.pageState = Object.assign({},this.pageState,state);
 		}
 		,
@@ -496,7 +498,7 @@ export default {
 		 */
 		popupChange(e){
 			// console.log(e);
-			
+			console.log('popupChange:弹窗状态改变==>' + (e.show?'开':'关'));
 			if(e.show == false){
 				this.popupStack.pop();
 				
@@ -511,6 +513,7 @@ export default {
 		 * @param {String} ref 弹窗的ref值
 		 */
 		openPopup(ref){
+			console.log('openPopup：打开弹窗'+ref);
 			if(this.popupStack.includes(ref)) return;
 			
 			this.popupStack.push(ref);
@@ -522,6 +525,7 @@ export default {
 		 * @param {String} ref 弹窗的ref值
 		 */
 		closePopup(ref){
+			console.log('closePopup：关闭弹窗'+ref);
 			this.$refs[ref].close();
 		}
 		,
@@ -530,6 +534,7 @@ export default {
 		 * @param {Number} index 当前选中元素索引值
 		 */
 		orderTap(index){
+			console.log('orderTap:选择排序方式',this.storeNavList[0].list[index].name);
 			this.storeNavList[0].listSelected = true;
 			this.storeNavList[0].listSelectedIndex = index;
 			this.storeNavList[0].title = this.storeNavList[0].list[index].name;
@@ -541,6 +546,8 @@ export default {
 		 * @param {Number} index 当前选中元素索引值
 		 */
 		filterTap(key,index){
+			console.log('filterTap：选择筛选方式');
+			
 			// 判断是否是多选
 			if(key == 'filterDataSupports'){
 				
@@ -574,14 +581,29 @@ export default {
 		}
 		,
 		/**
-		 * 筛选弹窗中的清空按钮点击事件
+		 * 筛选弹窗中的按钮点击事件
+		 * @param {String} option 按钮标记，表示当前是哪个按钮触发的事件
 		 */
-		storeNavBtnTap(){
+		storeNavBtnTap(option){
+			console.log('storeNavBtnTap: 筛选中的底部按钮点击',option);
+			// 清空当前选择项
+			if(option == 'clear'){
+				// 将已经选择的选项都清空
+				this.storeNavList[3].selectedIndex.filterDataSupports = [];
+				this.storeNavList[3].selectedIndex.filterDataActivity = -1;
+				this.storeNavList[3].selectedIndex.averagePrice = -1;
+			}
 			
-			// 将已经选择的选项都清空
-			this.storeNavList[3].selectedIndex.filterDataSupports = [];
-			this.storeNavList[3].selectedIndex.filterDataActivity = -1;
-			this.storeNavList[3].selectedIndex.averagePrice = -1;
+			// 确定当前选择的筛选项
+			if(option == 'ok'){
+				// 发起确定请求
+				
+				// 监听结果
+				
+				// 关闭弹窗
+				this.changePageState({storeNavSelected:false});
+				// 根据结果渲染新的列表
+			}
 		}
 		,
 		// 监听content-body盒子的滑动事件

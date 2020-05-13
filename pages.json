@@ -14,7 +14,8 @@
 		}, {
 			"path": "pages/order/order",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": "订单页",
+				"navigationStyle":"custom"
 			}
 		}, {
 			"path": "pages/user/user",

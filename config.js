@@ -1,5 +1,8 @@
 // 项目配置文件
 
+/**
+ * 测试数据
+ */
 export const TEST_DATA = {
 	"bar": {
 		"activity_types": [{
@@ -212,4 +215,28 @@ export const TEST_DATA = {
 			"value": 6
 		}]
 	}
+}
+
+/**
+ * 图片地址
+ */
+export const IMG_URL = {
+	"login_no":'https://fuss10.elemecdn.com/d/60/70008646170d1f654e926a2aaa3afpng.png'
+}
+
+export const COMMON_TEXT = {
+	"login":{
+		index:{
+			login_tips:"登录后查看更多商家"
+		},
+		order:{
+			login_tips:"登录后查看外卖订单"
+		}
+	}
+}
+
+export default {
+	TEST_DATA,
+	IMG_URL,
+	COMMON_TEXT
 }

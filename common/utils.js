@@ -1,4 +1,5 @@
 // 工具类
+import Vue from 'vue'
 
 /**
  * 获取元素基本信息（宽高定位等)
@@ -28,6 +29,22 @@ export const getElementInfo = (selector,callback,range) => {
 	return res;
 }
 
+/**
+ * 用于输出日志方法
+ * @param {String} fnName 方法名
+ * @param {String} description 描述
+ * @param {*} data 获取的数据，非必要
+ */
+export const log = (fnName,description,data="") => {
+	
+	// 阻止生产环境输出日志消息
+	if(!Vue.config.productionTip) return;
+	
+	// 输出日志
+	console.log(fnName+"：",description,data);
+}
+
 export default {
-	getElementInfo
+	getElementInfo,
+	log
 }

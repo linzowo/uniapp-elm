@@ -145,10 +145,12 @@
 			<!-- 获取到城市时显示 E -->
 			
 			<!-- 未获取到城市时显示 S -->
-			<city v-else class="city-page"></city>
+			<noPosition v-else class="city-page"></noPosition>
 			<!-- 未获取到城市时显示 E -->
 		</scroll-view>
 		<!-- 主体内容部分 E -->
+			
+		
 		
 		<!-- 弹窗部分 S -->
 		
@@ -297,20 +299,31 @@
  * @module index-项目首页
  * @description 项目首页
  */
-	
-// 引入为获取到城市时的提示页面
-import city from '@/pages/city/city.vue';
+
+// 引入未获取到城市时的提示页面
+import noPosition from '@/components/noPosition/noPosition.vue';
 // 引入顶部导航栏模块
 import navBar from '@/components/common/navBar.vue';
+// 地址模块
+import addressPage from '@/pages/address/address.vue';
 
 // 引入官方组件
 import uniPopup from '@/components/uni-popup/uni-popup.vue';
 // 引入工具
-import utils from '@/common/utils.js';
+// import utils from '@/common/utils.js';
 // 配置文件
-import {TEST_DATA} from '@/config.js';
+import {TEST_DATA} from '@/config/test_data.js';
 
 export default {
+	/**
+	 * @static 
+	 * @description index模块下包含的子组件
+	 * @property {Component} noPosition 未获取到用户城市时显示的页面
+	 * @property {Component} navBar 自定义navbar模块
+	 * @property {Component} addressPage 地址管理模块
+	 * @property {Component} uniPopup uni组件-弹出层
+	 */
+	components: { noPosition,navBar,uniPopup,addressPage },
 	/**
 	 * @static 
 	 * @description index模块下的数据
@@ -398,14 +411,6 @@ export default {
 			
 		};
 	},
-	/**
-	 * @static 
-	 * @description index模块下包含的子组件
-	 * @property {Component} city 未获取到用户城市时显示的页面
-	 * @property {Component} navBar 自定义navbar模块
-	 * @property {Component} uniPopup uni组件-弹出层
-	 */
-	components: { city,navBar,uniPopup },
 	onLoad() {
 		
 		// 获取系统信息备用
@@ -421,11 +426,11 @@ export default {
 		// 当页面滚动到顶部导航栏缩进后，获取其位置信息，用于设置商铺分类导航栏的定位设置
 		if(e.scrollTop > 30 && 
 				this.elementInfo['nav-bar-container'].bottom >
-						utils.getElementInfo('.nav-bar-container').bottom)
+						this.$utils.getElementInfo('.nav-bar-container').bottom)
 		{
 							
 				this.$set(this.elementInfo,'nav-bar-container', 
-								utils.getElementInfo('.nav-bar-container'));
+								this.$utils.getElementInfo('.nav-bar-container'));
 				// console.log(this.elementInfo);
 								
 		}
@@ -445,7 +450,7 @@ export default {
 		
 		// 动态获取需要使用的元素的位置信息
 		for (let key in this.elementInfo) {
-			this.elementInfo[key] = utils.getElementInfo('.'+key);
+			this.elementInfo[key] = this.$utils.getElementInfo('.'+key);
 		}
 	}
 	,
@@ -455,7 +460,7 @@ export default {
 		 * @param {Object} e
 		 */
 		tabSelect(e) {
-			console.log('tabSelect:切换商家排序筛选导航的选项');
+			this.$utils.log('tabSelect','切换商家排序筛选导航的选项');
 			// 用户唤起弹窗后再次点击相同的元素时，直接关闭弹窗
 			if(this.storeNavList[e.currentTarget.dataset.id].selected && this.pageState.storeNavSelected){
 				// 改变页面状态
@@ -488,7 +493,7 @@ export default {
 		 * @param {Object} state
 		 */
 		changePageState(state){
-			console.log('changePageState:改变页面状态：',state);
+			this.$utils.log('changePageState','改变页面状态',state);
 			this.pageState = Object.assign({},this.pageState,state);
 		}
 		,
@@ -497,8 +502,7 @@ export default {
 		 * @param {Object} e 事件参数对象
 		 */
 		popupChange(e){
-			// console.log(e);
-			console.log('popupChange:弹窗状态改变==>' + (e.show?'开':'关'));
+			this.$utils.log('popupChange','弹窗状态改变==>' + (e.show?'开':'关'),e);
 			if(e.show == false){
 				this.popupStack.pop();
 				
@@ -513,7 +517,7 @@ export default {
 		 * @param {String} ref 弹窗的ref值
 		 */
 		openPopup(ref){
-			console.log('openPopup：打开弹窗'+ref);
+			this.$utils.log('openPopup','打开弹窗'+ref);
 			if(this.popupStack.includes(ref)) return;
 			
 			this.popupStack.push(ref);
@@ -525,7 +529,7 @@ export default {
 		 * @param {String} ref 弹窗的ref值
 		 */
 		closePopup(ref){
-			console.log('closePopup：关闭弹窗'+ref);
+			this.$utils.log('closePopup','关闭弹窗'+ref);
 			this.$refs[ref].close();
 		}
 		,
@@ -534,7 +538,7 @@ export default {
 		 * @param {Number} index 当前选中元素索引值
 		 */
 		orderTap(index){
-			console.log('orderTap:选择排序方式',this.storeNavList[0].list[index].name);
+			this.$utils.log('orderTap','选择排序方式',this.storeNavList[0].list[index].name);
 			this.storeNavList[0].listSelected = true;
 			this.storeNavList[0].listSelectedIndex = index;
 			this.storeNavList[0].title = this.storeNavList[0].list[index].name;
@@ -546,8 +550,7 @@ export default {
 		 * @param {Number} index 当前选中元素索引值
 		 */
 		filterTap(key,index){
-			console.log('filterTap：选择筛选方式');
-			
+			this.$utils.log('filterTap','选择筛选方式');
 			// 判断是否是多选
 			if(key == 'filterDataSupports'){
 				
@@ -585,7 +588,7 @@ export default {
 		 * @param {String} option 按钮标记，表示当前是哪个按钮触发的事件
 		 */
 		storeNavBtnTap(option){
-			console.log('storeNavBtnTap: 筛选中的底部按钮点击',option);
+			this.$utils.log('storeNavBtnTap','筛选中的底部按钮点击',option);
 			// 清空当前选择项
 			if(option == 'clear'){
 				// 将已经选择的选项都清空

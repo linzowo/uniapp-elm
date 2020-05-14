@@ -47,8 +47,32 @@ view {
 }
 
 /* 字体颜色 */
+.text-color-0{
+	color: #000;
+}
+.text-color-3{
+	color: #333;
+}
+.text-color-6{
+	color: #666;
+}
+.text-color-9{
+	color: #999;
+}
+.text-color-c{
+	color: #ccc;
+}
+.text-color-e{
+	color: #eee;
+}
+.text-color-f{
+	color: #fff;
+}
 .text-color-gray {
 	color: #808080;
+}
+.text-color-blue {
+	color: #2395ff;
 }
 
 
@@ -56,6 +80,10 @@ view {
 .bg-grey-fa{
 	background-color: #fafafa;
 }
+.bg-grey-f5{
+	background-color: #f5f5f5;
+}
+
 .cur-item{
 	background-color: #edf5fe;
 	color: #3190E8;
@@ -66,6 +94,26 @@ view {
 	border-width: 1px;
 	border-style: solid;
 	border-color: #333333;
+}
+.border-top{
+	border-top-width: 1px;
+	border-top-style: solid;
+	border-top-color: #333333;
+}
+.border-bottom{
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #333333;
+}
+.border-left{
+	border-left-width: 1px;
+	border-left-style: solid;
+	border-left-color: #333333;
+}
+.border-right{
+	border-right-width: 1px;
+	border-right-style: solid;
+	border-right-color: #333333;
 }
 .border-lg{
 	border-width: 3px;

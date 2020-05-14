@@ -1,6 +1,6 @@
 <template>
 	<view 
-	class="order-box flex-direction"
+	class="order-box flex-direction bg-grey-f5"
 	:style="{height : $system_info.containerHeight + 'px'}"
 	>
 		<!-- 未登录 S -->

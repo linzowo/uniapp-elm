@@ -3,13 +3,13 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "uni-app",
+				"navigationBarTitleText": "饿了么",
 				"navigationStyle": "custom"
 			}
 		}, {
 			"path": "pages/discover/discover",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": "发现"
 			}
 		}, {
 			"path": "pages/order/order",
@@ -20,13 +20,24 @@
 		}, {
 			"path": "pages/user/user",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": "我的"
 			}
 		}, {
 			"path": "pages/address/address",
 			"style": {
-				"navigationBarTitleText": "地址管理页"
+				"navigationBarTitleText": "选择收货地址",
+				"app-plus":{
+					"titleNView":{
+						"buttons":[
+							{
+								"text":"新增地址",
+								"fontSize":"15px"
+							}
+						]
+					}
+				}
 			}
+			
 		}, {
 			"path": "pages/search/search",
 			"style": {
@@ -58,6 +69,11 @@
 			"style": {
 				"navigationBarTitleText": "文件展示页"
 			}
+		}, {
+			"path": "pages/city/city",
+			"style": {
+				"navigationBarTitleText": "城市选择"
+			}
 		}
 	],
 	"globalStyle": {
@@ -65,6 +81,7 @@
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#3190e8",
 		"backgroundColor": "#3190e8"
+		
 	},
 	"tabBar": {
 		"color": "#8e8e93",

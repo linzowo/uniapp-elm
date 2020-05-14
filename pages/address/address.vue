@@ -12,14 +12,27 @@
 			:style="{marginLeft:0}"
 			>
 					<text class="cuIcon-search"></text>
-					<input @focus="InputFocus" @blur="InputBlur" :adjust-position="false" type="text" placeholder="请输入地址" confirm-type="search"></input>
+					<input 
+					@focus="InputFocus" 
+					@blur="InputBlur" 
+					@input="InputEnter"
+					:value="inputText"
+					type="text" 
+					placeholder="请输入地址" 
+					confirm-type="search"></input>
+					<text 
+					v-if="inputText"
+					@tap="clearInput"
+					class="cuIcon-close text-lg"></text>
 				</view>
 		</view>
 		
-		<view class="content">
+		<view class="content flex-direction">
 			
 			<!-- 我的地址 S -->
-			<view class="my-address flex-direction flex-sub">
+			<view 
+			v-if="!inputText"
+			class="my-address flex-direction flex-sub">
 				<!-- 当前地址 S -->
 				<view class="current-address flex-sub flex-direction margin-tb-xs">
 					<text class="margin-tb-sm margin-lr text-color-6">当前地址</text>
@@ -55,8 +68,10 @@
 			<!-- 我的地址 E -->
 			
 			<!-- 搜索結果列表 S -->
-			<view class="search-res">
-				
+			<view 
+			v-if="inputText"
+			class="search-res">
+				搜索结果
 			</view>
 			<!-- 搜索結果列表 E -->
 			
@@ -70,7 +85,8 @@
 	export default {
 		data() {
 			return {
-				key: 1
+				key: 1,
+				inputText:""
 			}
 		},
 		onShow() {
@@ -93,6 +109,13 @@
 			},
 			InputBlur(e){
 				
+			}
+			,
+			InputEnter(e){
+				this.inputText = e.detail.value;
+			},
+			clearInput(){
+				this.inputText = "";
 			}
 		}
 	}

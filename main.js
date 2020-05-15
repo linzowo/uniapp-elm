@@ -13,12 +13,15 @@ import utils from '@/common/utils.js';
 Vue.prototype.$utils = utils;
 
 // 引入配置文件
+// 公共文本
 import {COMMON_TEXT} from '@/config/common_text.js';
-import {IMG_URL} from '@/config/img_url.js';
-
-// 将一些默认图片地址数据挂载到vue对象上
-Vue.prototype.$img_url = IMG_URL;
 Vue.prototype.$common_text = COMMON_TEXT;
+// 公共图片地址
+import {IMG_URL} from '@/config/img_url.js';
+Vue.prototype.$img_url = IMG_URL;
+// 测试数据
+import TEST_DATA from '@/config/test_data.js';
+Vue.prototype.$t_d = TEST_DATA;
 
 // 将系统信息绑定到对象上方便后面使用
 uni.getSystemInfo({

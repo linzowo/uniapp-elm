@@ -37,10 +37,12 @@
 				<view class="current-address flex-sub flex-direction margin-tb-xs">
 					<text class="margin-tb-sm margin-lr text-color-6">当前地址</text>
 					<view class="current-address-content padding-tb-sm padding-lr justify-between flex-sub bg-white align-center">
-						<text class="text-bold text-df text-black">成都</text>
+						<text class="text-bold text-df text-black text-cut"
+						:style="{width:'500rpx'}"
+						>{{getCurrentAddress().position_name}}</text>
 						<text class="text-color-blue flex align-center">
 							<text class="lg cuIcon-focus text-xl margin-right-xs"></text>
-							重新定位
+							<text>重新定位</text>
 						</text>
 					</view>
 				</view>
@@ -50,16 +52,17 @@
 				<view class="address-list flex-sub flex-direction margin-tb-xs">
 					<text class="margin-tb-sm margin-lr text-color-6">收货地址</text>
 					<view 
-					class="current-address-content padding-tb-sm padding-lr flex-sub bg-white flex-direction border-top border-color-e"
-					v-for="i in 4"
+					class="current-address-content padding-tb-sm padding-lr flex-sub bg-white flex-direction border-color-e"
+					:class="[i==0?'':'border-top']"
+					v-for="(item,i) in getMyAddressList()"
 					:key="i"
 					>
 						<text class="text-sm margin-bottom-xs">
-							<text class="text-bold text-df text-black">林除夕</text>
-							<text class="margin-lr-xs">先生</text>
-							<text class="margin-left-xs">18566667777</text>
+							<text class="text-bold text-df text-black">{{item.name}}</text>
+							<text class="margin-lr-xs">{{item.gender?"先生":"女士"}}</text>
+							<text class="margin-left-xs">{{item.phone}}</text>
 						</text>
-						<text class="text-sm">天下无双小区</text>
+						<text class="text-sm">{{item.position_name}}</text>
 					</view>
 					
 				</view>
@@ -70,8 +73,24 @@
 			<!-- 搜索結果列表 S -->
 			<view 
 			v-if="inputText"
-			class="search-res">
-				搜索结果
+			class="search-res flex-direction">
+				<view 
+				class="current-address-content padding-tb-xs padding-lr flex-sub justify-between bg-white border-color-e align-center"
+				:class="[i==1?'':'border-top']"
+				v-for="(item,i) in searchAddress()"
+				:key="i"
+				>
+					<view class="text-sm margin-bottom-xs flex-direction">
+						<text class="text-bold text-df text-black">{{item.position_name}}</text>
+						<text class="">{{item.position_address}}</text>
+					</view>
+					<text class="text-sm margin-lr">{{item.distance}}m</text>
+				</view>
+				<view class="tips flex-direction align-center text-color-9 padding-lg">
+					<text class="text-lg margin-bottom-sm">找不到地址？</text>
+					<text class="text-sm">请尝试只输入小区、写字楼或学校名</text>
+					<text class="text-sm">详细地址（如门牌号）可稍后输入</text>
+				</view>
 			</view>
 			<!-- 搜索結果列表 E -->
 			
@@ -85,12 +104,17 @@
 	export default {
 		data() {
 			return {
-				key: 1,
-				inputText:""
+				inputText:"",
+				myAddress:{}
 			}
 		},
-		onShow() {
-			console.log(1);
+		onShow() {},
+		created() {
+			
+			// 在结构创建完成后页面渲染前获取一些渲染必要的数据
+			
+			// 获取我的地址数据
+			this.myAddress = this.$t_d.ADDRESS_DATA.my_address;
 		}
 		,
 		onNavigationBarButtonTap(e) {
@@ -116,6 +140,21 @@
 			},
 			clearInput(){
 				this.inputText = "";
+			},
+			searchAddress(){
+				// 发起网络请求查询搜索结果
+				
+				// 将结果清洗为需要的结构
+				
+				// 返回结果数组
+				
+				return this.$t_d.ADDRESS_DATA.search_res;
+			},
+			getCurrentAddress(){
+				return this.myAddress.address_list[this.myAddress.current];
+			},
+			getMyAddressList(){
+				return this.myAddress.address_list.filter((item,i)=>i!==this.myAddress.current);
 			}
 		}
 	}

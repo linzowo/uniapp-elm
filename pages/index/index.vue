@@ -309,10 +309,6 @@ import addressPage from '@/pages/address/address.vue';
 
 // 引入官方组件
 import uniPopup from '@/components/uni-popup/uni-popup.vue';
-// 引入工具
-// import utils from '@/common/utils.js';
-// 配置文件
-import {TEST_DATA} from '@/config/test_data.js';
 
 export default {
 	/**
@@ -356,7 +352,7 @@ export default {
 			storeNavList: [
 				{
 					selected:true,
-					list:TEST_DATA.outside.inside_sort_filter,
+					list:[],
 					listSelected:false,
 					listSelectedIndex:0,
 					title:'通用排序',
@@ -373,8 +369,8 @@ export default {
 					selected:false,
 					list:{
 						// 筛选数据
-						filterDataSupports:[TEST_DATA.bar.delivery_mode,...TEST_DATA.bar.supports],
-						filterDataActivity:TEST_DATA.bar.activity_types,
+						filterDataSupports:[],
+						filterDataActivity:[],
 						averagePrice:['￥20以下','￥20-￥40','￥40-￥60','￥60-￥80','￥80-￥100','￥100以上']
 					},
 					selectedIndex:{
@@ -421,6 +417,16 @@ export default {
 			}
 		})
 	},
+	created() {
+		
+		// 在结构创建完成后页面渲染前获取一些渲染必要的数据
+		
+		// 获取主页单排筛选和排序方式数据
+		this.storeNavList[0].list = this.$t_d.INDEX_SORT_DATA.outside.inside_sort_filter;
+		this.storeNavList[3].list.filterDataSupports = [this.$t_d.INDEX_SORT_DATA.bar.delivery_mode,...this.$t_d.INDEX_SORT_DATA.bar.supports];
+		this.storeNavList[3].list.filterDataActivity = this.$t_d.INDEX_SORT_DATA.bar.activity_types;
+	}
+	,
 	onPageScroll(e) {
 		
 		// 当页面滚动到顶部导航栏缩进后，获取其位置信息，用于设置商铺分类导航栏的定位设置

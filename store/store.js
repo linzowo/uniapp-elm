@@ -2,35 +2,24 @@
 // 引入vue和vuex
 import Vue from 'vue';
 import Vuex from 'vuex';
+import mutations from './mutations.js';
+import getters from './getters.js';
+import actions from './actions.js';
 
 // 将vuex挂载到vue
 Vue.use(Vuex);
 
+const state = {
+	userInfo:null, // 用户信息
+	login: true, // 登录状态
+}
+
 // 实例化store
 const store = new Vuex.Store({
-	state:{
-		userList:{
-			admin:{
-				name:"admin",
-				password:"123456",
-				phone:123456789,
-				address:"成都",
-				balance:0,
-				points:0,
-				coupons:0,
-				order:{},
-				history:{}
-			}
-		}
-	},
-	mutations:{},
-	getters:{
-		
-		// 返回所在城市信息
-		getAddress(state){
-			return state.userList.admin.address;
-		}
-	}
+	state,
+	mutations,
+	getters,
+	actions
 })
 
 

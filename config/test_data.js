@@ -217,46 +217,43 @@ export const INDEX_SORT_DATA = {
 }
 
 export const ADDRESS_DATA = {
-	my_address:{
-		current:1,
-		address_list:[
-			{
-				name:"林除夕",
-				gender:1,
-				phone:18455556666,
-				address:"上海浦东新区陆家嘴滨江大道旁的花园石桥路28弄",
-				position_name:"汤臣一品"
-			},
-			{
-				name:"林除夕",
-				gender:1,
-				phone:18455556666,
-				address:"上海浦东新区陆家嘴滨江大道旁的花园石桥路28弄",
-				position_name:"汤臣二品"
-			},
-			{
-				name:"林除夕",
-				gender:0,
-				phone:18455556666,
-				address:"上海浦东新区陆家嘴滨江大道旁的花园石桥路28弄",
-				position_name:"汤臣三品"
-			},
-			{
-				name:"小李",
-				gender:0,
-				phone:18455557777,
-				address:"上海浦东新区陆家嘴滨江大道旁的花园石桥路28弄",
-				position_name:"汤臣一品"
-			},
-			{
-				name:"spike",
-				gender:1,
-				phone:18455553333,
-				address:"太平洋沿岸和比弗利山山脚下",
-				position_name:"比利佛山庄"
-			}
-		]
-	},
+	my_address:[
+		{
+			name:"林除夕",
+			gender:1,
+			phone:18455556666,
+			address:"上海浦东新区陆家嘴滨江大道旁的花园石桥路28弄",
+			position_name:"汤臣一品"
+		},
+		{
+			name:"林除夕",
+			gender:1,
+			phone:18455556666,
+			address:"上海浦东新区陆家嘴滨江大道旁的花园石桥路28弄",
+			position_name:"汤臣二品"
+		},
+		{
+			name:"林除夕",
+			gender:0,
+			phone:18455556666,
+			address:"上海浦东新区陆家嘴滨江大道旁的花园石桥路28弄",
+			position_name:"汤臣三品"
+		},
+		{
+			name:"小李",
+			gender:0,
+			phone:18455557777,
+			address:"上海浦东新区陆家嘴滨江大道旁的花园石桥路28弄",
+			position_name:"汤臣一品"
+		},
+		{
+			name:"spike",
+			gender:1,
+			phone:18455553333,
+			address:"太平洋沿岸和比弗利山山脚下",
+			position_name:"比利佛山庄"
+		}
+	],
 	search_res:[
 		{
 			position_name:"汤臣一品",
@@ -280,6 +277,19 @@ export const ADDRESS_DATA = {
 		}
 	]
 }
+
+export const USER_DATA = [
+	{
+		name:"linzowo",
+		phone:13645678520,
+		shipAddress:"成都",
+		balance:0,
+		points:0,
+		coupons:0,
+		order:{},
+		history:{}
+	}
+]
 
 export default {
 	INDEX_SORT_DATA,

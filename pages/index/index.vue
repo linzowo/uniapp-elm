@@ -336,7 +336,7 @@ export default {
 	data() {
 		return {
 			// 顶部地址栏地址
-			address: this.$store.getters.getAddress,
+			address: null,
 			// 顶部分类导航栏数据
 			navList: [
 				{
@@ -425,6 +425,9 @@ export default {
 		this.storeNavList[0].list = this.$t_d.INDEX_SORT_DATA.outside.inside_sort_filter;
 		this.storeNavList[3].list.filterDataSupports = [this.$t_d.INDEX_SORT_DATA.bar.delivery_mode,...this.$t_d.INDEX_SORT_DATA.bar.supports];
 		this.storeNavList[3].list.filterDataActivity = this.$t_d.INDEX_SORT_DATA.bar.activity_types;
+		
+		// 获取地址信息
+		this.address = this.$store.getters.GET_SHIP_ADDRESS || null;
 	}
 	,
 	onPageScroll(e) {

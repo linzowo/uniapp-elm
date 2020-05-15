@@ -39,8 +39,10 @@
 					<view class="current-address-content padding-tb-sm padding-lr justify-between flex-sub bg-white align-center">
 						<text class="text-bold text-df text-black text-cut"
 						:style="{width:'500rpx'}"
-						>{{getCurrentAddress().position_name}}</text>
-						<text class="text-color-blue flex align-center">
+						>{{myAddress[0].position_name}}</text>
+						<text 
+						@tap="getCurrentPosition"
+						class="text-color-blue flex align-center">
 							<text class="lg cuIcon-focus text-xl margin-right-xs"></text>
 							<text>重新定位</text>
 						</text>
@@ -54,7 +56,7 @@
 					<view 
 					class="current-address-content padding-tb-sm padding-lr flex-sub bg-white flex-direction border-color-e"
 					:class="[i==0?'':'border-top']"
-					v-for="(item,i) in getMyAddressList()"
+					v-for="(item,i) in myAddress"
 					:key="i"
 					>
 						<text class="text-sm margin-bottom-xs">
@@ -104,8 +106,8 @@
 	export default {
 		data() {
 			return {
-				inputText:"",
-				myAddress:{}
+				inputText:"", // 存储输入框内容
+				myAddress:[], // 用户的地址信息 在组件创建后获取
 			}
 		},
 		onShow() {},
@@ -128,19 +130,37 @@
 		}
 		,
 		methods:{
+			/**
+			 * 搜索栏获取焦点
+			 * @param {Object} e
+			 */
 			InputFocus(e){
 				
 			},
+			/**
+			 * 搜索栏失去焦点
+			 * @param {Object} e
+			 */
 			InputBlur(e){
 				
 			}
 			,
+			/**
+			 * 搜索栏输入
+			 * @param {Object} e
+			 */
 			InputEnter(e){
 				this.inputText = e.detail.value;
 			},
+			/**
+			 * 清空搜索栏
+			 */
 			clearInput(){
 				this.inputText = "";
 			},
+			/**
+			 * 获取搜索结果
+			 */
 			searchAddress(){
 				// 发起网络请求查询搜索结果
 				
@@ -150,11 +170,22 @@
 				
 				return this.$t_d.ADDRESS_DATA.search_res;
 			},
-			getCurrentAddress(){
-				return this.myAddress.address_list[this.myAddress.current];
-			},
-			getMyAddressList(){
-				return this.myAddress.address_list.filter((item,i)=>i!==this.myAddress.current);
+			/**
+			 * 获取当前地址
+			 */
+			getCurrentPosition(){
+				
+				// 获取地址信息
+				uni.getLocation({
+					type:"wgs84",
+					success(e) {
+						console.log('获取到了当前的位置坐标但是没有定位api所以没法操作',e);
+					}
+				})
+				
+				// 通过地图api转换为实际地址
+				
+				// 存储实际地址，更新数据
 			}
 		}
 	}

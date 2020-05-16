@@ -10,7 +10,7 @@
 			:src="$img_url.login_no" mode="widthFix"></image>
 			<text 
 			class="margin-bottom-sm text-xl login-text"
-			>{{$common_text.login.order.login_tips}}</text>
+			>{{$c_t.login.order.login_tips}}</text>
 			<navigator 
 			url="/pages/login/login"
 			class="logged-btn cu-btn lg">立即登录</navigator>

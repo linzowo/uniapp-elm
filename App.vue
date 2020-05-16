@@ -1,4 +1,8 @@
 <script>
+	
+	// 引入vuex中的对象方便调用方法
+	import {mapState,mapActions,mapMutations} from 'vuex';
+	
 export default {
 	onLaunch: function() {
 		console.log('App Launch');
@@ -9,10 +13,25 @@ export default {
 	onHide: function() {
 		console.log('App Hide');
 	},
+	created() {
+		// 获取用户的登录信息
+		this.getUserInfo();
+		// 获取用户当前的位置信息
+		this.saveAddress();
+	}
+	,
 	mounted() {
+		// 云函数
 		let ele = document.createElement('script');
 		ele.src = '//at.alicdn.com/t/font_1704517_wdvao8saor.js';
 		document.head.appendChild(ele);
+	}
+	,
+	methods:{
+		...mapActions([
+			'getUserInfo',
+			'saveAddress'
+		])
 	}
 };
 </script>

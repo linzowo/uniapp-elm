@@ -4,7 +4,9 @@
 			<navigator 
 			url="../city/city"
 			class="action">
-				<text class="text-xs margin-right">广州</text>
+				<text class="text-xs margin-right">
+					{{userInfo?userInfo.currentCity:"未知"}}
+				</text>
 				<text class="cuIcon-triangledownfill"></text>
 			</navigator>
 			<view 
@@ -39,7 +41,13 @@
 					<view class="current-address-content padding-tb-sm padding-lr justify-between flex-sub bg-white align-center">
 						<text class="text-bold text-df text-black text-cut"
 						:style="{width:'500rpx'}"
-						>{{myAddress[0].position_name}}</text>
+						>
+							{{
+								userInfo ? 
+								userInfo.shipAddress.position_name : 
+								$c_t.address.no_ship_address
+							}}
+						</text>
 						<text 
 						@tap="getCurrentPosition"
 						class="text-color-blue flex align-center">
@@ -103,6 +111,7 @@
 </template>
 
 <script>
+	import {mapState} from 'vuex';
 	export default {
 		data() {
 			return {
@@ -127,6 +136,12 @@
 				// 	url:''
 				// })
 			}
+		}
+		,
+		computed:{
+			...mapState([
+				'userInfo'
+			])
 		}
 		,
 		methods:{

@@ -300,6 +300,9 @@
  * @description 项目首页
  */
 
+// 引入vuex中的对象方便调用方法
+import {mapState,mapActions,mapMutations} from 'vuex';
+
 // 引入未获取到城市时的提示页面
 import noPosition from '@/components/noPosition/noPosition.vue';
 // 引入顶部导航栏模块
@@ -421,13 +424,23 @@ export default {
 		
 		// 在结构创建完成后页面渲染前获取一些渲染必要的数据
 		
+		// 将收货定位信息绑定到元素上
+		this.address = this.userInfo.shipAddress.position_name || null;
+		
 		// 获取主页单排筛选和排序方式数据
 		this.storeNavList[0].list = this.$t_d.INDEX_SORT_DATA.outside.inside_sort_filter;
 		this.storeNavList[3].list.filterDataSupports = [this.$t_d.INDEX_SORT_DATA.bar.delivery_mode,...this.$t_d.INDEX_SORT_DATA.bar.supports];
 		this.storeNavList[3].list.filterDataActivity = this.$t_d.INDEX_SORT_DATA.bar.activity_types;
 		
-		// 获取地址信息
-		this.address = this.$store.getters.GET_SHIP_ADDRESS || null;
+	}
+	,
+	mounted() {
+		
+		// 动态获取需要使用的元素的位置信息
+		for (let key in this.elementInfo) {
+			this.elementInfo[key] = this.$utils.getElementInfo('.'+key);
+		}
+		
 	}
 	,
 	onPageScroll(e) {
@@ -453,14 +466,6 @@ export default {
 			return true;
 		}
 		
-	}
-	,
-	mounted() {
-		
-		// 动态获取需要使用的元素的位置信息
-		for (let key in this.elementInfo) {
-			this.elementInfo[key] = this.$utils.getElementInfo('.'+key);
-		}
 	}
 	,
 	methods: {
@@ -618,6 +623,11 @@ export default {
 			}
 		}
 		,
+		...mapActions([
+			'getUserInfo',
+			'saveAddress'
+		])
+		,
 		// 监听content-body盒子的滑动事件
 		scroll: function(e) {
 			// 为了实现点击滑动到指定位置效果，存储的滑动数据
@@ -631,7 +641,8 @@ export default {
 				this.scrollTop = this.elementInfo['content-list-tab-box'].top;
 			});
 		}
-	},
+	}
+	,
 	watch:{
 		/**
 		 * 监听页面状态变化，根据状态设置对应的操作
@@ -650,6 +661,13 @@ export default {
 			}
 		}
 	}
+	,
+	computed:{
+		...mapState([
+			'userInfo'
+		])
+	}
+	
 };
 </script>
 

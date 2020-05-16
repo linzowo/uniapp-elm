@@ -282,7 +282,8 @@ export const USER_DATA = [
 	{
 		name:"linzowo",
 		phone:13645678520,
-		shipAddress:"成都",
+		currentCity:"成都",
+		shipAddress:"",
 		balance:0,
 		points:0,
 		coupons:0,

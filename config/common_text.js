@@ -6,6 +6,9 @@ export const COMMON_TEXT = {
 		order:{
 			login_tips:"登录后查看外卖订单"
 		}
+	},
+	address:{
+		no_ship_address:"定位不准，请手动定位"
 	}
 }
 

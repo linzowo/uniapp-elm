@@ -80,7 +80,15 @@
 		"navigationBarTextStyle": "white",
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#3190e8",
-		"backgroundColor": "#3190e8"
+		"backgroundColor": "#3190e8",
+		"app-plus":{
+			"titleNView":{
+				"backgroundImage":"linear-gradient(90deg, #0af, #0085ff)"
+			}
+		},
+		"h5":{}
+		
+		
 		
 	},
 	"tabBar": {

@@ -1,7 +1,9 @@
 export const SAVE_SHIP_ADDRESS = "SAVE_SHIP_ADDRESS";
 export const SAVE_USERINFO = "SAVE_USERINFO";
+export const SAVE_CITY = "SAVE_CITY";
 
 export default {
 	SAVE_SHIP_ADDRESS,
-	SAVE_USERINFO
+	SAVE_USERINFO,
+	SAVE_CITY
 }

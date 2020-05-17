@@ -1,12 +1,14 @@
 <template>
 	<view class="city-container flex-direction">
 		<!-- 搜索栏 S -->
-		<view class="cu-bar search bg-white padding-lr-sm mbg-gradual-blue search-box">
+		<view 
+		class="cu-bar search bg-white padding-lr-sm mbg-gradual-blue search-box">
 			<view class="search-form round">
 				<text class="cuIcon-search"></text>
 				<input 
 				@focus="InputFocus" 
 				@blur="InputBlur"
+				@input="InputEnter"
 				type="text" 
 				placeholder="输入城市名或者拼音" 
 				confirm-type="search"></input>
@@ -21,7 +23,9 @@
 		:scroll-into-view="'indexes-'+ listCurID"
 		>
 			<!-- 当前城市区域 S -->
-			<view class="current-city padding-top-xs flex-direction">
+			<view 
+			v-if="!inputText"
+			class="current-city padding-top-xs flex-direction">
 				<text class="padding-lr padding-tb-xs text-color-6">当前定位城市</text>
 				<view class="city-name padding bg-white">
 					<text class="text-color-3">{{userInfo.currentCity}}</text>
@@ -39,7 +43,9 @@
 				:data-index="item.title"
 				class="flex-direction flex-sub"
 				>
-					<view class="padding">{{item.title}}</view>
+					<view 
+					v-if="!inputText"
+					class="padding">{{item.title}}</view>
 					<view class="cu-list no-padding flex-direction">
 						<view 
 						class="cu-item border-top border-color-e" 
@@ -59,7 +65,9 @@
 		</scroll-view>
 		
 		<!-- 侧边bar S -->
-		<view class="indexBar" :style="[{height:'calc(100vh - ' + 80 + 'px)'}]">
+		<view 
+		v-if="!inputText"
+		class="indexBar" :style="[{height:'calc(100vh - ' + 80 + 'px)'}]">
 			<view class="indexBar-box" @touchstart="tStart" @touchend="tEnd" @touchmove.stop="tMove">
 				<view class="indexBar-item" 
 				v-for="(item,index) in list" 

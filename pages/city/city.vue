@@ -2,7 +2,9 @@
 	<view class="city-container flex-direction">
 		<!-- 搜索栏 S -->
 		<view 
-		class="cu-bar search bg-white padding-lr-sm mbg-gradual-blue search-box">
+		class="cu-bar search bg-white padding-lr-sm mbg-gradual-blue search-box"
+		:style="{top:systemInfo.windowTop + 'px'}"
+		>
 			<view class="search-form round">
 				<text class="cuIcon-search"></text>
 				<input 
@@ -16,11 +18,9 @@
 		</view>
 		<!-- 搜索栏 E -->
 		
-		<scroll-view 
-		scroll-y="true" 
-		class="indexes"
-		:style="{height:scrollViewHeight}"
-		:scroll-into-view="'indexes-'+ listCurID"
+		<view 
+		class="indexes flex-direction"
+		:style="{top:searchBoxInfo.bottom + 'px'}"
 		>
 			<!-- 当前城市区域 S -->
 			<view 
@@ -36,7 +36,7 @@
 			<!-- 城市列表区域 S -->
 			<view
 			 class="flex-sub"
-			 v-for="(item,index) in list" :key="index">
+			 v-for="(item,index) in newList" :key="index">
 				<view 
 				:class="'indexItem-' + item.title" 
 				:id="'indexes-' + item.title" 
@@ -62,13 +62,13 @@
 			</view>
 			<!-- 城市列表区域 E -->
 			
-		</scroll-view>
+		</view>
 		
 		<!-- 侧边bar S -->
 		<view 
 		v-if="!inputText"
 		class="indexBar" :style="[{height:'calc(100vh - ' + 80 + 'px)'}]">
-			<view class="indexBar-box" @touchstart="tStart" @touchend="tEnd" @touchmove.stop="tMove">
+			<view class="indexBar-box">
 				<view class="indexBar-item" 
 				v-for="(item,index) in list" 
 				:key="index" 
@@ -80,11 +80,6 @@
 				</view>
 			</view>
 		</view>
-		
-		<!--选择显示-->
-		<text v-show="!hidden" class="indexToast">
-			{{listCur}}
-		</text>
 		<!-- 侧边bar E -->
 	</view>
 </template>
@@ -98,25 +93,32 @@
 				inputText:"", // 输入框文本
 				StatusBar: this.StatusBar,
 				CustomBar: this.CustomBar,
-				hidden: true,
 				listCurID: '',
 				list: CITY_DATA,
-				listCur: '',
-				scrollViewHeight:"",
+				newList:[],
+				systemInfo:{},
+				searchBoxInfo:{},
+				oldScroll:0,
 			}
 		},
-		onReady() {
-			let that = this;
-			uni.createSelectorQuery().select('.indexBar-box').boundingClientRect(function(res) {
-				that.boxTop = res.top
-			}).exec();
-			uni.createSelectorQuery().select('.indexes').boundingClientRect(function(res) {
-				that.barTop = res.top
-			}).exec()
-		},
+		onPageScroll(e) {
+			// 存储页面滚动距离用于定位元素
+			this.oldScroll = e.scrollTop;
+		}
+		,
 		mounted() {
-			// 动态设置滑动区域高度
-			this.scrollViewHeight = this.$system_info.containerHeight - this.$utils.getElementInfo('.search-box').height + 'px';
+			
+			this.searchBoxInfo = this.$utils.getElementInfo('.search-box');
+			// console.log(this.searchBoxInfo);
+			
+			this.getList();
+			
+			uni.getSystemInfo({
+				success(e) {
+					// console.log(e);
+					this.systemInfo = e;
+				}
+			})
 		}
 		,
 		computed:{
@@ -163,48 +165,35 @@
 			,
 			//获取文字信息
 			getCur(e) {
-				this.hidden = false;
-				this.listCur = this.list[e.currentTarget.id].title;
+				// this.listCurID = this.list[e.currentTarget.id].title;
+				
 			},
 			setCur(e) {
-				this.hidden = true;
-				this.listCur = this.listCur
-			},
-			//滑动选择Item
-			tMove(e) {
-				let y = e.touches[0].clientY,
-					offsettop = this.boxTop,
-					that = this;
-				//判断选择区域,只有在选择区才会生效
-				if (y > offsettop) {
-					let num = parseInt((y - offsettop) / 20);
-					this.listCur = that.list[num].title
-				};
-			},
+				// 如果该元素还未渲染就跳过
+				if(!this.$utils.getElementInfo('.indexItem-'+this.list[e.currentTarget.id].title)) return;
 
-			//触发全部开始选择
-			tStart() {
-				this.hidden = false
-			},
-
-			//触发结束选择
-			tEnd() {
-				this.hidden = true;
-				this.listCurID = this.listCur
-			},
-			indexSelect(e) {
-				console.log(e);
-				let that = this;
-				let barHeight = this.barHeight;
-				let list = this.list;
-				let scrollY = Math.ceil(list.length * e.detail.y / barHeight);
-				for (let i = 0; i < list.length; i++) {
-					if (scrollY < i + 1) {
-						that.listCur = list[i].title;
-						that.movableY = i * 20
-						return false
+				
+				this.listCurID = this.list[e.currentTarget.id].title;
+				
+				// 获取要跳转的位置
+				let scroll = this.oldScroll + this.$utils.getElementInfo('.indexItem-'+this.listCurID).top - this.searchBoxInfo.bottom;
+				
+				// 移动到对应的位置
+				uni.pageScrollTo({
+					scrollTop: scroll,
+					duration: 0
+				})
+			}
+			,
+			getList(){
+				let i = 0;
+				let timers = setInterval(()=>{
+					this.newList.push(this.list[i++]);
+					
+					if(i >= this.list.length){
+						clearInterval(timers);
 					}
-				}
+				},5);
 			}
 			,
 			...mapMutations(['SAVE_CITY'])
@@ -215,10 +204,12 @@
 </script>
 
 <style lang="scss" scoped>
-	// .search-box{
-	// 	position: sticky;
-	// 	top: 10px;
-	// }
+	.search-box{
+		position: fixed;
+		// top: 10px;
+		z-index: 99;
+		width: 750rpx;
+	}
 	.indexes {
 		position: relative;
 	}

@@ -75,6 +75,12 @@
     "h5" : {
         "sdkConfigs" : {
             "maps" : {}
+        },
+        "optimization" : {
+			"preload":true,
+            "treeShaking" : {
+                "enable" : true
+            }
         }
     }
 }

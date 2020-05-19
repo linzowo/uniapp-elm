@@ -66,23 +66,23 @@
 				<view class="flex-direction flex-sub">
 					<!-- 无结果 -->
 					<view 
-					v-if="!searchList.length"
+					v-if="!searchList"
 					class="search-no bg-white flex-direction align-center">
 						<text class="text-lg text-color-6">无结果</text>
 					</view>
 					
 					<!-- 有结果 -->
 					<view 
-					v-if="searchList.length"
+					v-if="searchList"
 					class="cu-list no-padding flex-direction">
 						<view 
 						class="cu-item border-top border-color-e" 
 						v-for="(cityName,sub) in searchList" 
 						:key="sub"
-						@tap="changeCity(cityName)"
+						@tap="changeCity(cityName.slice(1,cityName.length-1))"
 						>
 							<view class="city-name padding bg-white flex-sub">
-								<text class="text-color-3">{{cityName}}</text>
+								<text class="text-color-3">{{cityName.slice(1,cityName.length-1)}}</text>
 							</view>
 						</view>
 					</view>
@@ -183,7 +183,8 @@
 				
 				// 输入的中文
 				if(/^[\u4e00-\u9fa5]+$/.test(this.inputText)){
-					console.log('输入的中文');
+					let reg = new RegExp("\\\"[\\u4e00-\\u9fa5]*"+this.inputText+"[\\u4e00-\\u9fa5]*\\\"","g");
+					this.searchList = JSON.stringify(this.list).match(reg);
 					return;
 				}
 				

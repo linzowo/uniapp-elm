@@ -24,7 +24,7 @@
 		>
 			<!-- 当前城市区域 S -->
 			<view 
-			v-if="!inputText"
+			v-show="!inputText"
 			class="current-city padding-top-xs flex-direction">
 				<text class="padding-lr padding-tb-xs text-color-6">当前定位城市</text>
 				<view class="city-name padding bg-white">
@@ -35,21 +35,20 @@
 			
 			<!-- 城市列表区域 S -->
 			<view
+			v-show="!inputText"
 			 class="flex-sub"
-			 v-for="(item,index) in newList" :key="index">
+			 v-for="(value,key,index) in newList" :key="key + index">
 				<view 
-				:class="'indexItem-' + item.title" 
-				:id="'indexes-' + item.title" 
-				:data-index="item.title"
+				:class="'indexItem-' + key" 
+				:id="'indexes-' + key" 
+				:data-index="key"
 				class="flex-direction flex-sub"
 				>
-					<view 
-					v-if="!inputText"
-					class="padding">{{item.title}}</view>
+					<view class="padding">{{key}}</view>
 					<view class="cu-list no-padding flex-direction">
 						<view 
 						class="cu-item border-top border-color-e" 
-						v-for="(cityName,sub) in item.lists" 
+						v-for="(cityName,sub) in value" 
 						:key="sub"
 						@tap="changeCity(cityName)"
 						>
@@ -62,21 +61,48 @@
 			</view>
 			<!-- 城市列表区域 E -->
 			
+			<!-- 搜索列表区域 S -->
+			<view
+			v-show="inputText"
+			 class="flex-sub"
+			 v-for="(value,key,index) in newList" :key="index">
+				<view 
+				:class="'indexItem-' + key" 
+				:id="'indexes-' + key" 
+				:data-index="key"
+				class="flex-direction flex-sub"
+				>
+					<view class="cu-list no-padding flex-direction">
+						<view 
+						class="cu-item border-top border-color-e" 
+						v-for="(cityName,sub) in value" 
+						:key="sub"
+						@tap="changeCity(cityName)"
+						>
+							<view class="city-name padding bg-white flex-sub">
+								<text class="text-color-3">{{cityName}}</text>
+							</view>
+						</view>
+					</view>
+				</view>
+			</view>
+			<!-- 搜索列表区域 E -->
+			
 		</view>
 		
 		<!-- 侧边bar S -->
 		<view 
-		v-if="!inputText"
+		v-show="!inputText"
 		class="indexBar" :style="[{height:'calc(100vh - ' + 80 + 'px)'}]">
 			<view class="indexBar-box">
 				<view class="indexBar-item" 
-				v-for="(item,index) in list" 
+				v-for="(item,index) in listKey" 
 				:key="index" 
-				:id="index" 
+				:id="item" 
 				@touchstart="getCur" 
 				@touchend="setCur"
 				> 
-				<text>{{item.title}}</text>
+				<text>{{item}}</text>
 				</view>
 			</view>
 		</view>
@@ -95,7 +121,9 @@
 				CustomBar: this.CustomBar,
 				listCurID: '',
 				list: CITY_DATA,
-				newList:[],
+				listKey:Object.keys(CITY_DATA),
+				newList:{},
+				searchList:[], // 搜索列表
 				systemInfo:{},
 				searchBoxInfo:{},
 				oldScroll:0,
@@ -147,13 +175,14 @@
 			 */
 			InputEnter(e){
 				this.inputText = e.detail.value;
+				
 			},
 			/**
 			 * 改变城市
 			 * @param {Object} cityName
 			 */
 			changeCity(cityName){
-				console.log(cityName);
+				this.$utils.log('changeCity','切换城市为'+cityName);
 				
 				// 修改用户的城市选择
 				this.SAVE_CITY(cityName);
@@ -169,11 +198,13 @@
 				
 			},
 			setCur(e) {
+				this.$utils.log('setCur','用户查看列表：'+e.currentTarget.id);
+				let curID = e.currentTarget.id;
 				// 如果该元素还未渲染就跳过
-				if(!this.$utils.getElementInfo('.indexItem-'+this.list[e.currentTarget.id].title)) return;
+				if(!this.$utils.getElementInfo('.indexItem-'+curID)) return;
 
 				
-				this.listCurID = this.list[e.currentTarget.id].title;
+				this.listCurID = curID;
 				
 				// 获取要跳转的位置
 				let scroll = this.oldScroll + this.$utils.getElementInfo('.indexItem-'+this.listCurID).top - this.searchBoxInfo.bottom;
@@ -186,11 +217,13 @@
 			}
 			,
 			getList(){
-				let i = 0;
+				this.$utils.log('getList','通过定时器向渲染列表中逐个添加数据避免一次性渲染导致的页面加载缓慢的问题');
+				let i = 0,key;
 				let timers = setInterval(()=>{
-					this.newList.push(this.list[i++]);
+					key = this.listKey[i++];
+					this.$set(this.newList,key,this.list[key]);
 					
-					if(i >= this.list.length){
+					if(i >= this.listKey.length){
 						clearInterval(timers);
 					}
 				},5);

@@ -62,20 +62,22 @@
 			<!-- 城市列表区域 E -->
 			
 			<!-- 搜索列表区域 S -->
-			<view
-			v-show="inputText"
-			 class="flex-sub"
-			 v-for="(value,key,index) in newList" :key="index">
-				<view 
-				:class="'indexItem-' + key" 
-				:id="'indexes-' + key" 
-				:data-index="key"
-				class="flex-direction flex-sub"
-				>
-					<view class="cu-list no-padding flex-direction">
+			<view v-show="inputText" class="flex-sub">
+				<view class="flex-direction flex-sub">
+					<!-- 无结果 -->
+					<view 
+					v-if="!searchList.length"
+					class="search-no bg-white flex-direction align-center">
+						<text class="text-lg text-color-6">无结果</text>
+					</view>
+					
+					<!-- 有结果 -->
+					<view 
+					v-if="searchList.length"
+					class="cu-list no-padding flex-direction">
 						<view 
 						class="cu-item border-top border-color-e" 
-						v-for="(cityName,sub) in value" 
+						v-for="(cityName,sub) in searchList" 
 						:key="sub"
 						@tap="changeCity(cityName)"
 						>
@@ -175,6 +177,27 @@
 			 */
 			InputEnter(e){
 				this.inputText = e.detail.value;
+				
+				// 输入包含中文和字母以外数据
+				if(!(/^([\u4e00-\u9fa5]*[a-zA-Z]*)+$/.test(this.inputText))) return;
+				
+				// 输入的中文
+				if(/^[\u4e00-\u9fa5]+$/.test(this.inputText)){
+					console.log('输入的中文');
+					return;
+				}
+				
+				// 输入的字母
+				if(/^[a-zA-Z]+$/.test(this.inputText)){
+					console.log('输入的英文');
+					return;
+				}
+				
+				// 输入的中英混合
+				if(/^([\u4e00-\u9fa5]+|[a-zA-Z]+)+([a-zA-Z]+|[\u4e00-\u9fa5]+)+$/.test(this.inputText)){
+					console.log('输入的中英混合');
+					return;
+				}
 				
 			},
 			/**
@@ -306,5 +329,10 @@
 		line-height: 100upx;
 		text-align: center;
 		font-size: 48upx;
+	}
+	
+	.search-no{
+		height: 100vh;
+		padding-top: 30vh;
 	}
 </style>

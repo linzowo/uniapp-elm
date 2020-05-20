@@ -66,6 +66,7 @@
 					:class="[i==0?'':'border-top']"
 					v-for="(item,i) in myAddress"
 					:key="i"
+					@tap="changeAddress(i)"
 					>
 						<text class="text-sm margin-bottom-xs">
 							<text class="text-bold text-df text-black">{{item.name}}</text>
@@ -111,7 +112,7 @@
 </template>
 
 <script>
-	import {mapState} from 'vuex';
+	import {mapState,mapMutations} from 'vuex';
 	export default {
 		data() {
 			return {
@@ -202,6 +203,15 @@
 				
 				// 存储实际地址，更新数据
 			}
+			,
+			changeAddress(index){
+				// 更改公共区域数据
+				this.SAVE_SHIP_ADDRESS(this.myAddress[index]);
+				// 因为当前页面渲染的数据是缓存数据，所以通过更新缓存更新视图
+				this.userInfo.shipAddress = JSON.parse(JSON.stringify(this.myAddress[index]));
+			}
+			,
+			...mapMutations(['SAVE_SHIP_ADDRESS'])
 		}
 	}
 </script>

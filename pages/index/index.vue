@@ -338,8 +338,6 @@ export default {
 	 */
 	data() {
 		return {
-			// 顶部地址栏地址
-			address: null,
 			// 顶部分类导航栏数据
 			navList: [
 				{
@@ -410,6 +408,16 @@ export default {
 			
 		};
 	},
+	computed:{
+		...mapState([
+			'userInfo'
+		]),
+		// 顶部收货地址
+		address(){
+			return this.userInfo.shipAddress.position_name || null;
+		}
+	}
+	,
 	onLoad() {
 		
 		// 获取系统信息备用
@@ -425,7 +433,7 @@ export default {
 		// 在结构创建完成后页面渲染前获取一些渲染必要的数据
 		
 		// 将收货定位信息绑定到元素上
-		this.address = this.userInfo.shipAddress.position_name || null;
+		// this.address = this.userInfo.shipAddress.position_name || null;
 		
 		// 获取主页单排筛选和排序方式数据
 		this.storeNavList[0].list = this.$t_d.INDEX_SORT_DATA.outside.inside_sort_filter;
@@ -660,12 +668,6 @@ export default {
 				this.closePopup('filterBarPopup');
 			}
 		}
-	}
-	,
-	computed:{
-		...mapState([
-			'userInfo'
-		])
 	}
 	
 };

@@ -96,6 +96,10 @@
 </template>
 
 <script>
+	/**
+	 * TODO: 搜索功能采用覆盖式，不再采用隐藏式优化执行效果
+	 */
+	
 	import {pinyin} from '@/common/py.js';
 	import {CITY_DATA} from "@/config/city_data.js";
 	import {mapMutations,mapState} from "vuex";

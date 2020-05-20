@@ -138,19 +138,6 @@
 		}
 		,
 		mounted() {
-			console.log(pinyin.getFullChars('林'));
-			console.log(pinyin.getCamelChars('林正文'));
-			
-			// let res = {};
-			// for(let key of this.listKey){
-			// 	res[key] = {};
-			// 	this.list[key].forEach(ele=>{
-			// 		res[key][pinyin.getFullChars(ele)] = ele;
-			// 		// res[key].push(pinyin.getFullChars(ele));
-			// 		// console.log(pinyin.getFullChars('林'));
-			// 	})
-			// }
-			// console.log(JSON.stringify(res));
 			this.searchBoxInfo = this.$utils.getElementInfo('.search-box');
 			// console.log(this.searchBoxInfo);
 			
@@ -189,10 +176,19 @@
 			 * @param {Object} e
 			 */
 			InputEnter(e){
-				this.inputText = e.detail.value;
+				this.inputText = e.detail.value.toLowerCase();
 				
 				// 输入包含中文和字母以外数据
-				if(!(/^([\u4e00-\u9fa5]*[a-zA-Z]*)+$/.test(this.inputText))) return;
+				if(!(/^([\u4e00-\u9fa5]*[a-zA-Z]*)+$/.test(this.inputText))) {
+					this.searchList = null;
+					return;
+				};
+				
+				// 输入的中英混合
+				if(/^([\u4e00-\u9fa5]+|[a-zA-Z]+)+([a-zA-Z]+|[\u4e00-\u9fa5]+)+$/.test(this.inputText)){
+					this.searchList = null;
+					return;
+				}
 				
 				// 输入的中文
 				if(/^[\u4e00-\u9fa5]+$/.test(this.inputText)){
@@ -205,14 +201,10 @@
 				if(/^[a-zA-Z]+$/.test(this.inputText)){
 					let reg = new RegExp("(\\\"[a-zA-Z]*"+this.inputText+"[a-zA-Z]*\\\")\\\:(\\\"[\\u4e00-\\u9fa5]+\\\")","g");
 					let reg1 = new RegExp("\\\"[\\u4e00-\\u9fa5]+\\\\","g");
-					this.searchList = JSON.stringify(JSON.stringify(this.list).match(reg)).match(reg1);
+					this.searchList = JSON.stringify(
+											JSON.stringify(this.list).toLowerCase().match(reg)
+										).match(reg1);
 					
-					return;
-				}
-				
-				// 输入的中英混合
-				if(/^([\u4e00-\u9fa5]+|[a-zA-Z]+)+([a-zA-Z]+|[\u4e00-\u9fa5]+)+$/.test(this.inputText)){
-					console.log('输入的中英混合');
 					return;
 				}
 				

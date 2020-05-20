@@ -48,8 +48,8 @@
 					<view class="cu-list no-padding flex-direction">
 						<view 
 						class="cu-item border-top border-color-e" 
-						v-for="(cityName,sub) in value" 
-						:key="sub"
+						v-for="(cityName,sub,i) in value" 
+						:key="sub+i"
 						@tap="changeCity(cityName)"
 						>
 							<view class="city-name padding bg-white flex-sub">
@@ -113,6 +113,7 @@
 </template>
 
 <script>
+	import {pinyin} from '@/common/py.js';
 	import {CITY_DATA} from "@/config/city_data.js";
 	import {mapMutations,mapState} from "vuex";
 	export default {
@@ -137,7 +138,19 @@
 		}
 		,
 		mounted() {
+			console.log(pinyin.getFullChars('林'));
+			console.log(pinyin.getCamelChars('林正文'));
 			
+			// let res = {};
+			// for(let key of this.listKey){
+			// 	res[key] = {};
+			// 	this.list[key].forEach(ele=>{
+			// 		res[key][pinyin.getFullChars(ele)] = ele;
+			// 		// res[key].push(pinyin.getFullChars(ele));
+			// 		// console.log(pinyin.getFullChars('林'));
+			// 	})
+			// }
+			// console.log(JSON.stringify(res));
 			this.searchBoxInfo = this.$utils.getElementInfo('.search-box');
 			// console.log(this.searchBoxInfo);
 			
@@ -190,7 +203,10 @@
 				
 				// 输入的字母
 				if(/^[a-zA-Z]+$/.test(this.inputText)){
-					console.log('输入的英文');
+					let reg = new RegExp("(\\\"[a-zA-Z]*"+this.inputText+"[a-zA-Z]*\\\")\\\:(\\\"[\\u4e00-\\u9fa5]+\\\")","g");
+					let reg1 = new RegExp("\\\"[\\u4e00-\\u9fa5]+\\\\","g");
+					this.searchList = JSON.stringify(JSON.stringify(this.list).match(reg)).match(reg1);
+					
 					return;
 				}
 				

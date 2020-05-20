@@ -66,14 +66,14 @@
 				<view class="flex-direction flex-sub">
 					<!-- 无结果 -->
 					<view 
-					v-if="!searchList"
+					v-show="!searchList"
 					class="search-no bg-white flex-direction align-center">
 						<text class="text-lg text-color-6">无结果</text>
 					</view>
 					
 					<!-- 有结果 -->
 					<view 
-					v-if="searchList"
+					v-show="searchList"
 					class="cu-list no-padding flex-direction">
 						<view 
 						class="cu-item border-top border-color-e" 
@@ -178,17 +178,13 @@
 			InputEnter(e){
 				this.inputText = e.detail.value.toLowerCase();
 				
+				if(!this.inputText) return;
+				
 				// 输入包含中文和字母以外数据
-				if(!(/^([\u4e00-\u9fa5]*[a-zA-Z]*)+$/.test(this.inputText))) {
+				if(!(/^([\u4e00-\u9fa5]|[a-zA-Z])+$/.test(this.inputText))) {
 					this.searchList = null;
 					return;
 				};
-				
-				// 输入的中英混合
-				if(/^([\u4e00-\u9fa5]+|[a-zA-Z]+)+([a-zA-Z]+|[\u4e00-\u9fa5]+)+$/.test(this.inputText)){
-					this.searchList = null;
-					return;
-				}
 				
 				// 输入的中文
 				if(/^[\u4e00-\u9fa5]+$/.test(this.inputText)){
@@ -205,6 +201,12 @@
 											JSON.stringify(this.list).toLowerCase().match(reg)
 										).match(reg1);
 					
+					return;
+				}
+				
+				// 输入的中英混合
+				if(/^([\u4e00-\u9fa5]|[a-zA-Z])+$/.test(this.inputText)){
+					this.searchList = null;
 					return;
 				}
 				

@@ -34,36 +34,34 @@
 			<!-- 当前城市区域 E -->
 			
 			<!-- 城市列表区域 S -->
+			<!-- v-show="!inputText" -->
 			<view
-			v-show="!inputText"
 			 class="flex-sub"
-			 v-for="(value,key,index) in newList" :key="key + index">
+			 v-for="(value,key,index) in newList" :key="key + index"
+			 >
 				<view 
 				:class="'indexItem-' + key" 
 				:id="'indexes-' + key" 
 				:data-index="key"
 				class="flex-direction flex-sub"
 				>
-					<view class="padding">{{key}}</view>
+					<view 
+					v-show="!inputText"
+					class="padding">{{key}}</view>
 					<view class="cu-list no-padding flex-direction">
 						<view 
 						class="cu-item border-top border-color-e" 
 						v-for="(cityName,sub,i) in value" 
 						:key="sub+i"
 						@tap="changeCity(cityName)"
+						v-show="itemShow(cityName)"
 						>
 							<view class="city-name padding bg-white flex-sub">
 								<text class="text-color-3">{{cityName}}</text>
 							</view>
 						</view>
 					</view>
-				</view>
-			</view>
-			<!-- 城市列表区域 E -->
-			
-			<!-- 搜索列表区域 S -->
-			<view v-show="inputText" class="flex-sub">
-				<view class="flex-direction flex-sub">
+					
 					<!-- 无结果 -->
 					<view 
 					v-show="!searchList"
@@ -71,24 +69,9 @@
 						<text class="text-lg text-color-6">无结果</text>
 					</view>
 					
-					<!-- 有结果 -->
-					<view 
-					v-show="searchList"
-					class="cu-list no-padding flex-direction">
-						<view 
-						class="cu-item border-top border-color-e" 
-						v-for="(cityName,sub) in searchList" 
-						:key="sub"
-						@tap="changeCity(cityName.slice(1,cityName.length-1))"
-						>
-							<view class="city-name padding bg-white flex-sub">
-								<text class="text-color-3">{{cityName.slice(1,cityName.length-1)}}</text>
-							</view>
-						</view>
-					</view>
 				</view>
 			</view>
-			<!-- 搜索列表区域 E -->
+			<!-- 城市列表区域 E -->
 			
 		</view>
 		
@@ -261,6 +244,18 @@
 						clearInterval(timers);
 					}
 				},5);
+			}
+			,
+			itemShow(cityName){
+				if(!this.inputText) return true;
+				
+				uni.pageScrollTo({
+					scrollTop:0,
+					duration:0
+				})
+				
+				if(JSON.stringify(this.searchList).includes(cityName)) return true;
+				return false;
 			}
 			,
 			...mapMutations(['SAVE_CITY'])

@@ -283,6 +283,8 @@ export const ADDRESS_DATA = {
 	]
 }
 
+export const FOOD_TYPE_DATA = ["全部","面食粥点","简餐便当","汉堡披萨","香锅冒菜","小吃炸串","地方菜系","日韩料理","轻食简餐"];
+
 export const USER_DATA = [
 	{
 		name:"linzowo",
@@ -299,5 +301,6 @@ export const USER_DATA = [
 
 export default {
 	INDEX_SORT_DATA,
-	ADDRESS_DATA
+	ADDRESS_DATA,
+	FOOD_TYPE_DATA
 }

@@ -51,7 +51,8 @@
 		}, {
 			"path": "pages/categoryList/categoryList",
 			"style": {
-				"navigationBarTitleText": "分类列表页"
+				"navigationBarTitleText": "分类列表页",
+				"navigationStyle": "custom"
 			}
 		}, {
 			"path": "pages/combo/combo",

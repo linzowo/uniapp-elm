@@ -1,8 +1,8 @@
 <template>
 	<view v-if="showPopup" class="uni-popup" :class="[popupstyle]" @touchmove.stop.prevent="clear">
-		<uni-transition v-if="maskShow" :mode-class="['fade']" :styles="maskClass" :duration="duration" :show="showTrans"
+		<uni-transition v-if="maskShow" :mode-class="['fade']" :styles="getMaskClass()" :duration="duration" :show="showTrans"
 		 @click="onTap" />
-		<uni-transition :mode-class="ani" :styles="transClass" :duration="duration" :show="showTrans" @click="onTap">
+		<uni-transition :mode-class="ani" :styles="getTransClass()" :duration="duration" :show="showTrans" @click="onTap">
 			<view class="uni-popup__wrapper-box" @click.stop="clear">
 				<slot />
 			</view>
@@ -50,6 +50,27 @@
 			maskClick: {
 				type: Boolean,
 				default: true
+			},
+			// 自定义遮罩层的样式，通过传递对应的参数可以修改其呈现样式
+			myMaskClass: {
+				type: Object,
+				default() {
+					return null;
+				}
+			},
+			// 弹窗主体盒子样式，通过设置这个参数可以实现调节弹窗对应的呈现效果
+			myTransClass: {
+				type: Object,
+				default() {
+					return null;
+				}
+			},
+			positionTop: {
+				type: Object,
+				default() {
+					return null;
+				}
+				
 			}
 		},
 		provide() {
@@ -99,7 +120,8 @@
 				mkclick: true,
 				popupstyle:'top'
 			}
-		},
+		}
+		,
 		created() {
 			if (this.animation) {
 				this.duration = 300
@@ -108,6 +130,29 @@
 			}
 		},
 		methods: {
+			// 自定义方法：过滤弹窗遮罩层样式
+			getMaskClass(){
+				
+				Object.assign(this.maskClass,this.positionTop);
+				
+				if(this.myMaskClass){
+					return Object.assign(this.maskClass,this.myMaskClass);
+				}
+				return this.maskClass;
+			}
+			,
+			// 自定义方法：过滤弹窗主体盒子样式
+			getTransClass(){
+				
+				Object.assign(this.transClass,this.positionTop);
+				
+				if(this.myTransClass){
+					return Object.assign(this.transClass,this.myTransClass);
+				}
+				
+				return this.transClass;
+			}
+			,
 			clear(e) {
 				// TODO nvue 取消冒泡
 				e.stopPropagation()

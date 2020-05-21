@@ -29,7 +29,7 @@
 				</view>
 		</view>
 		
-		<view class="content flex-direction">
+		<view v-if="login" class="content flex-direction">
 			
 			<!-- 我的地址 S -->
 			<view 
@@ -83,32 +83,32 @@
 			</view>
 			<!-- 我的地址 E -->
 			
-			<!-- 搜索結果列表 S -->
-			<view 
-			v-if="inputText"
-			class="search-res flex-direction">
-				<view 
-				class="current-address-content padding-tb-xs padding-lr flex-sub justify-between bg-white border-color-e align-center"
-				:class="[i==1?'':'border-top']"
-				v-for="(item,i) in searchAddress()"
-				:key="i"
-				>
-					<view class="text-sm margin-bottom-xs flex-direction">
-						<text class="text-bold text-df text-black">{{item.position_name}}</text>
-						<text class="">{{item.position_address}}</text>
-					</view>
-					<text class="text-sm margin-lr">{{item.distance}}m</text>
-				</view>
-				<view class="tips flex-direction align-center text-color-9 padding-lg">
-					<text class="text-lg margin-bottom-sm">找不到地址？</text>
-					<text class="text-sm">请尝试只输入小区、写字楼或学校名</text>
-					<text class="text-sm">详细地址（如门牌号）可稍后输入</text>
-				</view>
-			</view>
-			<!-- 搜索結果列表 E -->
-			
 		</view>
 		
+		
+		<!-- 搜索結果列表 S -->
+		<view 
+		v-if="inputText"
+		class="search-res flex-direction">
+			<view 
+			class="current-address-content padding-tb-xs padding-lr flex-sub justify-between bg-white border-color-e align-center"
+			:class="[i==1?'':'border-top']"
+			v-for="(item,i) in searchAddress()"
+			:key="i"
+			>
+				<view class="text-sm margin-bottom-xs flex-direction">
+					<text class="text-bold text-df text-black">{{item.position_name}}</text>
+					<text class="">{{item.position_address}}</text>
+				</view>
+				<text class="text-sm margin-lr">{{item.distance}}m</text>
+			</view>
+			<view class="tips flex-direction align-center text-color-9 padding-lg">
+				<text class="text-lg margin-bottom-sm">找不到地址？</text>
+				<text class="text-sm">请尝试只输入小区、写字楼或学校名</text>
+				<text class="text-sm">详细地址（如门牌号）可稍后输入</text>
+			</view>
+		</view>
+		<!-- 搜索結果列表 E -->
 		
 	</view>
 </template>
@@ -134,16 +134,25 @@
 		,
 		onNavigationBarButtonTap(e) {
 			// console.log(e);
-			if(e.index == 0){
+			// 当用户登录时点击新增地址
+			if(e.index == 0 && this.login){
 				uni.redirectTo({
 					url:'/pages/address/add_address'
+				})
+			}
+			
+			// 当用户未登录时点击新增地址
+			if(e.index == 0 && !this.login){
+				uni.redirectTo({
+					url:'/pages/login/login'
 				})
 			}
 		}
 		,
 		computed:{
 			...mapState([
-				'userInfo'
+				'userInfo',
+				'login'
 			])
 		}
 		,

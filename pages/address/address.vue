@@ -70,7 +70,9 @@
 					>
 						<text class="text-sm margin-bottom-xs">
 							<text class="text-bold text-df text-black">{{item.name}}</text>
-							<text class="margin-lr-xs">{{item.gender?"先生":"女士"}}</text>
+							<text 
+							v-if="item.gender !== null"
+							class="margin-lr-xs">{{item.gender?"先生":"女士"}}</text>
 							<text class="margin-left-xs">{{item.phone}}</text>
 						</text>
 						<text class="text-sm">{{item.position_name}}</text>

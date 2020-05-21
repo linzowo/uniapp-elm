@@ -252,7 +252,7 @@ export const ADDRESS_DATA = {
 		},
 		{
 			name:"spike",
-			gender:1,
+			gender:null,
 			phone:18455553333,
 			address:"太平洋沿岸和比弗利山山脚下",
 			position_name:"比利佛山庄",

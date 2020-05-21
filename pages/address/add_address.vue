@@ -36,12 +36,12 @@
 				<view class="cu-form-group" @tap="chooseAddress">
 					<view class="title">地址</view>
 					<text 
-					:class="[formData.address?'':'text-color-9']"
+					:class="[formData.address.position_address?'':'text-color-9']"
 					class="placeholder flex flex-sub">
-						{{formData.address?formData.address.position_address:'小区/写字楼/学校等'}}
+						{{formData.address.position_address?formData.address.position_address:'小区/写字楼/学校等'}}
 					</text>
 					<text class="lg text-gray" :class="'cuIcon-right'"></text>
-					<input type="text" name="address" v-model="formData.address" class="form-display" />
+					<input type="text" name="address" v-model="formData.address.position_address" class="form-display" />
 				</view>
 				<view class="cu-form-group">
 					<view class="title">门牌号</view>
@@ -128,7 +128,7 @@
 					name:null,
 					gender:null,
 					phone:null,
-					address:null,
+					address:{},
 					addressInfo:null, // 门牌号
 					tag:null
 				},

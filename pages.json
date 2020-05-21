@@ -74,6 +74,11 @@
 			"style": {
 				"navigationBarTitleText": "文件展示页"
 			}
+		}, {
+			"path": "pages/city/city",
+			"style": {
+				"navigationBarTitleText": "城市选择"
+			}
 		}
 	],
 	"globalStyle": {

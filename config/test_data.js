@@ -223,35 +223,40 @@ export const ADDRESS_DATA = {
 			gender:1,
 			phone:18455556666,
 			address:"上海浦东新区陆家嘴滨江大道旁的花园石桥路28弄",
-			position_name:"汤臣一品"
+			position_name:"汤臣一品",
+			tag:null
 		},
 		{
 			name:"林除夕",
 			gender:1,
 			phone:18455556666,
 			address:"上海浦东新区陆家嘴滨江大道旁的花园石桥路28弄",
-			position_name:"汤臣二品"
+			position_name:"汤臣二品",
+			tag:null
 		},
 		{
 			name:"林除夕",
 			gender:0,
 			phone:18455556666,
 			address:"上海浦东新区陆家嘴滨江大道旁的花园石桥路28弄",
-			position_name:"汤臣三品"
+			position_name:"汤臣三品",
+			tag:"学校"
 		},
 		{
 			name:"小李",
 			gender:0,
 			phone:18455557777,
 			address:"上海浦东新区陆家嘴滨江大道旁的花园石桥路28弄",
-			position_name:"汤臣一品"
+			position_name:"汤臣一品",
+			tag:"公司"
 		},
 		{
 			name:"spike",
 			gender:1,
 			phone:18455553333,
 			address:"太平洋沿岸和比弗利山山脚下",
-			position_name:"比利佛山庄"
+			position_name:"比利佛山庄",
+			tag:"家"
 		}
 	],
 	search_res:[

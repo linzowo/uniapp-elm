@@ -39,6 +39,11 @@
 			}
 			
 		}, {
+			"path": "pages/address/add_address",
+			"style": {
+				"navigationBarTitleText": "添加地址"
+			}
+		}, {
 			"path": "pages/search/search",
 			"style": {
 				"navigationBarTitleText": "搜索页"
@@ -68,11 +73,6 @@
 			"path": "pages/file/file",
 			"style": {
 				"navigationBarTitleText": "文件展示页"
-			}
-		}, {
-			"path": "pages/city/city",
-			"style": {
-				"navigationBarTitleText": "城市选择"
 			}
 		}
 	],

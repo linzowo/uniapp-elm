@@ -313,111 +313,138 @@ import addressPage from '@/pages/address/address.vue';
 // 引入官方组件
 import uniPopup from '@/components/uni-popup/uni-popup.vue';
 
-export default {
+
+/**
+ * @static 
+ * @description index模块下包含的子组件
+ * @property {Component} noPosition 未获取到用户城市时显示的页面
+ * @property {Component} navBar 自定义navbar模块
+ * @property {Component} addressPage 地址管理模块
+ * @property {Component} uniPopup uni组件-弹出层
+ */
+const components = { noPosition,navBar,uniPopup,addressPage };
+
+
+/**
+ * @static 
+ * @description index模块下的数据
+ * @property {String} address 顶部地址栏地址
+ * @property {Array} navList 顶部分类导航栏数据
+ * @property {Array} storeNavList 商铺分类列表数据
+ * @property {Object} elementInfo 部分元素的位置信息-可以根据需要自行添加类样式获取其他元素
+ * @property {Object} pageState 当前页面的状态信息，用于控制页面的呈现状态
+ * @property {Object} systemInfo 系统信息：宽高尺寸等
+ * @property {Array} popupStack 弹窗栈用于关闭多个弹窗时使用
+ * @property {Number} scrollTop content-body控制滑动需要的数据
+ * @property {Object} old content-body控制滑动需要的数据
+ */
+const data = function() {
+	return {
+		// 顶部分类导航栏数据
+		navList: [
+			{
+				img: "https://cube.elemecdn.com/7/d8/a867c870b22bc74c87c348b75528djpeg.jpeg?x-oss-process=image/format,webp/resize,w_90,h_90,m_fixed",
+				title: "美食"
+			},
+			{
+				img: "https://cube.elemecdn.com/a/7b/b02bd836411c016935d258b300cfejpeg.jpeg?x-oss-process=image/format,webp/resize,w_90,h_90,m_fixed",
+				title: "大牌惠吃"
+			}
+		],
+		// 商铺分类列表
+		storeNavList: [
+			{
+				selected:true,
+				list:[],
+				listSelected:false,
+				listSelectedIndex:0,
+				title:'通用排序',
+			},
+			{
+				selected:false,
+				title:'距离最近'
+			},
+			{
+				selected:false,
+				title:'销量最高'
+			},
+			{
+				selected:false,
+				list:{
+					// 筛选数据
+					filterDataSupports:[],
+					filterDataActivity:[],
+					averagePrice:['￥20以下','￥20-￥40','￥40-￥60','￥60-￥80','￥80-￥100','￥100以上']
+				},
+				selectedIndex:{
+					filterDataSupports:[],
+					filterDataActivity:-1,
+					averagePrice:-1
+				},
+				title:'筛选'
+			}], // 商铺导航栏数据
+		loggedIn: false, // 登录状态 true-登录 false-未登录
+		// 一些需要的元素信息
+		elementInfo:{
+			'nav-bar-container':{
+				bottom:0
+			},
+			'content-list-tab-box':{
+				bottom:0,
+			},
+			'container':{}
+		}, // 元素位置信息，key该元素的class
+		// 记录当前页面状态
+		pageState:{
+			login:false, // 登录状态
+			storeNavSelected:false, // 店铺导航栏的nav是否被选中
+		}, 
+		// 系统信息宽高尺寸等
+		systemInfo:null, 
+		// 弹窗栈用于帮助用户关闭多个弹窗
+		popupStack:[],
+		scrollTop: 0,
+		old: {
+			scrollTop: 0
+		}
+		
+	};
+};
+
+const computed = {
+	...mapState([
+		'userInfo'
+	]),
+	// 顶部收货地址
+	address(){
+		return this.userInfo.shipAddress.position_name || null;
+	}
+};
+
+const watch = {
 	/**
-	 * @static 
-	 * @description index模块下包含的子组件
-	 * @property {Component} noPosition 未获取到用户城市时显示的页面
-	 * @property {Component} navBar 自定义navbar模块
-	 * @property {Component} addressPage 地址管理模块
-	 * @property {Component} uniPopup uni组件-弹出层
+	 * 监听页面状态变化，根据状态设置对应的操作
+	 * @param {Object} n
+	 * @param {Object} o
 	 */
-	components: { noPosition,navBar,uniPopup,addressPage },
-	/**
-	 * @static 
-	 * @description index模块下的数据
-	 * @property {String} address 顶部地址栏地址
-	 * @property {Array} navList 顶部分类导航栏数据
-	 * @property {Array} storeNavList 商铺分类列表数据
-	 * @property {Object} elementInfo 部分元素的位置信息-可以根据需要自行添加类样式获取其他元素
-	 * @property {Object} pageState 当前页面的状态信息，用于控制页面的呈现状态
-	 * @property {Object} systemInfo 系统信息：宽高尺寸等
-	 * @property {Array} popupStack 弹窗栈用于关闭多个弹窗时使用
-	 * @property {Number} scrollTop content-body控制滑动需要的数据
-	 * @property {Object} old content-body控制滑动需要的数据
-	 */
-	data() {
-		return {
-			// 顶部分类导航栏数据
-			navList: [
-				{
-					img: "https://cube.elemecdn.com/7/d8/a867c870b22bc74c87c348b75528djpeg.jpeg?x-oss-process=image/format,webp/resize,w_90,h_90,m_fixed",
-					title: "美食"
-				},
-				{
-					img: "https://cube.elemecdn.com/a/7b/b02bd836411c016935d258b300cfejpeg.jpeg?x-oss-process=image/format,webp/resize,w_90,h_90,m_fixed",
-					title: "大牌惠吃"
-				}
-			],
-			// 商铺分类列表
-			storeNavList: [
-				{
-					selected:true,
-					list:[],
-					listSelected:false,
-					listSelectedIndex:0,
-					title:'通用排序',
-				},
-				{
-					selected:false,
-					title:'距离最近'
-				},
-				{
-					selected:false,
-					title:'销量最高'
-				},
-				{
-					selected:false,
-					list:{
-						// 筛选数据
-						filterDataSupports:[],
-						filterDataActivity:[],
-						averagePrice:['￥20以下','￥20-￥40','￥40-￥60','￥60-￥80','￥80-￥100','￥100以上']
-					},
-					selectedIndex:{
-						filterDataSupports:[],
-						filterDataActivity:-1,
-						averagePrice:-1
-					},
-					title:'筛选'
-				}], // 商铺导航栏数据
-			loggedIn: false, // 登录状态 true-登录 false-未登录
-			// 一些需要的元素信息
-			elementInfo:{
-				'nav-bar-container':{
-					bottom:0
-				},
-				'content-list-tab-box':{
-					bottom:0,
-				},
-				'container':{}
-			}, // 元素位置信息，key该元素的class
-			// 记录当前页面状态
-			pageState:{
-				login:false, // 登录状态
-				storeNavSelected:false, // 店铺导航栏的nav是否被选中
-			}, 
-			// 系统信息宽高尺寸等
-			systemInfo:null, 
-			// 弹窗栈用于帮助用户关闭多个弹窗
-			popupStack:[],
-            scrollTop: 0,
-            old: {
-                scrollTop: 0
-            }
+	pageState(n,o){
+		if(n.storeNavSelected){
+			// 打开筛选弹窗
+			this.openPopup('filterBarPopup');
 			
-		};
-	},
-	computed:{
-		...mapState([
-			'userInfo'
-		]),
-		// 顶部收货地址
-		address(){
-			return this.userInfo.shipAddress.position_name || null;
+			// 获取元素位置，将元素置顶
+			this.goTop();
+		}else{
+			this.closePopup('filterBarPopup');
 		}
 	}
-	,
+};
+
+export default {
+	components,
+	data,
+	computed,
+	watch,
 	onLoad() {
 		
 		// 获取系统信息备用
@@ -648,25 +675,6 @@ export default {
 			this.$nextTick(function() {
 				this.scrollTop = this.elementInfo['content-list-tab-box'].top;
 			});
-		}
-	}
-	,
-	watch:{
-		/**
-		 * 监听页面状态变化，根据状态设置对应的操作
-		 * @param {Object} n
-		 * @param {Object} o
-		 */
-		pageState(n,o){
-			if(n.storeNavSelected){
-				// 打开筛选弹窗
-				this.openPopup('filterBarPopup');
-				
-				// 获取元素位置，将元素置顶
-				this.goTop();
-			}else{
-				this.closePopup('filterBarPopup');
-			}
 		}
 	}
 	

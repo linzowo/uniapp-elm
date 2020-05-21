@@ -126,16 +126,16 @@
 			// 在结构创建完成后页面渲染前获取一些渲染必要的数据
 			
 			// 获取我的地址数据
+			// 模拟网络环境下请求我的地址数据
 			this.myAddress = this.$t_d.ADDRESS_DATA.my_address;
 		}
 		,
 		onNavigationBarButtonTap(e) {
 			// console.log(e);
 			if(e.index == 0){
-				console.log('跳转至地址新增页');
-				// uni.redirectTo({
-				// 	url:''
-				// })
+				uni.redirectTo({
+					url:'/pages/address/add_address'
+				})
 			}
 		}
 		,

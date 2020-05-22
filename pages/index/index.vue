@@ -120,18 +120,7 @@
 						<!-- 已登录 E -->
 						
 						<!-- 未登录 S -->
-						<view 
-						v-if="!loggedIn"
-						class="logged-out flex-direction align-center justify-center text-grey">
-							<image 
-							class="logged-img"
-							src="//fuss10.elemecdn.com/d/60/70008646170d1f654e926a2aaa3afpng.png" mode="aspectFit"></image>
-							<h3 class="margin-bottom-sm">没有结果</h3>
-							<text class="margin-bottom-sm text-xs">登录后查看更多商家</text>
-							<navigator 
-							url="/pages/login/login"
-							class="logged-btn cu-btn lg">登录</navigator>
-						</view>
+						<noLogin v-if="!loggedIn"></noLogin>
 						<!-- 未登录 E -->
 						
 						
@@ -309,6 +298,8 @@ import noPosition from '@/components/noPosition/noPosition.vue';
 import navBar from '@/components/common/navBar.vue';
 // 地址模块
 import addressPage from '@/pages/address/address.vue';
+// 未登录模块
+import noLogin from '@/components/noLogin/noLogin.vue';
 
 // 引入官方组件
 import uniPopup from '@/components/uni-popup/uni-popup.vue';
@@ -322,7 +313,7 @@ import uniPopup from '@/components/uni-popup/uni-popup.vue';
  * @property {Component} addressPage 地址管理模块
  * @property {Component} uniPopup uni组件-弹出层
  */
-const components = { noPosition,navBar,uniPopup,addressPage };
+const components = { noPosition,navBar,uniPopup,addressPage,noLogin };
 
 
 /**

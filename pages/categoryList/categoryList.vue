@@ -71,10 +71,7 @@
 			<view 
 			v-if="!login"
 			class="login-no flex-direction align-center flex-sub justify-center padding-top">
-				<image :src="$i_u.login_no" class="login-img" mode="widthFix"></image>
-				<text class="text-lg text-color-9 margin-bottom">没有结果</text>
-				<text class="text-lg text-color-9">登录后可查看更多商家</text>
-				<navigator url="/pages/login/login" class="link">点此登录 ></navigator>
+				<noLogin></noLogin>
 			</view>
 			<!-- 未登录 E -->
 			
@@ -271,6 +268,9 @@
 </template>
 
 <script>
+	
+	// 未登录模块
+	import noLogin from '@/components/noLogin/noLogin.vue';
 	import {mapState,mapMutations} from 'vuex';
 	export default {
 		data() {
@@ -295,6 +295,7 @@
 		
 			}
 		},
+		components:{noLogin},
 		computed:{
 			...mapState([
 				'login'
@@ -573,10 +574,6 @@
 	}
 	.login-no{
 		
-	}
-	.link{
-		border-bottom: 1px solid #0081FF;
-		color: #0081FF;
 	}
 	.login-img{
 		width: 400rpx;

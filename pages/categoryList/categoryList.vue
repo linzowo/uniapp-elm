@@ -13,15 +13,18 @@
 				scroll-x 
 				class="nav scroll-box" 
 				scroll-with-animation 
-				:scroll-left="scrollLeft">
+				:scroll-into-view="categotyID"
+				>
 					<view 
 					class="cu-item" 
-					:class="index==TabCur?'text-white cur':'text-color-e'" 
-					v-for="(item,index) in foodType" 
+					:class="[index==TabCur?'text-white cur':'text-color-e']" 
+					v-for="(item,index) in foodType.sub_categories" 
 					:key="index" 
 					@tap="typeSelect" 
-					:data-id="index">
-						{{item}}
+					:data-id="index"
+					:id="'cu-item'+index"
+					>
+						{{item.name}}
 					</view>
 				</scroll-view>
 				<view 
@@ -204,7 +207,7 @@
 		:animation="false"
 		class="filter-bar-popup-box"
 		>
-			<view class="category-box">
+			<view class="category-box flex-direction">
 				<!-- title S -->
 				<view class="title-box flex-sub bg-grey-fa justify-between">
 					<text class="padding">请选择分类</text>
@@ -215,7 +218,48 @@
 				<!-- title E -->
 				
 				<!-- category S -->
-				
+				<view class="category-box flex-sub">
+					
+					<!-- category-head S -->
+					<scroll-view scroll-y class="bg-white nav flex-direction category-head bg-grey-fc">
+						<view 
+						class="cu-item justify-between padding-lr-sm align-center" 
+						:class="index==categoryCur?'cur-left text-color-blue bg-white':' bg-grey-fc'" 
+						v-for="(item,index) in categoryData" 
+						:key="index" 
+						@tap="categoryHeadtabSelect" 
+						:data-id="index"
+						:style="{display:'flex'}"
+						>
+							<text class="text-color-6">{{item.name}}</text>
+							<text class="round text-xs border border-color-e padding-0 tag-text">{{item.count}}</text>
+						</view>
+					</scroll-view>
+					<!-- category-head E -->
+					
+					<!-- category-body S -->
+					<scroll-view scroll-y class="bg-white nav flex-direction category-body">
+						<view 
+						class="cu-item justify-between padding-lr-sm align-center" 
+						:class="index == categorySelected[1] && categoryCur == categorySelected[0] ? 'text-color-blue':''" 
+						v-for="(item,index) in categoryData[categoryCur].sub_categories" 
+						:key="index" 
+						@tap="categoryBodytabSelect" 
+						:data-id="index"
+						:style="{display:'flex'}"
+						>
+							<view class="">
+								<!-- <image :src="'https://fuss10.elemecdn.com/d/60/'+item.image_url+'.png'" mode="widthFix"></image> -->
+								<text>{{item.name}}</text>
+							</view>
+							<text 
+							:class="index == categorySelected[1] && categoryCur == categorySelected[0] ?'cur':''"
+							class="round text-xs border border-color-e padding-0 tag-text">{{item.count}}</text>
+						</view>
+					</scroll-view>
+					<!-- category-body E -->
+					
+				</view>
 				<!-- category E -->
 			</view>
 		</uni-popup>
@@ -233,60 +277,21 @@
 			return {
 				navBarInfo:{},
 				TabCur: 0,
-				scrollLeft: 0,
 				foodType:[],
+				categoryCur:0,
+				categorySelected:[0,0],
 				categoryData:[],
-				// 顶部分类导航栏数据
-				navList: [
-					{
-						img: "https://cube.elemecdn.com/7/d8/a867c870b22bc74c87c348b75528djpeg.jpeg?x-oss-process=image/format,webp/resize,w_90,h_90,m_fixed",
-						title: "美食"
-					},
-					{
-						img: "https://cube.elemecdn.com/a/7b/b02bd836411c016935d258b300cfejpeg.jpeg?x-oss-process=image/format,webp/resize,w_90,h_90,m_fixed",
-						title: "大牌惠吃"
-					}
-				],
+				categotyID:null, // 锚点定位id
 				// 商铺分类列表
-				storeNavList: [
-					{
-						selected:true,
-						list:[],
-						listSelected:false,
-						listSelectedIndex:0,
-						title:'通用排序',
-					},
-					{
-						selected:false,
-						title:'距离最近'
-					},
-					{
-						selected:false,
-						title:'销量最高'
-					},
-					{
-						selected:false,
-						list:{
-							// 筛选数据
-							filterDataSupports:[],
-							filterDataActivity:[],
-							averagePrice:['￥20以下','￥20-￥40','￥40-￥60','￥60-￥80','￥80-￥100','￥100以上']
-						},
-						selectedIndex:{
-							filterDataSupports:[],
-							filterDataActivity:-1,
-							averagePrice:-1
-						},
-						title:'筛选'
-					}], // 商铺导航栏数据
-					// 记录当前页面状态
-					pageState:{
-						login:false, // 登录状态
-						storeNavSelected:false, // 店铺导航栏的nav是否被选中
-						navBtnSelected:false, // 自定义顶部nav按钮被选中
-					}, 
-					// 弹窗栈用于帮助用户关闭多个弹窗
-					popupStack:[],
+				storeNavList: [], // 商铺导航栏数据
+				// 记录当前页面状态
+				pageState:{
+					login:false, // 登录状态
+					storeNavSelected:false, // 店铺导航栏的nav是否被选中
+					navBtnSelected:false, // 自定义顶部nav按钮被选中
+				}, 
+				// 弹窗栈用于帮助用户关闭多个弹窗
+				popupStack:[],
 		
 			}
 		},
@@ -304,18 +309,22 @@
 			 * @param {Object} o
 			 */
 			pageState(n,o){
-				if(n.storeNavSelected){
-					// 打开筛选弹窗
-					this.openPopup('filterBarPopup');
-				}else{
-					this.closePopup('filterBarPopup');
+				if(n.storeNavSelected !== o.storeNavSelected){
+					if(n.storeNavSelected){
+						// 打开筛选弹窗
+						this.openPopup('filterBarPopup');
+					}else{
+						this.closePopup('filterBarPopup');
+					}
 				}
 				
-				if(n.navBtnSelected){
-					// 打开筛选弹窗
-					this.openPopup('filterCategoryPopup');
-				}else{
-					this.closePopup('filterCategoryPopup');
+				if(n.navBtnSelected !== o.navBtnSelected){
+					if(n.navBtnSelected){
+						// 打开筛选弹窗
+						this.openPopup('filterCategoryPopup');
+					}else{
+						this.closePopup('filterCategoryPopup');
+					}
 				}
 			}
 		}
@@ -324,14 +333,16 @@
 			// 请求一些渲染页面必须的数据
 			
 			// 模拟网络请求需要数据
-			this.foodType = this.$t_d.FOOD_TYPE_DATA;
-			this.categoryData = this.$t_d.CATEGORE_DATA;
 			
+			// 顶部导航栏下拉菜单需要的数据
+			this.categoryData = this.$t_d.CATEGORE_DATA.filter(ele=>{
+				return ele.sub_categories.length !== 0;
+			});
 			
-			// 获取主页单排筛选和排序方式数据
-			this.storeNavList[0].list = this.$t_d.INDEX_SORT_DATA.outside.inside_sort_filter;
-			this.storeNavList[3].list.filterDataSupports = [this.$t_d.INDEX_SORT_DATA.bar.delivery_mode,...this.$t_d.INDEX_SORT_DATA.bar.supports];
-			this.storeNavList[3].list.filterDataActivity = this.$t_d.INDEX_SORT_DATA.bar.activity_types;
+			// 顶部导航栏默认navbar中的内容值
+			this.foodType = this.categoryData[0];
+			
+			this.storeNavList = this.$t_d.STORE_FILTER_DATA;
 			
 		}
 		,
@@ -340,6 +351,38 @@
 		}
 		,
 		methods:{
+			/**
+			 * 切换顶部分类列表
+			 * @param {Object} e
+			 */
+			categoryHeadtabSelect(e){
+					console.log(e.currentTarget.dataset.id);
+					this.categoryCur = e.currentTarget.dataset.id;
+			}
+			,
+			/**
+			 * 选取子分类
+			 * @param {Object} e
+			 */
+			categoryBodytabSelect(e){
+				
+				// 存储当前矩阵位置
+				this.categorySelected[0] = this.categoryCur;
+				this.categorySelected[1] = e.currentTarget.dataset.id;
+				
+				// 更改当前页面中呈现的分类
+				this.foodType = this.categoryData[this.categorySelected[0]];
+				
+				// 移动标签至对应位置
+				this.TabCur = this.categorySelected[1];
+				this.categotyID = 'cu-item'+this.TabCur;
+				
+				// 根据新分类发起请求获取最新数据
+				
+				// 关闭弹窗
+				this.changePageState({navBtnSelected:false});
+			}
+			,
 			navBtnTap(){
 				// 改变页面状态
 				this.changePageState({navBtnSelected:true});
@@ -351,7 +394,7 @@
 			 */
 			typeSelect(e){
 				this.TabCur = e.currentTarget.dataset.id;
-				this.scrollLeft = (e.currentTarget.dataset.id - 1) * 60;
+				this.categotyID = 'cu-item'+this.TabCur;
 			}
 			,
 			/**
@@ -549,5 +592,22 @@
 	}
 	.category-box{
 		width: 750rpx;
+		height: 60vh;
+	}
+	.category-head{
+		flex: 3;
+	}
+	.category-body{
+		flex: 6;
+	}
+	.tag-text{
+		line-height: 1.5;
+		padding: 0 5px;
+		color: #999;
+	}
+	.tag-text.cur{
+		background-color: #2395ff;
+		border-color: #2395ff;
+		color: #fff;
 	}
 </style>

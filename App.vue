@@ -37,7 +37,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "app.css";
 @import 'colorui/icon.css';
 @import 'colorui/main.css';
+@import "app.css";
 </style>

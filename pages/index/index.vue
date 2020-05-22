@@ -33,16 +33,16 @@
 							url="/pages/categoryList/categoryList"
 							class="padding-xs flex vs-column vs-align-center" 
 							:style="{width:'150rpx'}"
-							v-for="(item,index) in navList.length*5" 
+							v-for="(item,index) in navList" 
 							:key="index">
 									<image 
-									:src="navList[item%2==0?1:0].img" 
+									:src="item.img" 
 									mode="aspectFill"
 									class="nav-img"
 									></image>
 									<text 
 									class="nav-title font-20 color-black6"
-									>{{navList[item%2==0?1:0].title}}</text>
+									>{{item.title}}</text>
 							</navigator>
 						</view>
 					</view>
@@ -341,48 +341,9 @@ const components = { noPosition,navBar,uniPopup,addressPage };
 const data = function() {
 	return {
 		// 顶部分类导航栏数据
-		navList: [
-			{
-				img: "https://cube.elemecdn.com/7/d8/a867c870b22bc74c87c348b75528djpeg.jpeg?x-oss-process=image/format,webp/resize,w_90,h_90,m_fixed",
-				title: "美食"
-			},
-			{
-				img: "https://cube.elemecdn.com/a/7b/b02bd836411c016935d258b300cfejpeg.jpeg?x-oss-process=image/format,webp/resize,w_90,h_90,m_fixed",
-				title: "大牌惠吃"
-			}
-		],
+		navList: [],
 		// 商铺分类列表
-		storeNavList: [
-			{
-				selected:true,
-				list:[],
-				listSelected:false,
-				listSelectedIndex:0,
-				title:'通用排序',
-			},
-			{
-				selected:false,
-				title:'距离最近'
-			},
-			{
-				selected:false,
-				title:'销量最高'
-			},
-			{
-				selected:false,
-				list:{
-					// 筛选数据
-					filterDataSupports:[],
-					filterDataActivity:[],
-					averagePrice:['￥20以下','￥20-￥40','￥40-￥60','￥60-￥80','￥80-￥100','￥100以上']
-				},
-				selectedIndex:{
-					filterDataSupports:[],
-					filterDataActivity:-1,
-					averagePrice:-1
-				},
-				title:'筛选'
-			}], // 商铺导航栏数据
+		storeNavList: [], // 商铺导航栏数据
 		loggedIn: false, // 登录状态 true-登录 false-未登录
 		// 一些需要的元素信息
 		elementInfo:{
@@ -462,11 +423,11 @@ export default {
 		// 将收货定位信息绑定到元素上
 		// this.address = this.userInfo.shipAddress.position_name || null;
 		
-		// 获取主页单排筛选和排序方式数据
-		this.storeNavList[0].list = this.$t_d.INDEX_SORT_DATA.outside.inside_sort_filter;
-		this.storeNavList[3].list.filterDataSupports = [this.$t_d.INDEX_SORT_DATA.bar.delivery_mode,...this.$t_d.INDEX_SORT_DATA.bar.supports];
-		this.storeNavList[3].list.filterDataActivity = this.$t_d.INDEX_SORT_DATA.bar.activity_types;
+		this.navList = Array(10);
+		this.navList.fill(this.$t_d.NAV_LIST_DATA[0],0,5);
+		this.navList.fill(this.$t_d.NAV_LIST_DATA[1],5,10);
 		
+		this.storeNavList = this.$t_d.STORE_FILTER_DATA;
 	}
 	,
 	mounted() {

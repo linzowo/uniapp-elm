@@ -1960,6 +1960,9 @@ button.cuIcon.lg {
 .nav .cu-item.cur {
 	border-bottom: 4upx solid;
 }
+.nav .cu-item.cur-left {
+	border-left: 4upx solid;
+}
 
 /* ==================
          时间轴

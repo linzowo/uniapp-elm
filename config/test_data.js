@@ -1,6 +1,20 @@
 /**
  * 测试数据
  */
+
+// 主页顶部nav分类菜单数据
+export const NAV_LIST_DATA = [
+	{
+		img: "https://cube.elemecdn.com/7/d8/a867c870b22bc74c87c348b75528djpeg.jpeg?x-oss-process=image/format,webp/resize,w_90,h_90,m_fixed",
+		title: "美食"
+	},
+	{
+		img: "https://cube.elemecdn.com/a/7b/b02bd836411c016935d258b300cfejpeg.jpeg?x-oss-process=image/format,webp/resize,w_90,h_90,m_fixed",
+		title: "大牌惠吃"
+	}
+];
+
+// 商品列表中用于排序的数据
 export const INDEX_SORT_DATA = {
 	"bar": {
 		"activity_types": [{
@@ -215,6 +229,41 @@ export const INDEX_SORT_DATA = {
 	}
 }
 
+// 商铺排序及筛选使用的数据结构
+export const STORE_FILTER_DATA = [
+	{
+		selected:true,
+		list:INDEX_SORT_DATA.outside.inside_sort_filter,
+		listSelected:false,
+		listSelectedIndex:0,
+		title:'通用排序',
+	},
+	{
+		selected:false,
+		title:'距离最近'
+	},
+	{
+		selected:false,
+		title:'销量最高'
+	},
+	{
+		selected:false,
+		list:{
+			// 筛选数据
+			filterDataSupports:[INDEX_SORT_DATA.bar.delivery_mode,...INDEX_SORT_DATA.bar.supports],
+			filterDataActivity:INDEX_SORT_DATA.bar.activity_types,
+			averagePrice:['￥20以下','￥20-￥40','￥40-￥60','￥60-￥80','￥80-￥100','￥100以上']
+		},
+		selectedIndex:{
+			filterDataSupports:[],
+			filterDataActivity:-1,
+			averagePrice:-1
+		},
+		title:'筛选'
+	}
+];
+
+// 所有地址相关的测试数据
 export const ADDRESS_DATA = {
 	my_address: [{
 			name: "林除夕",
@@ -280,10 +329,7 @@ export const ADDRESS_DATA = {
 	]
 }
 
-// 初始化的分类数据
-export const FOOD_TYPE_DATA = ["全部", "面食粥点", "简餐便当", "汉堡披萨", "香锅冒菜", "小吃炸串", "地方菜系", "日韩料理", "轻食简餐"];
-
-// 总的分类列表
+// 所有商铺的分类类别列表
 export const CATEGORE_DATA = [{
 	"count": 5373,
 	"id": null,
@@ -2341,6 +2387,7 @@ export const CATEGORE_DATA = [{
 	}]
 }]
 
+// 测试用的用户数据
 export const USER_DATA = [{
 	name: "linzowo",
 	phone: 13645678520,
@@ -2354,8 +2401,9 @@ export const USER_DATA = [{
 }]
 
 export default {
+	NAV_LIST_DATA,
 	INDEX_SORT_DATA,
 	ADDRESS_DATA,
-	FOOD_TYPE_DATA,
+	STORE_FILTER_DATA,
 	CATEGORE_DATA
 }

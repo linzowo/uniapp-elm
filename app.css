@@ -75,6 +75,9 @@ view {
 .bg-grey-f5{
 	background-color: #f5f5f5;
 }
+.bg-grey-fc{
+	background-color: #fcfcfc;
+}
 .bg-blue-base{
 	background-color: #0097ff;
 	color: #fff;
@@ -145,7 +148,9 @@ view {
 .border-color-f{
 	border-color: #fff;
 }
-
+.border-color-blue {
+	border-color: #2395ff;
+}
 .link-blue{
 	color: #2395ff;
 }

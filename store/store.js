@@ -11,7 +11,7 @@ Vue.use(Vuex);
 
 const state = {
 	userInfo:null, // 用户信息
-	login: false, // 登录状态
+	login: true, // 登录状态
 }
 
 // 实例化store

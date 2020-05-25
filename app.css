@@ -57,6 +57,9 @@ view {
 .text-color-e{
 	color: #eee;
 }
+.text-color-d{
+	color: #ddd;
+}
 .text-color-f{
 	color: #fff;
 }
@@ -163,4 +166,34 @@ view {
 .btn-bg-tag{
 	background-color: #eef7ff;
 	color: #2395ff;
+}
+
+/* 标签样式 */
+.ele-tag{
+	text-align: center;
+	font-weight: 700;
+	padding: 0 6rpx;
+	transform: scale(.8);
+	
+}
+.bg-tag-color-yellow{
+	background-image: linear-gradient(-139deg,#fff100,#ffe339);
+	color: #6f3f15;
+}
+
+/* 文本尺寸缩放 */
+.text-scale-5{
+	transform: scale(.5);
+}
+.text-scale-6{
+	transform: scale(.6);
+}
+.text-scale-7{
+	transform: scale(.7);
+}
+.text-scale-8{
+	transform: scale(.8);
+}
+.text-scale-9{
+	transform: scale(.9);
 }

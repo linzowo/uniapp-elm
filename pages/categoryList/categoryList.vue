@@ -1,5 +1,8 @@
 <template>
-	<view class="category-container flex-direction">
+	<view 
+	class="category-container flex-direction"
+	:style="style.categoryContainer"
+	>
 		
 		<!-- navBar S -->
 		<view 
@@ -78,8 +81,131 @@
 			<!-- 登录 S -->
 			<view
 			 v-if="login"
-			 class="login">
-				登录后
+			 class="flex-direction login store-list flex-sub">
+				<view 
+				v-for="(item,index) in storeListData"
+				:key="index"
+				@tap="gotoStoreIndex(index)"
+				class="store-list-item padding-tb padding-lr-sm border-bottom border-color-e align-start flex-sub">
+					<!-- 遮罩层 S -->
+					<view 
+					v-show="index == storeMaskIndex"
+					@tap.stop.prevent="controlStoreMask(index)"
+					class="store-item-mask align-center justify-center">
+						<text 
+						@tap.stop.prevent="dislikeStore(index)"
+						class="store-item-mask-btn round bg-white text-xs text-center">不喜欢</text>
+					</view>
+					<!-- 遮罩层 E -->
+					
+					<!-- 店铺封面 S -->
+					<image 
+					class="store-cover margin-right-xs" 
+					:src="item.restaurant.image_path|imgUrlFilter" 
+					mode="widthFix"></image>
+					<!-- 店铺封面 E -->
+					
+					<!-- 店铺详情 S -->
+					<view class="store-info-box flex-direction flex-sub">
+						
+						<!-- 店铺名称 S -->
+						<view class="store-title flex-sub align-center justify-between">
+							<view class="">
+								<text 
+								v-if="item.restaurant.brand_id"
+								class="ele-tag bg-tag-color-yellow">品牌</text>
+								<text
+								class="text-cut store-title-text text-bold flex-sub"
+								>{{item.restaurant.name}}
+								</text>
+							</view>
+							
+							<view
+							@tap="controlStoreMask(index)"
+							 class="dont-like-btn padding-left">
+								<text class="lg text-gray cuIcon-more"></text>
+							</view>
+						</view>
+						<!-- 店铺名称 E -->
+						
+						<!-- 店铺销售及评价情况 S -->
+						<view class="store-star padding-tb-xs align-center">
+							
+							<!-- star S -->
+							<view class="star-box star-size">
+								<view class="star-bg">
+									<image class="star-size" :src="$i_u.star_bg" mode="left"></image>
+								</view>
+								<view 
+								class="star"
+								:style="{width:parseInt(120 * (item.restaurant.rating/5)) + 'rpx'}"
+								>
+									<image class="star-size" :src="$i_u.star" mode="left"></image>
+								</view>
+							</view>
+							<!-- star E -->
+							
+							<!-- rate S -->
+							<text class="text-scale-9 text-sm text-color-6 margin-lr-xs">{{item.restaurant.rating}}</text>
+							<!-- rate E -->
+							
+							<!-- 销售量 S -->
+							<text class="text-scale-9 text-sm text-color-6">月售{{item.restaurant.recent_order_num}}单</text>
+							<!-- 销售量 E -->
+						</view>
+						<!-- 店铺销售及评价情况 E -->
+						
+						<!-- 配送相关信息 S -->
+						<view class="text-xs store-distance-box text-color-6 justify-between align-center">
+							<view class="text-scale-9 left align-center">
+								<text>￥{{item.restaurant.float_minimum_order_amount}}起送</text>
+								<text class="margin-lr-xs text-color-d">|</text>
+								<text>配送￥{{item.restaurant.float_delivery_fee}}</text>
+							</view>
+							<view class="text-scale-9 right align-center text-color-9">
+								<text>{{item.restaurant.distance|distaceFilter}}</text>
+								<text class="margin-lr-xs text-color-d">|</text>
+								<text>{{item.restaurant.order_lead_time}}分钟</text>
+							</view>
+						</view>
+						<!-- 配送相关信息 E -->
+						
+						<!-- 店铺分类 S -->
+						<view class="">
+							<text class="text-scale-8 store-categroy text-color-6 text-xs margin-tb-xs text-xs border border-color-e">{{item.restaurant.flavors[0].name}}</text>
+						</view>
+						<!-- 店铺分类 E -->
+						
+						<!-- 店铺促销活动 S -->
+						<view class="store-activities text-color-6 flex-sub text-xs align-start">
+							<view class="active-left flex-direction text-scale-9">
+								<view 
+								v-for="(e,i) in item.restaurant.act_tag ? item.restaurant.activities : item.restaurant.activities.slice(0,2)"
+								:key="e.id"
+								class="activities-item align-center margin-tb-xs">
+									<text class="radius active-tag text-xs margin-right-xs color-white"
+									:style="{backgroundColor:'#'+e.icon_color}"
+									>{{e.icon_name}}</text>
+									<text class="text-cut">{{e.tips}}</text>
+								</view>
+							</view>
+							<view 
+							v-if="item.restaurant.activities.length>2"
+							@tap.stop.prevent="showMoreActive(index)"
+							class="active-right margin-tb-xs text-color-9 justify-end align-center">
+								<text class="text-scale-9">{{item.restaurant.activities.length}}个活动</text>
+								<text 
+								:class="[item.restaurant.act_tag?'animation-rotate':'']"
+								class="active-icon text-df lg text-gray cuIcon-triangledownfill"></text>
+							</view>
+						</view>
+						<!-- 店铺促销活动 E -->
+						
+					</view>
+					<!-- 店铺详情 E -->
+					
+				</view>
+				
 			</view>
 			<!-- 登录 E -->
 			
@@ -273,15 +399,17 @@
 	import noLogin from '@/components/noLogin/noLogin.vue';
 	import {mapState,mapMutations} from 'vuex';
 	export default {
+		name:'categoryList',
 		data() {
 			return {
 				navBarInfo:{},
-				TabCur: 0,
-				foodType:[],
-				categoryCur:0,
-				categorySelected:[0,0],
-				categoryData:[],
+				TabCur: 0, // 当前顶部navbar中选中的是第几个分类
+				foodType:[], // 顶部navbar显示的商铺类别数据
+				categoryCur:0, // 现在选择的是那个大类
+				categorySelected:[0,0], // 类别矩阵 标识当前选中的是第几个大类中的第几个小类
+				categoryData:[], // 分类列表呈现时使用的数据
 				categotyID:null, // 锚点定位id
+				storeListData:[], // 登录后要显示的商铺列表数据
 				// 商铺分类列表
 				storeNavList: [], // 商铺导航栏数据
 				// 记录当前页面状态
@@ -290,12 +418,19 @@
 					storeNavSelected:false, // 店铺导航栏的nav是否被选中
 					navBtnSelected:false, // 自定义顶部nav按钮被选中
 				}, 
-				// 弹窗栈用于帮助用户关闭多个弹窗
-				popupStack:[],
-		
+				popupStack:[], // 弹窗栈用于帮助用户关闭多个弹窗
+				elementInfo:{}, // 存储元素的基本信息
+				style:{}, // 元素的style样式
+				storeMaskIndex:null, // 控制店铺的遮罩开闭
 			}
 		},
 		components:{noLogin},
+		onPageScroll(e) {
+			if(this.storeMaskIndex || this.storeMaskIndex == 0){
+				this.storeMaskIndex = null;
+			}
+		}
+		,
 		computed:{
 			...mapState([
 				'login'
@@ -345,13 +480,95 @@
 			
 			this.storeNavList = this.$t_d.STORE_FILTER_DATA;
 			
+			if(this.login){
+				this.storeListData = [...this.$t_d.STORE_lIST_DATA_1.items];
+			}
+			
 		}
 		,
 		mounted() {
 			this.navBarInfo = this.$utils.getElementInfo('.nav-bar');
+			
+			this.style.categoryContainer = {
+						paddingTop: this.navBarInfo.bottom + 'px',
+					}
+		}
+		,
+		filters:{
+			imgUrlFilter(origin){
+				return 'https://cube.elemecdn.com/' + origin[0] + '/' + origin.slice(1,3) + '/' + origin.slice(3) + '.' + (origin.slice(-3) == 'png'?'png':origin.slice(-4)) + '?x-oss-process=image/format,webp/resize,w_130,h_130,m_fixed';
+			},
+			distaceFilter(o){
+				return o > 1000 ? (o/1000).toFixed(2) + 'km' : o + 'm';
+			}
 		}
 		,
 		methods:{
+			/**
+			 * 跳转到用户点击的店铺主页
+			 * @param {Object} index
+			 */
+			gotoStoreIndex(index){
+				this.$utils.log('gotoStoreIndex','跳转到用户点击的店铺主页'+index);
+				
+				uni.navigateTo({
+					url:'/pages/storeIndex/storeIndex'
+				})
+			}
+			,
+			/**
+			 * 不喜欢该店铺
+			 * @param {Number} index 店铺索引值
+			 */
+			dislikeStore(index){
+				this.$utils.log('dislikeStore','不喜欢该店铺'+index);
+				
+				// 发起不喜欢请求
+				
+				// 将店铺从当前列表移除
+				
+				// 关闭遮罩
+				this.controlStoreMask(index);
+			}
+			,
+			/**
+			 * 控制店铺遮罩层的打开关闭
+			 * @param {Number} index 店铺索引值
+			 */
+			controlStoreMask(index){
+				this.$utils.log('controlStoreMask','控制遮罩的开关');
+				if(this.storeMaskIndex == index){
+					this.storeMaskIndex = null;
+					return;
+				}
+				
+				this.storeMaskIndex = index;
+			}
+			,
+			/**
+			 * 控制是否显示更多活动
+			 * @param {Number} index 店铺索引值
+			 */
+			showMoreActive(index){
+				this.storeListData[index].restaurant.act_tag = this.storeListData[index].restaurant.act_tag ? 0 : 1;
+			}
+			,
+			/**
+			 * 用于过滤当前要展示的店铺活动数量
+			 * 初始情况下默认展示2个
+			 * 当用户点击下拉按钮显示全部
+			 * @param {Number} index 当前店铺索引值
+			 */
+			activeFilter(index){
+				let item = this.storeListData[index].restaurant;
+				
+				if(item.act_more){
+					return item.activities;
+				}
+				
+				return item.activities.slice(0,2);
+			}
+			,
 			/**
 			 * 切换顶部分类列表
 			 * @param {Object} e
@@ -450,6 +667,10 @@
 					
 					if(this.pageState.storeNavSelected){
 						this.pageState.storeNavSelected = false;
+					}
+					
+					if(this.pageState.navBtnSelected){
+						this.pageState.navBtnSelected = false;
 					}
 				}
 			}
@@ -559,11 +780,9 @@
 	page{
 		background-color: #fff;
 	}
-	.content-box{
-		position: relative;
-	}
 	.nav-bar{
-		position: relative;
+		position: fixed;
+		top: 0;
 		z-index: 999;
 	}
 	.scroll-box{
@@ -606,5 +825,83 @@
 		background-color: #2395ff;
 		border-color: #2395ff;
 		color: #fff;
+	}
+	
+	// 店铺列表区域样式
+	.store-list-item{
+		position: relative;
+	}
+	.store-item-mask{
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		background-color: rgba($color: #000000, $alpha: 0.5);
+		z-index: 9;
+	}
+	.store-item-mask-btn{
+		width: 100rpx;
+		height: 100rpx;
+		line-height: 100rpx;
+	}
+	.store-cover{
+		width: 128rpx;
+		height: 128rpx;
+	}
+	
+	.store-title-text{
+		font-size: 30rpx;
+	}
+	.star-size{
+		width: 120rpx;
+		height: 20rpx;
+	}
+	.star-box{
+		position: relative;
+	}
+	.star-bg{
+		position: absolute;
+		z-index: 0;
+	}
+	.star{
+		position: relative;
+		z-index: 1;
+	}
+	.store-categroy{
+		padding: 0 10rpx;
+	}
+	
+	.active-left{
+		width: 440rpx;
+	}
+	.active-right{
+		flex: 3;
+		text-align: end;
+	}
+	.active-icon{
+		height: 20rpx;
+		animation: fillRotateDown 300ms ease;
+	}
+	.active-tag{
+		padding: 0 5rpx;
+		margin: 0 10rpx 0 -10rpx;
+	}
+	
+	.animation-rotate{
+		animation: fillRotateUp 300ms ease;
+		transform: rotate(180deg);
+	}
+	
+	@keyframes fillRotateUp{
+		0%{transform: rotate(0deg);}
+		50%{transform: rotate(90deg);}
+		100%{transform: rotate(180deg);}
+	}
+	
+	@keyframes fillRotateDown{
+		0%{transform: rotate(180deg);}
+		50%{transform: rotate(90deg);}
+		100%{transform: rotate(0deg);}
 	}
 </style>

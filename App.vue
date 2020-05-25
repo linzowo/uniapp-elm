@@ -23,7 +23,7 @@ export default {
 	mounted() {
 		// 云函数
 		let ele = document.createElement('script');
-		ele.src = '//at.alicdn.com/t/font_1704517_wdvao8saor.js';
+		ele.src = '//at.alicdn.com/t/font_1704517_k40zo27cx3b.js';
 		document.head.appendChild(ele);
 	}
 	,

@@ -80,6 +80,11 @@
 			"style": {
 				"navigationBarTitleText": "城市选择"
 			}
+		}, {
+			"path": "pages/storeIndex/storeIndex",
+			"style": {
+				"navigationBarTitleText": "店铺主页"
+			}
 		}
 	],
 	"globalStyle": {

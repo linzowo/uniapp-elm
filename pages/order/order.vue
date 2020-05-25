@@ -7,7 +7,7 @@
 		<view class="login-no flex-sub flex-direction align-center">
 			<image 
 			class="logged-img"
-			:src="$img_url.login_no" mode="widthFix"></image>
+			:src="$i_u.login_no" mode="widthFix"></image>
 			<text 
 			class="margin-bottom-sm text-xl login-text"
 			>{{$c_t.login.order.login_tips}}</text>

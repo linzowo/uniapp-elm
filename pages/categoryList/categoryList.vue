@@ -558,9 +558,6 @@
 		}
 		,
 		filters:{
-			imgUrlFilter(origin){
-				return 'https://cube.elemecdn.com/' + origin[0] + '/' + origin.slice(1,3) + '/' + origin.slice(3) + '.' + (origin.slice(-3) == 'png'?'png':origin.slice(-4)) + '?x-oss-process=image/format,webp/resize,w_130,h_130,m_fixed';
-			},
 			distaceFilter(o){
 				return o > 1000 ? (o/1000).toFixed(2) + 'km' : o + 'm';
 			}

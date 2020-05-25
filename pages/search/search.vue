@@ -38,7 +38,9 @@
 		<view class="content">
 			
 			<!-- 搜索标签 S -->
-			<view class="search-tag-box flex-direction">
+			<view 
+			v-show="!inputText"
+			class="search-tag-box flex-direction">
 				<!-- 历史搜索 S -->
 				<view 
 				v-if="searchHistory.length"
@@ -79,13 +81,82 @@
 			<!-- 搜索标签 E -->
 			
 			<!-- 搜索提示 S -->
-			<view class="search-cue-box">
+			<view 
+			v-show="inputText"
+			class="search-cue-box flex-sub padding-lr flex-direction">
+			
+				<view 
+				v-for="(item,index) in searchCueData.restaurants"
+				:key="index"
+				class="search-cue-item flex-sub flex-direction">
+					
+					<view class="align-center flex-sub special">
+						
+						<!-- 封面 S -->
+						<view class="cover margin-right">
+							<image 
+							class="search-cue-cover"
+							:src="item.image_path|imgUrlFilter" mode="widthFix"></image>
+						</view>
+						<!-- 封面 E -->
+						
+						<view class="align-center justify-between flex-sub border-bottom border-color-e padding-top-sm padding-bottom-xs">
+							
+							<!-- 内容 S -->
+							<view class="search-cue-content flex-direction flex-sub">
+								<view class="title padding-tb-xs flex-sub">
+									<view class="basis-xl text-cut">
+										<text class="text-cut">{{item.name}}</text>
+									</view>
+									<view class="basis-sm">
+										<text
+										v-for="(e,i) in item.tags"
+										:key="i"
+										:style="{color:'#fff',backgroundColor:'#'+e.name_color,height:'35rpx'}"
+										class="text-scale-8 text-sm padding-lr-xs">{{e.name}}</text>
+									</view>
+								</view>
+								<view class="">
+									<text class="reservation text-xs round border justify-center text-scale-8 padding-lr-xs">接受预定，{{item.next_business_time}}开始配送</text>
+								</view>
+								
+							</view>
+							<!-- 内容 E -->
+							
+							<!-- 评分 S -->
+							<view class="rating margin-left-sm text-xs text-color-9">
+								<text>评价{{item.rating}}</text>
+							</view>
+							<!-- 评分 E -->
+							
+						</view>
+						
+						
+					</view>
+					
+					
+				</view>
+			
+				<view 
+				v-for="(item,index) in searchCueData.word_with_meta"
+				:key="'word_with_meta'+index"
+				class="search-cue-item flex-sub flex-direction">
+				
+					<view class="align-center flex-sub normal">
+						<text class="cuIcon-search padding-sm"></text>
+						<view class="padding-tb border-bottom border-color-e flex-sub">
+							<text>{{item.word}}</text>
+						</view>
+					</view>
+					
+				</view>
 				
 			</view>
 			<!-- 搜索提示 E -->
 			
 			<!-- 搜索结果 S -->
-			<view class="search-result-box">
+			<view 
+			class="search-result-box">
 				
 			</view>
 			<!-- 搜索结果 E -->
@@ -184,5 +255,14 @@
 	}
 	.search-nav{
 		height: 50px;
+	}
+	.search-cue-cover{
+		width: 48rpx;
+		height: 48rpx;
+	}
+	.reservation{
+		color: #00e066;
+		border-color: #00e066;
+		margin-left: -40rpx;
 	}
 </style>

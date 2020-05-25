@@ -121,7 +121,7 @@
 							</view>
 							
 							<view
-							@tap="controlStoreMask(index)"
+							@tap.stop.prevent="controlStoreMask(index)"
 							 class="dont-like-btn padding-left">
 								<text class="lg text-gray cuIcon-more"></text>
 							</view>
@@ -129,29 +129,42 @@
 						<!-- 店铺名称 E -->
 						
 						<!-- 店铺销售及评价情况 S -->
-						<view class="store-star padding-tb-xs align-center">
-							
-							<!-- star S -->
-							<view class="star-box star-size">
-								<view class="star-bg">
-									<image class="star-size" :src="$i_u.star_bg" mode="left"></image>
+						<view class="store-star padding-tb-xs justify-between">
+							<view class="left align-center">
+								<!-- star S -->
+								<view class="star-box star-size">
+									<view class="star-bg">
+										<image class="star-size" :src="$i_u.star_bg" mode="left"></image>
+									</view>
+									<view 
+									class="star"
+									:style="{width:parseInt(120 * (item.restaurant.rating/5)) + 'rpx'}"
+									>
+										<image class="star-size" :src="$i_u.star" mode="left"></image>
+									</view>
 								</view>
-								<view 
-								class="star"
-								:style="{width:parseInt(120 * (item.restaurant.rating/5)) + 'rpx'}"
-								>
-									<image class="star-size" :src="$i_u.star" mode="left"></image>
-								</view>
+								<!-- star E -->
+								
+								<!-- rate S -->
+								<text class="text-scale-9 text-sm text-color-6 margin-lr-xs">{{item.restaurant.rating}}</text>
+								<!-- rate E -->
+								
+								<!-- 销售量 S -->
+								<text class="text-scale-9 text-sm text-color-6">月售{{item.restaurant.recent_order_num}}单</text>
+								<!-- 销售量 E -->
 							</view>
-							<!-- star E -->
 							
-							<!-- rate S -->
-							<text class="text-scale-9 text-sm text-color-6 margin-lr-xs">{{item.restaurant.rating}}</text>
-							<!-- rate E -->
+							<view
+							v-if="item.restaurant.delivery_mode"
+							 class="right">
+								<text 
+								:style="{
+										color:'#'+item.restaurant.delivery_mode.text_color,
+										backgroundColor:'#'+item.restaurant.delivery_mode.color
+									}"
+								class="text-scale-8 text-sm padding-lr-xs">{{item.restaurant.delivery_mode.text}}</text>
+							</view>
 							
-							<!-- 销售量 S -->
-							<text class="text-scale-9 text-sm text-color-6">月售{{item.restaurant.recent_order_num}}单</text>
-							<!-- 销售量 E -->
 						</view>
 						<!-- 店铺销售及评价情况 E -->
 						
@@ -526,6 +539,7 @@
 				// 发起不喜欢请求
 				
 				// 将店铺从当前列表移除
+				this.storeListData.splice(index,1);
 				
 				// 关闭遮罩
 				this.controlStoreMask(index);

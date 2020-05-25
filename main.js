@@ -11,6 +11,8 @@ Vue.prototype.$store = store;
 // 引入工具文件
 import utils from '@/common/utils.js';
 Vue.prototype.$utils = utils;
+import _ from 'lodash';
+Vue.prototype._ = _;
 
 // 引入配置文件
 // 公共文本

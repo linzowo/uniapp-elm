@@ -7190,7 +7190,149 @@ export const HOT_SEARCH = [{
 	"url": null,
 	"word": "冰粉"
 }]
-
+// 搜索提示结果
+export const SEARCH_CUE = {
+	"foods": [],
+	"in_food_search_whitelist": false,
+	"rank_id": "537d706794d142cca854c72922bb847a",
+	"restaurants": [{
+		"distance": 646,
+		"float_delivery_fee": 0.0,
+		"float_minimum_order_amount": 15.0,
+		"id": "E1976195290984635896",
+		"image_path": "53146AEA95A54543801AAE1D4E77C23Cpng",
+		"name": "salud冻酸奶·饮品(云鼎店)",
+		"next_business_time": "明天 10:00",
+		"rating": 4.8,
+		"recent_order_num": 30,
+		"scheme": "https://h5.ele.me/shop/#id=E1976195290984635896",
+		"tags": [{
+			"background": null,
+			"id": null,
+			"name": "满减",
+			"name_color": "FA7047"
+		}, {
+			"background": null,
+			"id": null,
+			"name": "蜂鸟",
+			"name_color": "2395FF"
+		}],
+		"type": 0
+	}, {
+		"distance": 3299,
+		"float_delivery_fee": 1.0,
+		"float_minimum_order_amount": 12.0,
+		"id": "E3886208267343182547",
+		"image_path": "6ba9794665d7f2d43e6dd0b1ed883eedjpeg",
+		"name": "茶屿Tealsland(西南财大店)",
+		"next_business_time": "明天 10:00",
+		"rating": 4.6,
+		"recent_order_num": 583,
+		"scheme": "https://h5.ele.me/shop/#id=E3886208267343182547",
+		"tags": [{
+			"background": null,
+			"id": null,
+			"name": "满减",
+			"name_color": "FA7047"
+		}],
+		"type": 0
+	}, {
+		"distance": 2828,
+		"float_delivery_fee": 0.5,
+		"float_minimum_order_amount": 15.0,
+		"id": "E3043068362804041892",
+		"image_path": "36CB0C0BA7674D9DA958D531D19A11FApng",
+		"name": "大阪Osaka食堂(成都温江店)",
+		"next_business_time": "明天 10:00",
+		"rating": 4.8,
+		"recent_order_num": 189,
+		"scheme": "https://h5.ele.me/shop/#id=E3043068362804041892",
+		"tags": [{
+			"background": null,
+			"id": null,
+			"name": "满减",
+			"name_color": "FA7047"
+		}, {
+			"background": null,
+			"id": null,
+			"name": "蜂鸟",
+			"name_color": "2395FF"
+		}],
+		"type": 0
+	}, {
+		"distance": 3194,
+		"float_delivery_fee": 2.5,
+		"float_minimum_order_amount": 15.0,
+		"id": "E17526666992799898431",
+		"image_path": "c64802da961fd1501c593d54ed529acfjpeg",
+		"name": "森伯SIMPLE.TEA(西南财大店)",
+		"next_business_time": "明天 10:40",
+		"rating": 4.9,
+		"recent_order_num": 77,
+		"scheme": "https://h5.ele.me/shop/#id=E17526666992799898431",
+		"tags": [{
+			"background": null,
+			"id": null,
+			"name": "满减",
+			"name_color": "FA7047"
+		}, {
+			"background": null,
+			"id": null,
+			"name": "蜂鸟",
+			"name_color": "2395FF"
+		}],
+		"type": 0
+	}, {
+		"distance": 477,
+		"float_delivery_fee": 0.0,
+		"float_minimum_order_amount": 80.0,
+		"id": "E15683700399929571902",
+		"image_path": "41F412361CA44AEC8F2B003B8F8744ADjpeg",
+		"name": "GANSO元祖蛋糕(温江德坤广场店)",
+		"next_business_time": "明天 8:00",
+		"rating": 4.8,
+		"recent_order_num": 55,
+		"scheme": "https://h5.ele.me/shop/#id=E15683700399929571902",
+		"tags": [{
+			"background": null,
+			"id": null,
+			"name": "满减",
+			"name_color": "FA7047"
+		}],
+		"type": 0
+	}],
+	"schema": "",
+	"search_word": "s",
+	"word_with_meta": [{
+		"restaurant_num": null,
+		"word": "三个先森的韩国炸鸡"
+	}, {
+		"restaurant_num": null,
+		"word": "水"
+	}, {
+		"restaurant_num": null,
+		"word": "食"
+	}, {
+		"restaurant_num": null,
+		"word": "三华李"
+	}, {
+		"restaurant_num": null,
+		"word": "三得利乌龙茶"
+	}, {
+		"restaurant_num": null,
+		"word": "烧"
+	}, {
+		"restaurant_num": null,
+		"word": "蒜"
+	}, {
+		"restaurant_num": null,
+		"word": "三得利"
+	}, {
+		"restaurant_num": null,
+		"word": "塑"
+	}],
+	"words": ["三个先森的韩国炸鸡", "水", "食", "三华李", "三得利乌龙茶", "烧", "蒜", "三得利", "塑"]
+}
 
 export default {
 	NAV_LIST_DATA,
@@ -7200,5 +7342,7 @@ export default {
 	CATEGORE_DATA,
 	STORE_lIST_DATA_1,
 	STORE_lIST_DATA_2,
-	STORE_lIST_DATA_3
+	STORE_lIST_DATA_3,
+	HOT_SEARCH,
+	SEARCH_CUE
 }

@@ -82,6 +82,8 @@
 			<view
 			 v-if="login"
 			 class="flex-direction login store-list flex-sub">
+			 
+				<!-- store-list-item S -->
 				<view 
 				v-for="(item,index) in storeListData"
 				:key="index"
@@ -218,7 +220,11 @@
 					<!-- 店铺详情 E -->
 					
 				</view>
+				<!-- store-list-item E -->
 				
+				<view class="list-end align-center justify-center">
+					<view class="cu-load" :class="hasNext?'loading':'over'"></view>
+				</view>
 			</view>
 			<!-- 登录 E -->
 			
@@ -403,6 +409,15 @@
 		
 		<!-- 弹窗部分 E -->
 		
+		<!-- 回到顶部按钮 S -->
+		<view
+		v-show="gotopShow"
+		@tap.stop.prevent="gotop"
+		 class="gotop round bg-white border border-lg border-color-e justify-center align-center">
+			<text class="lg text-gray cuIcon-top text-xxl"></text>
+		</view>
+		<!-- 回到顶部按钮 E -->
+		
 	</view>
 </template>
 
@@ -423,6 +438,7 @@
 				categoryData:[], // 分类列表呈现时使用的数据
 				categotyID:null, // 锚点定位id
 				storeListData:[], // 登录后要显示的商铺列表数据
+				hasNext:false, // 是否还存在下一组数据
 				// 商铺分类列表
 				storeNavList: [], // 商铺导航栏数据
 				// 记录当前页面状态
@@ -435,12 +451,45 @@
 				elementInfo:{}, // 存储元素的基本信息
 				style:{}, // 元素的style样式
 				storeMaskIndex:null, // 控制店铺的遮罩开闭
+				gotopShow: false, // 控制回到顶部按钮的显示与隐藏
 			}
 		},
 		components:{noLogin},
 		onPageScroll(e) {
 			if(this.storeMaskIndex || this.storeMaskIndex == 0){
 				this.storeMaskIndex = null;
+			}
+			
+			if(e.scrollTop > 350){
+				this.gotopShow = true;
+			}else{
+				this.gotopShow = false;
+			}
+		}
+		,
+		onReachBottom(){
+			// console.log('滑到底部了');
+			// 发起请求获取新的数据
+			
+			
+			// 模拟请求过程
+			if(this.hasNext){
+				setTimeout(()=>{
+					if(this.storeListData.length>8){
+						this.storeListData = [
+								...this.storeListData,
+								...this.$t_d.STORE_lIST_DATA_3.items
+							];
+						this.hasNext = this.$t_d.STORE_lIST_DATA_3.has_next;
+						return;
+					}
+					
+					this.storeListData = [
+							...this.storeListData,
+							...this.$t_d.STORE_lIST_DATA_2.items
+						];
+					this.hasNext = this.$t_d.STORE_lIST_DATA_2.has_next;
+				},500);
 			}
 		}
 		,
@@ -495,6 +544,7 @@
 			
 			if(this.login){
 				this.storeListData = [...this.$t_d.STORE_lIST_DATA_1.items];
+				this.hasNext = this.$t_d.STORE_lIST_DATA_1.has_next;
 			}
 			
 		}
@@ -517,6 +567,16 @@
 		}
 		,
 		methods:{
+			/**
+			 * 回到页面顶部
+			 */
+			gotop(){
+				uni.pageScrollTo({
+					duration:0,
+					scrollTop:0
+				})
+			}
+			,
 			/**
 			 * 跳转到用户点击的店铺主页
 			 * @param {Object} index
@@ -917,5 +977,13 @@
 		0%{transform: rotate(180deg);}
 		50%{transform: rotate(90deg);}
 		100%{transform: rotate(0deg);}
+	}
+	
+	.gotop{
+		position: fixed;
+		bottom: 140rpx;
+		right: 30rpx;
+		height: 85rpx;
+		width: 85rpx;
 	}
 </style>

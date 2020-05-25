@@ -5514,7 +5514,7 @@ export const STORE_lIST_DATA_2 = {
 	}
 };
 export const STORE_lIST_DATA_3 = {
-	"has_next": true,
+	"has_next": false,
 	"items": [{
 		"restaurant": {
 			"act_tag": 0,

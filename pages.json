@@ -46,7 +46,8 @@
 		}, {
 			"path": "pages/search/search",
 			"style": {
-				"navigationBarTitleText": "搜索页"
+				"navigationBarTitleText": "搜索页",
+				"navigationStyle": "custom"
 			}
 		}, {
 			"path": "pages/categoryList/categoryList",

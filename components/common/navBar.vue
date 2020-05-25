@@ -12,23 +12,43 @@
 		<!-- 当前位置信息 E -->
 		
 		<!-- 搜索框 S -->
-		<navigator url="/pages/search/search" 
+		<view
+		@tap="searchTap"
 		class="search flex vs-space-center vs-align-center font-30 color-black9">
 			<svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-fangdajing"></use></svg>
 			<text class="search-text color-black9">搜索饿了么商家、商品名称</text>
-		</navigator>
+		</view>
 		<!-- 搜索框 E -->
 	</view>
 </template>
 
 <script>
+	import {mapState} from 'vuex';
 	export default {
+		name:'navbar',
 		data() {
 			return {
 				key: 'value'
 			}
 		},
-		props:['address','hideAddress']
+		props:['address','hideAddress'],
+		computed:{
+			...mapState(['login'])
+		},
+		methods:{
+			searchTap(){
+				if(this.login){
+					uni.navigateTo({
+						 url:'/pages/search/search' 
+					})
+					return;
+				}
+				
+				uni.navigateTo({
+					url:'/pages/login/login'
+				})
+			}
+		}
 	}
 </script>
 

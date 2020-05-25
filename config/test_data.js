@@ -7107,6 +7107,91 @@ export const STORE_lIST_DATA_3 = {
 		}
 	}
 }
+
+// 热门搜索
+export const HOT_SEARCH = [{
+	"isHighlight": 0,
+	"link": null,
+	"searchWord": null,
+	"source": null,
+	"type": null,
+	"url": null,
+	"word": "茶百道"
+}, {
+	"isHighlight": 0,
+	"link": null,
+	"searchWord": null,
+	"source": null,
+	"type": null,
+	"url": null,
+	"word": "一点点"
+}, {
+	"isHighlight": 0,
+	"link": null,
+	"searchWord": null,
+	"source": null,
+	"type": null,
+	"url": null,
+	"word": "曹氏鸭脖"
+}, {
+	"isHighlight": 0,
+	"link": null,
+	"searchWord": null,
+	"source": null,
+	"type": null,
+	"url": null,
+	"word": "蜜雪冰城"
+}, {
+	"isHighlight": 0,
+	"link": null,
+	"searchWord": null,
+	"source": null,
+	"type": null,
+	"url": null,
+	"word": "奶茶"
+}, {
+	"isHighlight": 0,
+	"link": null,
+	"searchWord": null,
+	"source": null,
+	"type": null,
+	"url": null,
+	"word": "好利来"
+}, {
+	"isHighlight": 0,
+	"link": null,
+	"searchWord": null,
+	"source": null,
+	"type": null,
+	"url": null,
+	"word": "螺蛳粉"
+}, {
+	"isHighlight": 0,
+	"link": null,
+	"searchWord": null,
+	"source": null,
+	"type": null,
+	"url": null,
+	"word": "星巴克"
+}, {
+	"isHighlight": 0,
+	"link": null,
+	"searchWord": null,
+	"source": null,
+	"type": null,
+	"url": null,
+	"word": "黄焖鸡"
+}, {
+	"isHighlight": 0,
+	"link": null,
+	"searchWord": null,
+	"source": null,
+	"type": null,
+	"url": null,
+	"word": "冰粉"
+}]
+
+
 export default {
 	NAV_LIST_DATA,
 	INDEX_SORT_DATA,

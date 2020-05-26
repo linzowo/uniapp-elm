@@ -87,7 +87,7 @@
 					</view>
 					
 					<!-- nav S -->
-					<view 
+					<!-- <view 
 					class="content-list-tab-box bg-white"
 					>
 						<scroll-view scroll-x class="bg-white nav">
@@ -108,24 +108,29 @@
 								</view>
 							</view>
 						</scroll-view>
-					</view>
+					</view> -->
 					<!-- nav E -->
 					
 					<!-- body S -->
-					<view class="content-list-body justify-center">
+					<!-- <view class="content-list-body justify-center"> -->
 						<!-- 已登录 S -->
-						<view 
+						<!-- <view 
 						v-if="loggedIn"
-						class="logged-in margin-lr-sm"></view>
+						class="logged-in margin-lr-sm"></view> -->
 						<!-- 已登录 E -->
 						
 						<!-- 未登录 S -->
-						<noLogin v-if="!loggedIn"></noLogin>
+						<!-- <noLogin v-if="!loggedIn"></noLogin> -->
 						<!-- 未登录 E -->
 						
 						
-					</view>
+					<!-- </view> -->
 					<!-- body E -->
+					
+					<store-list 
+					:nav-style="{top:'60px'}"
+					:showGotop="false"
+					></store-list>
 					
 				</view>
 				<!-- 店铺列表区 E -->
@@ -280,6 +285,10 @@
 		
 		<!-- 弹窗部分 E -->
 		
+		<!-- 回到顶部模块 S -->
+		<gotop :scrollTop="old.scrollTop"></gotop>
+		<!-- 回到顶部模块 E -->
+		
 	</scroll-view>
 </template>
 
@@ -300,6 +309,10 @@ import navBar from '@/components/common/navBar.vue';
 import addressPage from '@/pages/address/address.vue';
 // 未登录模块
 import noLogin from '@/components/noLogin/noLogin.vue';
+// 店铺排序筛选模块
+import storeList from '@/components/store-list/store-list.vue'; 
+// 回到顶部工具
+import gotop from '@/components/common/gotop.vue';
 
 // 引入官方组件
 import uniPopup from '@/components/uni-popup/uni-popup.vue';
@@ -313,7 +326,7 @@ import uniPopup from '@/components/uni-popup/uni-popup.vue';
  * @property {Component} addressPage 地址管理模块
  * @property {Component} uniPopup uni组件-弹出层
  */
-const components = { noPosition,navBar,uniPopup,addressPage,noLogin };
+const components = { noPosition,navBar,uniPopup,addressPage,noLogin,storeList,gotop };
 
 
 /**

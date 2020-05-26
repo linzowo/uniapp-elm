@@ -5,7 +5,6 @@
 		<!-- 分类筛选nav S -->
 		<view 
 		class="content-list-tab-box bg-white flex-sub"
-		:style="navStyle"
 		>
 			<scroll-view scroll-x class="nav">
 				<view class="flex text-center">
@@ -33,8 +32,10 @@
 		
 		<scroll-view 
 		@scrolltolower="getMore"
+		@scroll="listScroll"
 		scroll-y
-		:style="{height:'calc(100vh - 6.8vh - '+ navStyle.top +')'}"
+		:scroll-top="scrollTop"
+		:style="{height:'calc(100vh - 6.8vh - '+ (navStyle.top || '0px') +' - env(safe-area-inset-bottom))'}"
 		class="content-box flex-sub">
 			
 			<!-- 未登录 S -->
@@ -309,6 +310,11 @@
 		</uni-popup>
 		<!-- 筛选及排序弹窗 S -->
 		
+		<!-- 回到顶部模块 S -->
+		<gotop 
+		v-if="showGotop"
+		:scrollTop="pageScroll" :gotopFn="goTop"></gotop>
+		<!-- 回到顶部模块 E -->
 		
 	</view>
 </template>
@@ -320,6 +326,9 @@
 	
 	
 	import {mapState,mapMutations} from 'vuex';
+	
+	// 回到顶部工具
+	import gotop from '@/components/common/gotop.vue';
 	
 	// 未登录模块
 	import noLogin from '@/components/noLogin/noLogin.vue';
@@ -344,15 +353,23 @@
 				storeMaskIndex:null, // 控制店铺的遮罩开闭
 				gotopShow: false, // 控制回到顶部按钮的显示与隐藏
 				zIndexControl: false, // 控制导航栏的层级
+				pageScroll:0, // 用于控制回到顶部按钮显示的
+				scrollTop: 0,
 			}
 		},
-		components:{noLogin},
+		components:{noLogin,gotop},
 		props:{
 			navStyle:{
 				type: Object,
 				default(){
-					return {}
+					return {
+						top:'0px'
+					}
 				}
+			},
+			showGotop:{
+				type: Boolean,
+				default: true
 			}
 		},
 		computed:{
@@ -408,6 +425,18 @@
 		}
 		,
 		methods:{
+			
+			goTop(e) {
+				this.scrollTop = this.pageScroll
+				this.$nextTick(function() {
+					this.scrollTop = 0
+				});
+			}
+			,
+			listScroll(e){
+				this.pageScroll = e.detail.scrollTop;
+			}
+			,
 			/**
 			 * 当页面滑动底部时触发获取更多列表数据
 			 */

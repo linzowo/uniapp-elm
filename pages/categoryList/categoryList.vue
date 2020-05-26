@@ -117,10 +117,6 @@
 		
 		<!-- 弹窗部分 E -->
 		
-		<!-- 回到顶部模块 S -->
-		<gotop :scrollTop="pageScroll"></gotop>
-		<!-- 回到顶部模块 E -->
-		
 	</view>
 </template>
 
@@ -133,8 +129,6 @@
 	
 	// 店铺排序筛选模块
 	import storeList from '@/components/store-list/store-list.vue'; 
-	// 回到顶部工具
-	import gotop from '@/components/common/gotop.vue';
 	
 	export default {
 		name:'categoryList',
@@ -155,11 +149,9 @@
 				popupStack:[], // 弹窗栈用于帮助用户关闭多个弹窗
 				elementInfo:{}, // 存储元素的基本信息
 				style:{}, // 元素的style样式
-				pageScroll:0, // 页面的滚动距离用于控制回到顶部按钮显示与隐藏
-				reachBottom: false, // 记录页面是否到达底部
 			}
 		},
-		components:{storeList,gotop},
+		components:{storeList},
 		computed:{
 			...mapState([
 				'login'
@@ -210,10 +202,6 @@
 			// this.style.categoryContainer = {
 			// 			paddingTop: this.navBarInfo.bottom + 'px',
 			// 		}
-		}
-		,
-		onPageScroll(e) {
-			this.pageScroll = e.scrollTop;
 		}
 		,
 		methods:{

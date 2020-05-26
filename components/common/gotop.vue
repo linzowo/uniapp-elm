@@ -24,6 +24,10 @@
 				targetTop:{
 					type: Number,
 					default:350
+				},
+				gotopFn:{
+					type: Function,
+					default: null
 				}
 			}
 		,
@@ -48,6 +52,11 @@
 					duration:0,
 					scrollTop:0
 				})
+				
+				if(this.gotopFn) {
+					this.gotopFn();
+				}
+				
 			}
 		}
 	}

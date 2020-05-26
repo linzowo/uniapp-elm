@@ -1,7 +1,7 @@
 <template>
 	<view 
 	class="category-container flex-direction"
-	:style="style.categoryContainer"
+	:style="{paddingTop:'50px'}"
 	>
 		
 		<!-- navBar S -->
@@ -38,315 +38,23 @@
 			</view>
 			<!-- 顶部自定义导航栏 E -->
 			
-			<!-- 分类筛选nav S -->
-			<view 
-			class="content-list-tab-box bg-white flex-sub"
-			>
-				<scroll-view scroll-x class="nav">
-					<view class="flex text-center">
-						<view 
-						class="cu-item flex-sub" 
-						:class="item.selected?'text-orange cur':''" v-for="(item,index) in storeNavList" 
-						:key="index" 
-						@tap="tabSelect" 
-						:data-id="index">
-							<text>{{item.title}}</text>
-							<svg 
-							v-if="index == 0"
-							class="icon-svg text-xs " aria-hidden="true"><use xlink:href="#icon-sanjiao"></use></svg>
-							<text 
-							v-if="index == 3"
-							class="lg" :class="'cuIcon-filter'"></text>
-						</view>
-					</view>
-				</scroll-view>
-			</view>
-			<!-- 分类筛选nav E -->
-			
 		</view>
 		<!-- navBar E -->
 		
 		<!-- content S -->
-		
-		<view class="content-box flex-sub">
-			
-			<!-- 未登录 S -->
-			<view 
-			v-if="!login"
-			class="login-no flex-direction align-center flex-sub justify-center padding-top">
-				<noLogin></noLogin>
-			</view>
-			<!-- 未登录 E -->
-			
-			<!-- 登录 S -->
-			<view
-			 v-if="login"
-			 class="flex-direction login store-list flex-sub">
-			 
-				<!-- store-list-item S -->
-				<view 
-				v-for="(item,index) in storeListData"
-				:key="index"
-				@tap="gotoStoreIndex(index)"
-				class="store-list-item padding-tb padding-lr-sm border-bottom border-color-e align-start flex-sub">
-					<!-- 遮罩层 S -->
-					<view 
-					v-show="index == storeMaskIndex"
-					@tap.stop.prevent="controlStoreMask(index)"
-					class="store-item-mask align-center justify-center">
-						<text 
-						@tap.stop.prevent="dislikeStore(index)"
-						class="store-item-mask-btn round bg-white text-xs text-center">不喜欢</text>
-					</view>
-					<!-- 遮罩层 E -->
-					
-					<!-- 店铺封面 S -->
-					<image 
-					class="store-cover margin-right-xs" 
-					:src="item.restaurant.image_path|imgUrlFilter" 
-					mode="widthFix"></image>
-					<!-- 店铺封面 E -->
-					
-					<!-- 店铺详情 S -->
-					<view class="store-info-box flex-direction flex-sub">
-						
-						<!-- 店铺名称 S -->
-						<view class="store-title flex-sub align-center justify-between">
-							<view class="">
-								<text 
-								v-if="item.restaurant.brand_id"
-								class="ele-tag bg-tag-color-yellow">品牌</text>
-								<text
-								class="text-cut store-title-text text-bold flex-sub"
-								>{{item.restaurant.name}}
-								</text>
-							</view>
-							
-							<view
-							@tap.stop.prevent="controlStoreMask(index)"
-							 class="dont-like-btn padding-left">
-								<text class="lg text-gray cuIcon-more"></text>
-							</view>
-						</view>
-						<!-- 店铺名称 E -->
-						
-						<!-- 店铺销售及评价情况 S -->
-						<view class="store-star padding-tb-xs justify-between">
-							<view class="left align-center">
-								<!-- star S -->
-								<view class="star-box star-size">
-									<view class="star-bg">
-										<image class="star-size" :src="$i_u.star_bg" mode="left"></image>
-									</view>
-									<view 
-									class="star"
-									:style="{width:parseInt(120 * (item.restaurant.rating/5)) + 'rpx'}"
-									>
-										<image class="star-size" :src="$i_u.star" mode="left"></image>
-									</view>
-								</view>
-								<!-- star E -->
-								
-								<!-- rate S -->
-								<text class="text-scale-9 text-sm text-color-6 margin-lr-xs">{{item.restaurant.rating}}</text>
-								<!-- rate E -->
-								
-								<!-- 销售量 S -->
-								<text class="text-scale-9 text-sm text-color-6">月售{{item.restaurant.recent_order_num}}单</text>
-								<!-- 销售量 E -->
-							</view>
-							
-							<view
-							v-if="item.restaurant.delivery_mode"
-							 class="right">
-								<text 
-								:style="{
-										color:'#'+item.restaurant.delivery_mode.text_color,
-										backgroundColor:'#'+item.restaurant.delivery_mode.color
-									}"
-								class="text-scale-8 text-sm padding-lr-xs">{{item.restaurant.delivery_mode.text}}</text>
-							</view>
-							
-						</view>
-						<!-- 店铺销售及评价情况 E -->
-						
-						<!-- 配送相关信息 S -->
-						<view class="text-xs store-distance-box text-color-6 justify-between align-center">
-							<view class="text-scale-9 left align-center">
-								<text>￥{{item.restaurant.float_minimum_order_amount}}起送</text>
-								<text class="margin-lr-xs text-color-d">|</text>
-								<text>配送￥{{item.restaurant.float_delivery_fee}}</text>
-							</view>
-							<view class="text-scale-9 right align-center text-color-9">
-								<text>{{item.restaurant.distance|distaceFilter}}</text>
-								<text class="margin-lr-xs text-color-d">|</text>
-								<text>{{item.restaurant.order_lead_time}}分钟</text>
-							</view>
-						</view>
-						<!-- 配送相关信息 E -->
-						
-						<!-- 店铺分类 S -->
-						<view class="">
-							<text class="text-scale-8 store-categroy text-color-6 text-xs margin-tb-xs text-xs border border-color-e">{{item.restaurant.flavors[0].name}}</text>
-						</view>
-						<!-- 店铺分类 E -->
-						
-						<!-- 店铺促销活动 S -->
-						<view class="store-activities text-color-6 flex-sub text-xs align-start">
-							<view class="active-left flex-direction text-scale-9">
-								<view 
-								v-for="(e,i) in item.restaurant.act_tag ? item.restaurant.activities : item.restaurant.activities.slice(0,2)"
-								:key="e.id"
-								class="activities-item align-center margin-tb-xs">
-									<text class="radius active-tag text-xs margin-right-xs color-white"
-									:style="{backgroundColor:'#'+e.icon_color}"
-									>{{e.icon_name}}</text>
-									<text class="text-cut">{{e.tips}}</text>
-								</view>
-							</view>
-							<view 
-							v-if="item.restaurant.activities.length>2"
-							@tap.stop.prevent="showMoreActive(index)"
-							class="active-right margin-tb-xs text-color-9 justify-end align-center">
-								<text class="text-scale-9">{{item.restaurant.activities.length}}个活动</text>
-								<text 
-								:class="[item.restaurant.act_tag?'animation-rotate':'']"
-								class="active-icon text-df lg text-gray cuIcon-triangledownfill"></text>
-							</view>
-						</view>
-						<!-- 店铺促销活动 E -->
-						
-					</view>
-					<!-- 店铺详情 E -->
-					
-				</view>
-				<!-- store-list-item E -->
-				
-				<view class="list-end align-center justify-center">
-					<view class="cu-load" :class="hasNext?'loading':'over'"></view>
-				</view>
-			</view>
-			<!-- 登录 E -->
-			
-		</view>
+		<store-list 
+		:nav-style="{top:'50px'}"
+		></store-list>
 		<!-- content E -->
 		
 		<!-- 弹窗部分 S -->
-		
-		<!-- 筛选及排序弹窗 S -->
-		<uni-popup 
-		ref="filterBarPopup" 
-		:type="'top'"
-		@change="popupChange"
-		:animation="false"
-		class="filter-bar-popup-box"
-		:positionTop="{top: navBarInfo.bottom + 'px'}"
-		>
-			<view class="bg-white flex-sub flex-direction">
-				
-				<!-- 弹窗主体 S -->
-				<view 
-				class="filter-list flex-sub solids-top"
-				>
-					
-					<!-- 排序选项 S -->
-					<view
-					v-if="storeNavList[0].selected"
-					 class="cu-list menu flex-sub order-box">
-						<view 
-						v-for="(item,index) in storeNavList[0].list"
-						:key="item.name+index"
-						@tap="orderTap(index)"
-						class="cu-item"
-						:class="storeNavList[0].listSelected ? 
-										(storeNavList[0].listSelectedIndex == index ? 
-												'text-blue':'' ) : ''"
-						>
-							<view class="content">
-								<text class="text-sm">{{item.name}}</text>
-							</view>
-							<view 
-							v-if="storeNavList[0].listSelected && storeNavList[0].listSelectedIndex == index"
-							class="action">
-								<text class="cuIcon-check text-lg"></text>
-							</view>
-						</view>
-					</view>
-					<!-- 排序选项 S -->
-					
-					<!-- 筛选选项 S -->
-					<view 
-					v-else
-					class="flex-sub flex-direction">
-						<view 
-						v-for="(filterValue,name,index) in storeNavList[3].list"
-						:key="index"
-						class="margin-lr-sm flex-direction flex-sub">
-							<text class="text-sm padding-tb-sm">
-								{{['商家服务（可多选）','优惠活动（单选）','人均消费'][index]}}
-							</text>
-							<view 
-							class="cu-list grid col-3 no-border" 
-							:style="{paddingLeft:0,paddingRight:0,paddingTop:0}">
-								<view 
-								v-for="(item,i) in filterValue"
-								:key="i"
-								@tap="filterTap(name,i)"
-								class="cu-item"
-								:style="{padding:0}"
-								>
-									<view 
-									class="margin-top-xs align-center bg-grey-fa margin-right-xs padding-tb-xs justify-center" 
-									:class="[
-										index == 0 ? 
-										(storeNavList[3].selectedIndex[name].includes(i) ? 'cur-item':'') : 
-										(i == storeNavList[3].selectedIndex[name] ? 'cur-item':'')
-										]"
-										>
-										<image 
-										v-if="item.icon_url"
-										class="bar-icon"
-										:src="item.icon_url" mode="aspectFit"></image>
-										{{item.text || item.name || item}}
-									</view>
-								</view>
-							</view>
-						</view>
-						
-						<!-- 按钮 S -->
-						<view class="flex-sub">
-							<text 
-							class="flex-sub bg-white padding solid shadow text-center"
-							:class="
-							storeNavList[3].selectedIndex.filterDataSupports.length ||
-							storeNavList[3].selectedIndex.filterDataActivity != -1 || 
-							storeNavList[3].selectedIndex.averagePrice != -1 ? 
-							'' : 'ban-click'"
-							@tap="storeNavBtnTap('clear')"
-							>清空</text>
-							<text 
-							class="flex-sub bg-green padding solid shadow text-center"
-							@tap="storeNavBtnTap('ok')"
-							>确定</text>
-						</view>
-						<!-- 按钮 E-->
-					</view>
-					
-					<!-- 筛选选项 E -->
-					
-				</view>
-				<!-- 弹窗主体 S -->
-			</view>
-		
-		</uni-popup>
-		<!-- 筛选及排序弹窗 S -->
 		
 		<!-- nav弹窗 S -->
 		<uni-popup
 		ref="filterCategoryPopup" 
 		:type="'top'"
 		@change="popupChange"
-		:animation="false"
+		:animation="true"
 		class="filter-bar-popup-box"
 		>
 			<view class="category-box flex-direction">
@@ -409,23 +117,25 @@
 		
 		<!-- 弹窗部分 E -->
 		
-		<!-- 回到顶部按钮 S -->
-		<view
-		v-show="gotopShow"
-		@tap.stop.prevent="gotop"
-		 class="gotop round bg-white border border-lg border-color-e justify-center align-center">
-			<text class="lg text-gray cuIcon-top text-xxl"></text>
-		</view>
-		<!-- 回到顶部按钮 E -->
+		<!-- 回到顶部模块 S -->
+		<gotop :scrollTop="pageScroll"></gotop>
+		<!-- 回到顶部模块 E -->
 		
 	</view>
 </template>
 
 <script>
+	/**
+	 * @module category-list 店铺分类列表页面
+	 */
 	
-	// 未登录模块
-	import noLogin from '@/components/noLogin/noLogin.vue';
 	import {mapState,mapMutations} from 'vuex';
+	
+	// 店铺排序筛选模块
+	import storeList from '@/components/store-list/store-list.vue'; 
+	// 回到顶部工具
+	import gotop from '@/components/common/gotop.vue';
+	
 	export default {
 		name:'categoryList',
 		data() {
@@ -437,62 +147,19 @@
 				categorySelected:[0,0], // 类别矩阵 标识当前选中的是第几个大类中的第几个小类
 				categoryData:[], // 分类列表呈现时使用的数据
 				categotyID:null, // 锚点定位id
-				storeListData:[], // 登录后要显示的商铺列表数据
-				hasNext:false, // 是否还存在下一组数据
-				// 商铺分类列表
-				storeNavList: [], // 商铺导航栏数据
 				// 记录当前页面状态
 				pageState:{
 					login:false, // 登录状态
-					storeNavSelected:false, // 店铺导航栏的nav是否被选中
 					navBtnSelected:false, // 自定义顶部nav按钮被选中
 				}, 
 				popupStack:[], // 弹窗栈用于帮助用户关闭多个弹窗
 				elementInfo:{}, // 存储元素的基本信息
 				style:{}, // 元素的style样式
-				storeMaskIndex:null, // 控制店铺的遮罩开闭
-				gotopShow: false, // 控制回到顶部按钮的显示与隐藏
+				pageScroll:0, // 页面的滚动距离用于控制回到顶部按钮显示与隐藏
+				reachBottom: false, // 记录页面是否到达底部
 			}
 		},
-		components:{noLogin},
-		onPageScroll(e) {
-			if(this.storeMaskIndex || this.storeMaskIndex == 0){
-				this.storeMaskIndex = null;
-			}
-			
-			if(e.scrollTop > 350){
-				this.gotopShow = true;
-			}else{
-				this.gotopShow = false;
-			}
-		}
-		,
-		onReachBottom(){
-			// console.log('滑到底部了');
-			// 发起请求获取新的数据
-			
-			
-			// 模拟请求过程
-			if(this.hasNext){
-				setTimeout(()=>{
-					if(this.storeListData.length>8){
-						this.storeListData = [
-								...this.storeListData,
-								...this.$t_d.STORE_lIST_DATA_3.items
-							];
-						this.hasNext = this.$t_d.STORE_lIST_DATA_3.has_next;
-						return;
-					}
-					
-					this.storeListData = [
-							...this.storeListData,
-							...this.$t_d.STORE_lIST_DATA_2.items
-						];
-					this.hasNext = this.$t_d.STORE_lIST_DATA_2.has_next;
-				},500);
-			}
-		}
-		,
+		components:{storeList,gotop},
 		computed:{
 			...mapState([
 				'login'
@@ -507,14 +174,6 @@
 			 * @param {Object} o
 			 */
 			pageState(n,o){
-				if(n.storeNavSelected !== o.storeNavSelected){
-					if(n.storeNavSelected){
-						// 打开筛选弹窗
-						this.openPopup('filterBarPopup');
-					}else{
-						this.closePopup('filterBarPopup');
-					}
-				}
 				
 				if(n.navBtnSelected !== o.navBtnSelected){
 					if(n.navBtnSelected){
@@ -542,104 +201,22 @@
 			
 			this.storeNavList = this.$t_d.STORE_FILTER_DATA;
 			
-			if(this.login){
-				this.storeListData = [...this.$t_d.STORE_lIST_DATA_1.items];
-				this.hasNext = this.$t_d.STORE_lIST_DATA_1.has_next;
-			}
-			
 		}
 		,
 		mounted() {
-			this.navBarInfo = this.$utils.getElementInfo('.nav-bar');
+			// this.navBarInfo = this.$utils.getElementInfo('.nav-bar');
 			
-			this.style.categoryContainer = {
-						paddingTop: this.navBarInfo.bottom + 'px',
-					}
+			// console.log(this.navBarInfo.bottom + 'px');
+			// this.style.categoryContainer = {
+			// 			paddingTop: this.navBarInfo.bottom + 'px',
+			// 		}
 		}
 		,
-		filters:{
-			distaceFilter(o){
-				return o > 1000 ? (o/1000).toFixed(2) + 'km' : o + 'm';
-			}
+		onPageScroll(e) {
+			this.pageScroll = e.scrollTop;
 		}
 		,
 		methods:{
-			/**
-			 * 回到页面顶部
-			 */
-			gotop(){
-				uni.pageScrollTo({
-					duration:0,
-					scrollTop:0
-				})
-			}
-			,
-			/**
-			 * 跳转到用户点击的店铺主页
-			 * @param {Object} index
-			 */
-			gotoStoreIndex(index){
-				this.$utils.log('gotoStoreIndex','跳转到用户点击的店铺主页'+index);
-				
-				uni.navigateTo({
-					url:'/pages/storeIndex/storeIndex'
-				})
-			}
-			,
-			/**
-			 * 不喜欢该店铺
-			 * @param {Number} index 店铺索引值
-			 */
-			dislikeStore(index){
-				this.$utils.log('dislikeStore','不喜欢该店铺'+index);
-				
-				// 发起不喜欢请求
-				
-				// 将店铺从当前列表移除
-				this.storeListData.splice(index,1);
-				
-				// 关闭遮罩
-				this.controlStoreMask(index);
-			}
-			,
-			/**
-			 * 控制店铺遮罩层的打开关闭
-			 * @param {Number} index 店铺索引值
-			 */
-			controlStoreMask(index){
-				this.$utils.log('controlStoreMask','控制遮罩的开关');
-				if(this.storeMaskIndex == index){
-					this.storeMaskIndex = null;
-					return;
-				}
-				
-				this.storeMaskIndex = index;
-			}
-			,
-			/**
-			 * 控制是否显示更多活动
-			 * @param {Number} index 店铺索引值
-			 */
-			showMoreActive(index){
-				this.storeListData[index].restaurant.act_tag = this.storeListData[index].restaurant.act_tag ? 0 : 1;
-			}
-			,
-			/**
-			 * 用于过滤当前要展示的店铺活动数量
-			 * 初始情况下默认展示2个
-			 * 当用户点击下拉按钮显示全部
-			 * @param {Number} index 当前店铺索引值
-			 */
-			activeFilter(index){
-				let item = this.storeListData[index].restaurant;
-				
-				if(item.act_more){
-					return item.activities;
-				}
-				
-				return item.activities.slice(0,2);
-			}
-			,
 			/**
 			 * 切换顶部分类列表
 			 * @param {Object} e
@@ -686,38 +263,6 @@
 				this.categotyID = 'cu-item'+this.TabCur;
 			}
 			,
-			/**
-			 * 切换排序和筛选标记
-			 * @param {Object} e
-			 */
-			tabSelect(e) {
-				this.$utils.log('tabSelect','切换商家排序筛选导航的选项');
-				// 用户唤起弹窗后再次点击相同的元素时，直接关闭弹窗
-				if(this.storeNavList[e.currentTarget.dataset.id].selected && this.pageState.storeNavSelected){
-					// 改变页面状态
-					this.changePageState({storeNavSelected:false});
-					return;
-				}
-				
-				// 将所有nav的状态切换为未选中
-				this.storeNavList.forEach(ele=>{
-					ele.selected = false;
-				});
-				
-				// 将用户选择的元素设置为选中状态
-				this.$set(this.storeNavList[e.currentTarget.dataset.id],'selected',true);
-				
-				// console.log(e.currentTarget);
-				// 开关筛选弹窗
-				// 通用排序被点击
-				if(e.currentTarget.dataset.id==0 || e.currentTarget.dataset.id==3){
-					// 改变页面状态
-					this.changePageState({storeNavSelected:true});
-				}else{
-					// 改变页面状态
-					this.changePageState({storeNavSelected:false});
-				}
-			},
 			/**
 			 * 改变页面状态的方法，页面所有的状态改变都在这里进行
 			 * @param {Object} state
@@ -766,83 +311,6 @@
 				this.$utils.log('closePopup','关闭弹窗'+ref);
 				this.$refs[ref].close();
 			}
-			,
-			/**
-			 * 点击选择排序方式
-			 * @param {Number} index 当前选中元素索引值
-			 */
-			orderTap(index){
-				this.$utils.log('orderTap','选择排序方式',this.storeNavList[0].list[index].name);
-				this.storeNavList[0].listSelected = true;
-				this.storeNavList[0].listSelectedIndex = index;
-				this.storeNavList[0].title = this.storeNavList[0].list[index].name;
-			}
-			,
-			/**
-			 * 点击选择筛选方式
-			 * @param {String} key 当前的分类名
-			 * @param {Number} index 当前选中元素索引值
-			 */
-			filterTap(key,index){
-				this.$utils.log('filterTap','选择筛选方式');
-				// 判断是否是多选
-				if(key == 'filterDataSupports'){
-					
-					// 判断当期选中的元素是否已经存在了 存在就将其删除
-					let eleIndex = this.storeNavList[3].selectedIndex[key].findIndex(ele=>{
-						return ele == index;
-					});
-					
-					if(eleIndex !== -1){
-						this.storeNavList[3].selectedIndex[key].splice(eleIndex,1);
-						return;
-					}
-					
-					// 不存在就加入数组
-					if(this.storeNavList[3].selectedIndex[key][0] == -1){
-						this.$set(this.storeNavList[3].selectedIndex[key],0,index);
-					}else{
-						this.storeNavList[3].selectedIndex[key].push(index);
-					}
-					
-					return;
-				}
-				
-				// 非多选操作
-				if(this.storeNavList[3].selectedIndex[key] == index) {
-					this.storeNavList[3].selectedIndex[key] = -1;
-					return;
-				}
-				
-				this.storeNavList[3].selectedIndex[key] = index;
-			}
-			,
-			/**
-			 * 筛选弹窗中的按钮点击事件
-			 * @param {String} option 按钮标记，表示当前是哪个按钮触发的事件
-			 */
-			storeNavBtnTap(option){
-				this.$utils.log('storeNavBtnTap','筛选中的底部按钮点击',option);
-				// 清空当前选择项
-				if(option == 'clear'){
-					// 将已经选择的选项都清空
-					this.storeNavList[3].selectedIndex.filterDataSupports = [];
-					this.storeNavList[3].selectedIndex.filterDataActivity = -1;
-					this.storeNavList[3].selectedIndex.averagePrice = -1;
-				}
-				
-				// 确定当前选择的筛选项
-				if(option == 'ok'){
-					// 发起确定请求
-					
-					// 监听结果
-					
-					// 关闭弹窗
-					this.changePageState({storeNavSelected:false});
-					// 根据结果渲染新的列表
-				}
-			}
-			,
 		}
 	}
 </script>
@@ -855,27 +323,13 @@
 		position: fixed;
 		top: 0;
 		z-index: 999;
+		height: 50px!important;
 	}
 	.scroll-box{
 		width: 660rpx;
 	}
 	.nav-bar-btn{
 		box-shadow: -1px 2px 3px rgba($color: #000000, $alpha: .3);
-	}
-	.login-no{
-		
-	}
-	.login-img{
-		width: 400rpx;
-		height: 400rpx;
-	}
-	.bar-icon{
-		width: 24rpx;
-		height: 24rpx;
-		margin-right: 10rpx;
-	}
-	.order-box{
-		width: 750rpx;
 	}
 	.category-box{
 		width: 750rpx;
@@ -898,89 +352,4 @@
 		color: #fff;
 	}
 	
-	// 店铺列表区域样式
-	.store-list-item{
-		position: relative;
-	}
-	.store-item-mask{
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		background-color: rgba($color: #000000, $alpha: 0.5);
-		z-index: 9;
-	}
-	.store-item-mask-btn{
-		width: 100rpx;
-		height: 100rpx;
-		line-height: 100rpx;
-	}
-	.store-cover{
-		width: 128rpx;
-		height: 128rpx;
-	}
-	
-	.store-title-text{
-		font-size: 30rpx;
-	}
-	.star-size{
-		width: 120rpx;
-		height: 20rpx;
-	}
-	.star-box{
-		position: relative;
-	}
-	.star-bg{
-		position: absolute;
-		z-index: 0;
-	}
-	.star{
-		position: relative;
-		z-index: 1;
-	}
-	.store-categroy{
-		padding: 0 10rpx;
-	}
-	
-	.active-left{
-		width: 440rpx;
-	}
-	.active-right{
-		flex: 3;
-		text-align: end;
-	}
-	.active-icon{
-		height: 20rpx;
-		animation: fillRotateDown 300ms ease;
-	}
-	.active-tag{
-		padding: 0 5rpx;
-		margin: 0 10rpx 0 -10rpx;
-	}
-	
-	.animation-rotate{
-		animation: fillRotateUp 300ms ease;
-		transform: rotate(180deg);
-	}
-	
-	@keyframes fillRotateUp{
-		0%{transform: rotate(0deg);}
-		50%{transform: rotate(90deg);}
-		100%{transform: rotate(180deg);}
-	}
-	
-	@keyframes fillRotateDown{
-		0%{transform: rotate(180deg);}
-		50%{transform: rotate(90deg);}
-		100%{transform: rotate(0deg);}
-	}
-	
-	.gotop{
-		position: fixed;
-		bottom: 140rpx;
-		right: 30rpx;
-		height: 85rpx;
-		width: 85rpx;
-	}
 </style>

@@ -1,10 +1,11 @@
 <template>
 	<!-- 店铺列表组件 -->
-	<view class="store-list-container">
+	<view class="store-list-container flex-direction">
 		
 		<!-- 分类筛选nav S -->
 		<view 
 		class="content-list-tab-box bg-white flex-sub"
+		:style="navStyle"
 		>
 			<scroll-view scroll-x class="nav">
 				<view class="flex text-center">
@@ -30,7 +31,11 @@
 		
 		<!-- content S -->
 		
-		<view class="content-box flex-sub">
+		<scroll-view 
+		@scrolltolower="getMore"
+		scroll-y
+		:style="{height:'calc(100vh - 6.8vh - '+ navStyle.top +')'}"
+		class="content-box flex-sub">
 			
 			<!-- 未登录 S -->
 			<view 
@@ -190,7 +195,7 @@
 			</view>
 			<!-- 登录 E -->
 			
-		</view>
+		</scroll-view>
 		<!-- content E -->
 		
 		<!-- 弹窗部分 S -->
@@ -200,9 +205,10 @@
 		ref="filterBarPopup" 
 		:type="'top'"
 		@change="popupChange"
-		:animation="false"
+		:animation="true"
 		class="filter-bar-popup-box"
-		:positionTop="{top: navBarInfo.bottom + 'px'}"
+		:positionTop="{top: 'calc(6.8vh + ' + (navStyle.top || '0px') + ')'}"
+		:zIndex="9"
 		>
 			<view class="bg-white flex-sub flex-direction">
 				
@@ -309,7 +315,7 @@
 
 <script>
 	/**
-	 * @module 店铺列表模块
+	 * @module 店铺排序筛选列表模块
 	 */
 	
 	
@@ -330,7 +336,6 @@
 				pageState:{
 					login:false, // 登录状态
 					storeNavSelected:false, // 店铺导航栏的nav是否被选中
-					navBtnSelected:false, // 自定义顶部nav按钮被选中
 				}, 
 				popupStack:[], // 弹窗栈用于帮助用户关闭多个弹窗
 				elementInfo:{}, // 存储元素的基本信息
@@ -338,47 +343,18 @@
 				style:{}, // 元素的style样式
 				storeMaskIndex:null, // 控制店铺的遮罩开闭
 				gotopShow: false, // 控制回到顶部按钮的显示与隐藏
+				zIndexControl: false, // 控制导航栏的层级
 			}
 		},
 		components:{noLogin},
-		onPageScroll(e) {
-			if(this.storeMaskIndex || this.storeMaskIndex == 0){
-				this.storeMaskIndex = null;
+		props:{
+			navStyle:{
+				type: Object,
+				default(){
+					return {}
+				}
 			}
-			
-			if(e.scrollTop > 350){
-				this.gotopShow = true;
-			}else{
-				this.gotopShow = false;
-			}
-		}
-		,
-		onReachBottom(){
-			// console.log('滑到底部了');
-			// 发起请求获取新的数据
-			
-			
-			// 模拟请求过程
-			if(this.hasNext){
-				setTimeout(()=>{
-					if(this.storeListData.length>8){
-						this.storeListData = [
-								...this.storeListData,
-								...this.$t_d.STORE_lIST_DATA_3.items
-							];
-						this.hasNext = this.$t_d.STORE_lIST_DATA_3.has_next;
-						return;
-					}
-					
-					this.storeListData = [
-							...this.storeListData,
-							...this.$t_d.STORE_lIST_DATA_2.items
-						];
-					this.hasNext = this.$t_d.STORE_lIST_DATA_2.has_next;
-				},500);
-			}
-		}
-		,
+		},
 		computed:{
 			...mapState([
 				'login'
@@ -401,14 +377,10 @@
 						this.closePopup('filterBarPopup');
 					}
 				}
-				
-				if(n.navBtnSelected !== o.navBtnSelected){
-					if(n.navBtnSelected){
-						// 打开筛选弹窗
-						this.openPopup('filterCategoryPopup');
-					}else{
-						this.closePopup('filterCategoryPopup');
-					}
+			},
+			reachBottom(n){
+				if(n){
+					this.getMore();
 				}
 			}
 		}
@@ -427,13 +399,7 @@
 			
 		}
 		,
-		mounted() {
-			this.navBarInfo = this.$utils.getElementInfo('.nav-bar');
-			
-			// this.style.categoryContainer = {
-			// 			paddingTop: this.navBarInfo.bottom + 'px',
-			// 		}
-		}
+		mounted() { }
 		,
 		filters:{
 			distaceFilter(o){
@@ -443,13 +409,33 @@
 		,
 		methods:{
 			/**
-			 * 回到页面顶部
+			 * 当页面滑动底部时触发获取更多列表数据
 			 */
-			gotop(){
-				uni.pageScrollTo({
-					duration:0,
-					scrollTop:0
-				})
+			getMore(){
+				// console.log('滑到底部了');
+				// 发起请求获取新的数据
+				
+				
+				// 模拟请求过程
+				if(this.hasNext){
+					setTimeout(()=>{
+						if(this.storeListData.length>8){
+							this.storeListData = [
+									...this.storeListData,
+									...this.$t_d.STORE_lIST_DATA_3.items
+								];
+							this.hasNext = this.$t_d.STORE_lIST_DATA_3.has_next;
+							return;
+						}
+						
+						this.storeListData = [
+								...this.storeListData,
+								...this.$t_d.STORE_lIST_DATA_2.items
+							];
+						this.hasNext = this.$t_d.STORE_lIST_DATA_2.has_next;
+					},500);
+				}
+				
 			}
 			,
 			/**
@@ -580,10 +566,6 @@
 					if(this.pageState.storeNavSelected){
 						this.pageState.storeNavSelected = false;
 					}
-					
-					if(this.pageState.navBtnSelected){
-						this.pageState.navBtnSelected = false;
-					}
 				}
 			}
 			,
@@ -688,21 +670,15 @@
 	}
 </script>
 
-<style lang='scss' scoped>
-	page{
-		background-color: #fff;
+<style lang="scss" scoped>
+	.store-list-container{
+		position: relative;
 	}
-	.nav-bar{
-		position: fixed;
-		top: 0;
-		z-index: 999;
-	}
-	.nav-bar-btn{
-		box-shadow: -1px 2px 3px rgba($color: #000000, $alpha: .3);
-	}
-	.login-img{
-		width: 400rpx;
-		height: 400rpx;
+	.content-list-tab-box{
+		position: sticky;
+		z-index: 99;
+		height: 6.8vh!important;
+		width: 750rpx;
 	}
 	.bar-icon{
 		width: 24rpx;
@@ -712,28 +688,8 @@
 	.order-box{
 		width: 750rpx;
 	}
-	.category-box{
-		width: 750rpx;
-		height: 60vh;
-	}
-	.category-head{
-		flex: 3;
-	}
-	.category-body{
-		flex: 6;
-	}
-	.tag-text{
-		line-height: 1.5;
-		padding: 0 5px;
-		color: #999;
-	}
-	.tag-text.cur{
-		background-color: #2395ff;
-		border-color: #2395ff;
-		color: #fff;
-	}
 	
-	// 店铺列表区域样式
+	/* // 店铺列表区域样式 */
 	.store-list-item{
 		position: relative;
 	}
@@ -810,13 +766,4 @@
 		50%{transform: rotate(90deg);}
 		100%{transform: rotate(0deg);}
 	}
-	
-	.gotop{
-		position: fixed;
-		bottom: 140rpx;
-		right: 30rpx;
-		height: 85rpx;
-		width: 85rpx;
-	}
-	
 </style>

@@ -1,5 +1,10 @@
 <template>
-	<view v-if="showPopup" class="uni-popup" :class="[popupstyle]" @touchmove.stop.prevent="clear">
+	<view 
+	v-if="showPopup" 
+	class="uni-popup" 
+	:style="{zIndex}"
+	:class="[popupstyle]" 
+	@touchmove.stop.prevent="clear">
 		<uni-transition v-if="maskShow" :mode-class="['fade']" :styles="getMaskClass()" :duration="duration" :show="showTrans"
 		 @click="onTap" />
 		<uni-transition :mode-class="ani" :styles="getTransClass()" :duration="duration" :show="showTrans" @click="onTap">
@@ -65,12 +70,17 @@
 					return null;
 				}
 			},
+			// 弹窗的top位置，通过这个参数可以将从顶部弹出的弹窗的高度控制在需要范围内
 			positionTop: {
 				type: Object,
 				default() {
 					return null;
 				}
-				
+			},
+			// 弹窗层级，某些特殊情况下需要一些特殊层级可以通过这个参数设置
+			zIndex: {
+				type: Number,
+				default: 99
 			}
 		},
 		provide() {

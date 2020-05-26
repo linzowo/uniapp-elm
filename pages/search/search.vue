@@ -85,6 +85,22 @@
 			v-show="inputText"
 			class="search-cue-box flex-sub padding-lr flex-direction">
 			
+				<!-- 输入内容显示 S -->
+				<view 
+				v-if="!searchCueData.word_with_meta"
+				class="search-cue-item flex-sub flex-direction">
+				
+					<view class="align-center flex-sub normal">
+						<text class="cuIcon-search padding-sm"></text>
+						<view class="padding-tb border-bottom border-color-e flex-sub">
+							<text>查找 {{inputText}}</text>
+						</view>
+					</view>
+					
+				</view>
+				<!-- 输入内容显示 E -->
+				
+				<!-- 特殊搜索提示 S -->
 				<view 
 				v-for="(item,index) in searchCueData.restaurants"
 				:key="index"
@@ -136,7 +152,9 @@
 					
 					
 				</view>
-			
+				<!-- 特殊搜索提示 E -->
+				
+				<!-- 普通搜索提示 S -->
 				<view 
 				v-for="(item,index) in searchCueData.word_with_meta"
 				:key="'word_with_meta'+index"
@@ -150,6 +168,7 @@
 					</view>
 					
 				</view>
+				<!-- 普通搜索提示 E -->
 				
 			</view>
 			<!-- 搜索提示 E -->
@@ -173,7 +192,7 @@
 			return {
 				hotData:[], // 热搜数据
 				inputText:'', // 输入框数据
-				searchCueData:[], // 搜索提示数据
+				searchCueData:{}, // 搜索提示数据
 				searchHistory:[], // 搜索历史数据
 			}
 		},
@@ -181,6 +200,8 @@
 			inputText(n,o){
 				if(n){
 					this.DB_getSearchCue();
+				}else{
+					this.searchCueData = {};
 				}
 			}
 		}

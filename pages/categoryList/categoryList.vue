@@ -44,6 +44,8 @@
 		<!-- content S -->
 		<store-list 
 		:nav-style="{top:'50px'}"
+		:nativeNav="false"
+		:nativeTabbar="false"
 		></store-list>
 		<!-- content E -->
 		

@@ -2,10 +2,11 @@
 	<scroll-view 
 	class="container vs-flex-item vs-column" 
 	:style="{
-		height:systemInfo.windowHeight+'px',
-		paddingTop:(old.scrollTop>10?120:195) + 'rpx'
+		height:'calc(100vh - 50px)',
+		paddingTop:old.scrollTop>10?'120rpx':'195rpx'
 		}" 
-	scroll-y="true"
+	:scroll-y="controlPageScroll"
+	@scroll="scroll"
 	:scroll-top="scrollTop"
 	>
 		<!-- 导航栏 S -->
@@ -16,13 +17,7 @@
 		<!-- 导航栏 S -->
 		
 		<!-- 主体内容部分 S -->
-		<scroll-view 
-		class="content-body flex flex-sub"
-		scroll-y="true"
-		:scroll-top="scrollTop" 
-		@scroll="scroll"
-		:style="{height:'100%'}"
-		>
+		<view class="content-body flex flex-sub">
 			<!-- 获取到城市时显示 S -->
 			<view v-if="address" class="vs-column vs-space-center">
 				<!-- 导航区 S -->
@@ -86,50 +81,15 @@
 						<text class="content-list-title-text font-30">推荐商家</text>
 					</view>
 					
-					<!-- nav S -->
-					<!-- <view 
-					class="content-list-tab-box bg-white"
-					>
-						<scroll-view scroll-x class="bg-white nav">
-							<view class="flex text-center">
-								<view 
-								class="cu-item flex-sub" 
-								:class="item.selected?'text-orange cur':''" v-for="(item,index) in storeNavList" 
-								:key="index" 
-								@tap="tabSelect" 
-								:data-id="index">
-									<text>{{item.title}}</text>
-									<svg 
-									v-if="index == 0"
-									class="icon-svg text-xs " aria-hidden="true"><use xlink:href="#icon-sanjiao"></use></svg>
-									<text 
-									v-if="index == 3"
-									class="lg" :class="'cuIcon-filter'"></text>
-								</view>
-							</view>
-						</scroll-view>
-					</view> -->
-					<!-- nav E -->
-					
-					<!-- body S -->
-					<!-- <view class="content-list-body justify-center"> -->
-						<!-- 已登录 S -->
-						<!-- <view 
-						v-if="loggedIn"
-						class="logged-in margin-lr-sm"></view> -->
-						<!-- 已登录 E -->
-						
-						<!-- 未登录 S -->
-						<!-- <noLogin v-if="!loggedIn"></noLogin> -->
-						<!-- 未登录 E -->
-						
-						
-					<!-- </view> -->
-					<!-- body E -->
 					
 					<store-list 
-					:nav-style="{top:'60px'}"
+					:nav-style="{top:navBarHeight+'px'}"
 					:showGotop="false"
+					:scroll="controlStoreScroll"
+					:nativeNav="false"
+					:navTapFn="scrollToStoreList"
+					:gotopFlag="scrollTop==0"
+					class="store-list"
 					></store-list>
 					
 				</view>
@@ -141,152 +101,19 @@
 			<!-- 未获取到城市时显示 S -->
 			<noPosition v-else class="city-page"></noPosition>
 			<!-- 未获取到城市时显示 E -->
-		</scroll-view>
+		</view>
 		<!-- 主体内容部分 E -->
 			
 		
 		
 		<!-- 弹窗部分 S -->
 		
-		<!-- 筛选弹窗 S -->
-		<uni-popup 
-		ref="filterBarPopup" 
-		:type="'top'"
-		@change="popupChange"
-		:animation="false"
-		class="filter-bar-popup-box"
-		>
-		
-			<view class="bg-white flex-sub flex-direction">
-				<!-- 搜索框 S -->
-				<navBar class="nav-bar"></navBar>
-				<!-- 搜索框 E -->
-				
-				<!-- 筛选nav S -->
-				<view 
-				class="popup-content bg-white"
-				>
-					<scroll-view scroll-x class="bg-white nav">
-						<view class="flex text-center">
-							<view 
-							class="cu-item flex-sub" 
-							:class="item.selected?'text-orange cur':''" v-for="(item,index) in storeNavList" 
-							:key="index" 
-							@tap="tabSelect" 
-							:data-id="index">
-								<text>{{item.title}}</text>
-								<svg 
-								v-if="index == 0"
-								class="icon-svg text-xs " aria-hidden="true"><use xlink:href="#icon-sanjiao"></use></svg>
-								<text 
-								v-if="index == 3"
-								class="lg" :class="'cuIcon-filter'"></text>
-							</view>
-						</view>
-					</scroll-view>
-				</view>
-				<!-- 筛选nav E -->
-				
-				<!-- 弹窗主体 S -->
-				<view 
-				class="filter-list flex-sub solids-top"
-				>
-					
-					<!-- 排序选项 S -->
-					<view
-					v-if="storeNavList[0].selected"
-					 class="cu-list menu flex-sub">
-						<view 
-						v-for="(item,index) in storeNavList[0].list"
-						:key="item.name+index"
-						@tap="orderTap(index)"
-						class="cu-item"
-						:class="storeNavList[0].listSelected ? 
-										(storeNavList[0].listSelectedIndex == index ? 
-												'text-blue':'' ) : ''"
-						>
-							<view class="content">
-								<text class="text-sm">{{item.name}}</text>
-							</view>
-							<view 
-							v-if="storeNavList[0].listSelected && storeNavList[0].listSelectedIndex == index"
-							class="action">
-								<text class="cuIcon-check text-lg"></text>
-							</view>
-						</view>
-					</view>
-					<!-- 排序选项 S -->
-					<!-- 筛选选项 S -->
-					<view 
-					v-else
-					class="flex-sub flex-direction">
-						<view 
-						v-for="(filterValue,name,index) in storeNavList[3].list"
-						:key="index"
-						class="margin-lr-sm flex-direction flex-sub">
-							<text class="text-sm padding-tb-sm">
-								{{['商家服务（可多选）','优惠活动（单选）','人均消费'][index]}}
-							</text>
-							<view 
-							class="cu-list grid col-3 no-border" 
-							:style="{paddingLeft:0,paddingRight:0,paddingTop:0}">
-								<view 
-								v-for="(item,i) in filterValue"
-								:key="i"
-								@tap="filterTap(name,i)"
-								class="cu-item"
-								:style="{padding:0}"
-								>
-									<view 
-									class="margin-top-xs align-center bg-grey-fa margin-right-xs padding-tb-xs justify-center" 
-									:class="[
-										index == 0 ? 
-										(storeNavList[3].selectedIndex[name].includes(i) ? 'cur-item':'') : 
-										(i == storeNavList[3].selectedIndex[name] ? 'cur-item':'')
-										]"
-										>
-										<image 
-										v-if="item.icon_url"
-										class="bar-icon"
-										:src="item.icon_url" mode="aspectFit"></image>
-										{{item.text || item.name || item}}
-									</view>
-								</view>
-							</view>
-						</view>
-						
-						<!-- 按钮 S -->
-						<view class="flex-sub">
-							<text 
-							class="flex-sub bg-white padding solid shadow text-center"
-							:class="
-							storeNavList[3].selectedIndex.filterDataSupports.length ||
-							storeNavList[3].selectedIndex.filterDataActivity != -1 || 
-							storeNavList[3].selectedIndex.averagePrice != -1 ? 
-							'' : 'ban-click'"
-							@tap="storeNavBtnTap('clear')"
-							>清空</text>
-							<text 
-							class="flex-sub bg-green padding solid shadow text-center"
-							@tap="storeNavBtnTap('ok')"
-							>确定</text>
-						</view>
-						<!-- 按钮 E-->
-					</view>
-					
-					<!-- 筛选选项 E -->
-					
-				</view>
-				<!-- 弹窗主体 S -->
-			</view>
-			
-		</uni-popup>
-		<!-- 筛选弹窗 E -->
-		
 		<!-- 弹窗部分 E -->
 		
 		<!-- 回到顶部模块 S -->
-		<gotop :scrollTop="old.scrollTop"></gotop>
+		<gotop 
+		:gotopFn="goTop"
+		:scrollTop="old.scrollTop"></gotop>
 		<!-- 回到顶部模块 E -->
 		
 	</scroll-view>
@@ -307,8 +134,6 @@ import noPosition from '@/components/noPosition/noPosition.vue';
 import navBar from '@/components/common/navBar.vue';
 // 地址模块
 import addressPage from '@/pages/address/address.vue';
-// 未登录模块
-import noLogin from '@/components/noLogin/noLogin.vue';
 // 店铺排序筛选模块
 import storeList from '@/components/store-list/store-list.vue'; 
 // 回到顶部工具
@@ -326,7 +151,7 @@ import uniPopup from '@/components/uni-popup/uni-popup.vue';
  * @property {Component} addressPage 地址管理模块
  * @property {Component} uniPopup uni组件-弹出层
  */
-const components = { noPosition,navBar,uniPopup,addressPage,noLogin,storeList,gotop };
+const components = { noPosition,navBar,uniPopup,addressPage,storeList,gotop };
 
 
 /**
@@ -344,34 +169,24 @@ const components = { noPosition,navBar,uniPopup,addressPage,noLogin,storeList,go
  */
 const data = function() {
 	return {
-		// 顶部分类导航栏数据
-		navList: [],
-		// 商铺分类列表
+		navList: [], // 顶部分类导航栏数据
 		storeNavList: [], // 商铺导航栏数据
 		loggedIn: false, // 登录状态 true-登录 false-未登录
-		// 一些需要的元素信息
-		elementInfo:{
-			'nav-bar-container':{
-				bottom:0
-			},
-			'content-list-tab-box':{
-				bottom:0,
-			},
-			'container':{}
-		}, // 元素位置信息，key该元素的class
+		elementInfo:{}, // 元素位置信息，key该元素的class
 		// 记录当前页面状态
 		pageState:{
 			login:false, // 登录状态
 			storeNavSelected:false, // 店铺导航栏的nav是否被选中
 		}, 
-		// 系统信息宽高尺寸等
-		systemInfo:null, 
-		// 弹窗栈用于帮助用户关闭多个弹窗
-		popupStack:[],
+		systemInfo:null, // 系统信息宽高尺寸等
+		popupStack:[], // 弹窗栈用于帮助用户关闭多个弹窗
 		scrollTop: 0,
 		old: {
 			scrollTop: 0
-		}
+		},
+		controlStoreScroll: false,
+		controlPageScroll: true,
+		navBarHeight:60,
 		
 	};
 };
@@ -443,21 +258,6 @@ export default {
 		
 	}
 	,
-	onPageScroll(e) {
-		
-		// 当页面滚动到顶部导航栏缩进后，获取其位置信息，用于设置商铺分类导航栏的定位设置
-		if(e.scrollTop > 30 && 
-				this.elementInfo['nav-bar-container'].bottom >
-						this.$utils.getElementInfo('.nav-bar-container').bottom)
-		{
-							
-				this.$set(this.elementInfo,'nav-bar-container', 
-								this.$utils.getElementInfo('.nav-bar-container'));
-				// console.log(this.elementInfo);
-								
-		}
-	}
-	,
 	onBackPress(e) {
 		
 		// 当存在打开的弹窗时通过返回键可以关闭弹窗
@@ -469,6 +269,17 @@ export default {
 	}
 	,
 	methods: {
+		scrollToStoreList(){
+			
+			if(this.$utils.getElementInfo('.store-list').top>this.navBarHeight){
+				
+				this.scrollTop = this.old.scrollTop;
+				this.$nextTick(function() {
+					this.scrollTop = this.$utils.getElementInfo('.store-list').top;
+				});
+			}
+		}
+		,
 		/**
 		 * 切换推荐商家分类选择
 		 * @param {Object} e
@@ -628,17 +439,29 @@ export default {
 			'saveAddress'
 		])
 		,
-		// 监听content-body盒子的滑动事件
-		scroll: function(e) {
+		// 监听主页面滑动
+        scroll: function(e) {
+			
 			// 为了实现点击滑动到指定位置效果，存储的滑动数据
-			this.old.scrollTop = e.detail.scrollTop;
-		},
+            this.old.scrollTop = e.detail.scrollTop
+			
+			// console.log(this.$utils.getElementInfo('.store-list'));
+			// 如果商铺列表盒子滑动到顶部就打开其滑动控制让其能够滑动
+			if(this.$utils.getElementInfo('.store-list').top <= this.navBarHeight && !this.controlStoreScroll){
+				this.controlStoreScroll = true;
+			}
+			
+			// 如果商铺列表盒子离开顶部就关闭其滑动
+			if(this.$utils.getElementInfo('.store-list').top > this.navBarHeight && this.controlStoreScroll){
+				this.controlStoreScroll = false;
+			}
+        }
+		,
 		// content-body盒子中的内容滑动到指定位置
-		goTop: function(e) {
-			if(this.old.scrollTop > this.elementInfo['content-list-tab-box'].top) return;
+		goTop: function() {
 			this.scrollTop = this.old.scrollTop;
 			this.$nextTick(function() {
-				this.scrollTop = this.elementInfo['content-list-tab-box'].top;
+				this.scrollTop = 0;
 			});
 		}
 	}
@@ -647,41 +470,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.container {
-	// background-color: #FFFFFF;
-	// background-color: pink;
-	// height: 1800px;
-}
-.content-body{
-	// display: flex;
-}
-.nav-bar{
-	position: relative;
-	top: 0;
-}
-.logo {
-	height: 200rpx;
-	width: 200rpx;
-	margin-top: 200rpx;
-	margin-left: auto;
-	margin-right: auto;
-	margin-bottom: 50rpx;
-}
-
-.text-area {
-	display: flex;
-	justify-content: center;
-}
-
-.title {
-	font-size: 36rpx;
-	color: #8f8f94;
-}
 
 .city-page {
 	width: 100%;
 }
-.nav{}
 .nav-img{
 	width: 90rpx;
 	height: 90rpx;
@@ -714,7 +506,6 @@ export default {
 }
 
 .member{
-	// margin: 0 20rpx;
 	background-image: linear-gradient(90deg,#ffefc4,#f3dda0);
 	color: #644f1b;
 	
@@ -725,15 +516,6 @@ export default {
 	}
 }
 
-.content-list{
-	// background-color: pink;
-}
-.content-list-title{
-	// background-color: blue;
-}
-.content-list-title-text{
-	
-}
 .content-list-title-text::before,
 .content-list-title-text::after{
 	content: "";
@@ -743,43 +525,5 @@ export default {
 	height: 1rpx;
 	background-color: #999;
 	margin: 0 30rpx;
-}
-
-.content-list-tab-box{
-	position: sticky;
-	top: 0;
-	z-index: 9;
-}
-.content-list-body{
-	// height: 1800px;
-	position: relative;
-}
-.logged-img{
-	width: 426rpx;
-	height: 426rpx;
-}
-.logged-btn{
-	width: 256rpx;
-	border-radius: 6rpx;
-	background-color: #56d176;
-	color: #fff;
-}
-
-.popup-content{
-	width: 750rpx;
-}
-.filter-list{
-	// height: 200px;
-}
-.filter-bar-popup-box{
-	top: -75rpx;
-}
-.bar-icon{
-	width: 24rpx;
-	height: 24rpx;
-	margin-right: 10rpx;
-}
-.ban-click{
-	color: #ddd;
 }
 </style>

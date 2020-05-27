@@ -3,8 +3,7 @@
 	<view class="store-list-container flex-direction">
 		
 		<!-- 分类筛选nav S -->
-		<view 
-		class="content-list-tab-box bg-white flex-sub"
+		<view class="content-list-tab-box bg-white flex-sub"
 		>
 			<scroll-view scroll-x class="nav">
 				<view class="flex text-center">
@@ -33,9 +32,9 @@
 		<scroll-view 
 		@scrolltolower="getMore"
 		@scroll="listScroll"
-		scroll-y
+		:scroll-y="scroll"
 		:scroll-top="scrollTop"
-		:style="{height:'calc(100vh - 6.8vh - '+ (navStyle.top || '0px') +' - env(safe-area-inset-bottom))'}"
+		:style="{height:'calc(100vh - 6.8vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - '+ (nativeTabbar?'50px - ':'') + (nativeNav?'44px - ' :'')+ (navStyle.top || '0px') + ')'}"
 		class="content-box flex-sub">
 			
 			<!-- 未登录 S -->
@@ -367,9 +366,35 @@
 					}
 				}
 			},
+			// 是否显示回到顶部按钮，默认显示
 			showGotop:{
 				type: Boolean,
 				default: true
+			},
+			// 是否开启商铺列表的滚动，默认开启
+			scroll:{
+				type: Boolean,
+				default: true
+			},
+			// 是否采用使用了默认原生nav
+			nativeNav:{
+				type: Boolean,
+				default: true
+			},
+			// 是否采用使用了默认原生tabbr
+			nativeTabbar:{
+				type: Boolean,
+				default: true
+			},
+			// 导航栏被点击时触发的外部方法
+			navTapFn: {
+				type: Function,
+				default: null
+			},
+			// 触发列表回到顶部的参数，当其变为true时就将列表返回顶部
+			gotopFlag: {
+				type: Boolean,
+				default: false
 			}
 		},
 		computed:{
@@ -395,9 +420,10 @@
 					}
 				}
 			},
-			reachBottom(n){
+			// 监听该参数的变化如果变为true就将列表回到顶部
+			gotopFlag(n){
 				if(n){
-					this.getMore();
+					this.goTop();
 				}
 			}
 		}
@@ -416,7 +442,10 @@
 			
 		}
 		,
-		mounted() { }
+		mounted() {
+			// 获取
+			// console.log(this.$utils.getElementInfo('.content-list-tab-box'));
+		}
 		,
 		filters:{
 			distaceFilter(o){
@@ -548,6 +577,12 @@
 			 */
 			tabSelect(e) {
 				this.$utils.log('tabSelect','切换商家排序筛选导航的选项');
+				
+				// 如果用户传递了nav点击事件先执行传递方法
+				if(this.navTapFn){
+					this.navTapFn()
+				}
+				
 				// 用户唤起弹窗后再次点击相同的元素时，直接关闭弹窗
 				if(this.storeNavList[e.currentTarget.dataset.id].selected && this.pageState.storeNavSelected){
 					// 改变页面状态
@@ -704,7 +739,7 @@
 		position: relative;
 	}
 	.content-list-tab-box{
-		position: sticky;
+		position: relative;
 		z-index: 99;
 		height: 6.8vh!important;
 		width: 750rpx;

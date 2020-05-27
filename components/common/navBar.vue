@@ -56,25 +56,24 @@
 	// 整个导航栏的高度为195rpx
 	.nav-bar-container{
 		background-image: linear-gradient(90deg, #0af, #0085ff);
-		padding: 30rpx 30rpx 0;
+		padding: 15px 30rpx 0;
 		position: fixed;
 		z-index: 99;
 		width: 750rpx;
-		height: 195rpx;
+		height: 97px;
 	}
 	.add-box{
 		color: #fff;
-		margin-bottom: 15rpx;
-		height: 30rpx;
+		height: 22px;
 	}
 	.add-content{
 		margin: 0 10rpx;
 	}
 	.search{
 		background-color: #fff;
-		padding: 20rpx 0;
-		margin: 20rpx 0;
-		height: 80rpx;
+		padding: 10px 0;
+		margin: 10px 0;
+		height: 40px;
 		
 		&-text{
 			margin-left: 20rpx;

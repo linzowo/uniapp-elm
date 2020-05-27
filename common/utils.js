@@ -44,7 +44,25 @@ export const log = (fnName,description,data="") => {
 	console.log(fnName+"：",description,data);
 }
 
+/**
+ * 将rpx值转换为px值
+ * @param {Number} rpx 要转换的rpx值
+ */
+export const rpx2px = (rpx)=>{
+	let res;
+	
+	uni.getSystemInfo({
+		success(e) {
+			// console.log(e.screenWidth);
+			res = rpx * (e.screenWidth / 750);
+		}
+	})
+	
+	return res;
+}
+
 export default {
 	getElementInfo,
-	log
+	log,
+	rpx2px
 }

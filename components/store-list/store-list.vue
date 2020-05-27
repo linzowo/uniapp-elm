@@ -34,7 +34,7 @@
 		@scroll="listScroll"
 		:scroll-y="scroll"
 		:scroll-top="scrollTop"
-		:style="{height:'calc(100vh - 6.8vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - '+ (nativeTabbar?'50px - ':'') + (nativeNav?'44px - ' :'')+ (navStyle.top || '0px') + ')'}"
+		:style="{height:'calc(100vh - 6vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - '+ (nativeTabbar?'50px - ':'') + (nativeNav?'44px - ' :'')+ (navStyle.top || '0px') + ')'}"
 		class="content-box flex-sub">
 			
 			<!-- 未登录 S -->
@@ -454,14 +454,20 @@
 		}
 		,
 		methods:{
-			
-			goTop(e) {
+			/**
+			 * 回到顶部方法
+			 */
+			goTop() {
 				this.scrollTop = this.pageScroll
 				this.$nextTick(function() {
 					this.scrollTop = 0
 				});
 			}
 			,
+			/**
+			 * 监听页面滚动的方法
+			 * @param {Object} e
+			 */
 			listScroll(e){
 				this.pageScroll = e.detail.scrollTop;
 			}

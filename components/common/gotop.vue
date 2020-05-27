@@ -32,7 +32,7 @@
 			}
 		,
 		watch:{
-			scrollTop(n,o){
+			scrollTop(n){
 				
 				if(n > this.targetTop){
 					this.gotopShow = true;

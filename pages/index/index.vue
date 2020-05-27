@@ -3,11 +3,12 @@
 	class="container vs-flex-item vs-column" 
 	:style="{
 		height:'calc(100vh - 50px)',
-		paddingTop:old.scrollTop>10?'120rpx':'195rpx'
-		}" 
+		paddingTop:old.scrollTop>10?'60px':'97px'
+	}" 
 	:scroll-y="controlPageScroll"
 	@scroll="scroll"
 	:scroll-top="scrollTop"
+	@scrolltolower="changeStoreScrollState"
 	>
 		<!-- 导航栏 S -->
 		<navBar 
@@ -83,7 +84,7 @@
 					
 					
 					<store-list 
-					:nav-style="{top:navBarHeight+'px'}"
+					:nav-style="{top:this.navBarHeight+'px'}"
 					:showGotop="false"
 					:scroll="controlStoreScroll"
 					:nativeNav="false"
@@ -159,10 +160,7 @@ const components = { noPosition,navBar,uniPopup,addressPage,storeList,gotop };
  * @description index模块下的数据
  * @property {String} address 顶部地址栏地址
  * @property {Array} navList 顶部分类导航栏数据
- * @property {Array} storeNavList 商铺分类列表数据
- * @property {Object} elementInfo 部分元素的位置信息-可以根据需要自行添加类样式获取其他元素
  * @property {Object} pageState 当前页面的状态信息，用于控制页面的呈现状态
- * @property {Object} systemInfo 系统信息：宽高尺寸等
  * @property {Array} popupStack 弹窗栈用于关闭多个弹窗时使用
  * @property {Number} scrollTop content-body控制滑动需要的数据
  * @property {Object} old content-body控制滑动需要的数据
@@ -170,23 +168,19 @@ const components = { noPosition,navBar,uniPopup,addressPage,storeList,gotop };
 const data = function() {
 	return {
 		navList: [], // 顶部分类导航栏数据
-		storeNavList: [], // 商铺导航栏数据
 		loggedIn: false, // 登录状态 true-登录 false-未登录
-		elementInfo:{}, // 元素位置信息，key该元素的class
 		// 记录当前页面状态
 		pageState:{
 			login:false, // 登录状态
-			storeNavSelected:false, // 店铺导航栏的nav是否被选中
 		}, 
-		systemInfo:null, // 系统信息宽高尺寸等
 		popupStack:[], // 弹窗栈用于帮助用户关闭多个弹窗
-		scrollTop: 0,
+		scrollTop: 0, // 用于控制页面滚动到哪个位置的
 		old: {
-			scrollTop: 0
+			scrollTop: 0, // 记录当前页面的滚动位置的
 		},
-		controlStoreScroll: false,
-		controlPageScroll: true,
-		navBarHeight:60,
+		controlStoreScroll: false, // 控制商铺列表是否可以滑动的
+		controlPageScroll: true, // 控制主页面是否可以滑动的
+		navBarHeight:60, // 顶部自定义navbar的默认高度用来设置其他元素的高度使用的
 		
 	};
 };
@@ -207,17 +201,7 @@ const watch = {
 	 * @param {Object} n
 	 * @param {Object} o
 	 */
-	pageState(n,o){
-		if(n.storeNavSelected){
-			// 打开筛选弹窗
-			this.openPopup('filterBarPopup');
-			
-			// 获取元素位置，将元素置顶
-			this.goTop();
-		}else{
-			this.closePopup('filterBarPopup');
-		}
-	}
+	pageState(n,o){}
 };
 
 export default {
@@ -225,16 +209,6 @@ export default {
 	data,
 	computed,
 	watch,
-	onLoad() {
-		
-		// 获取系统信息备用
-		uni.getSystemInfo({
-			success:(e)=>{
-				// console.log(e);
-				this.systemInfo = e;
-			}
-		})
-	},
 	created() {
 		
 		// 在结构创建完成后页面渲染前获取一些渲染必要的数据
@@ -246,17 +220,9 @@ export default {
 		this.navList.fill(this.$t_d.NAV_LIST_DATA[0],0,5);
 		this.navList.fill(this.$t_d.NAV_LIST_DATA[1],5,10);
 		
-		this.storeNavList = this.$t_d.STORE_FILTER_DATA;
 	}
 	,
-	mounted() {
-		
-		// 动态获取需要使用的元素的位置信息
-		for (let key in this.elementInfo) {
-			this.elementInfo[key] = this.$utils.getElementInfo('.'+key);
-		}
-		
-	}
+	mounted() {}
 	,
 	onBackPress(e) {
 		
@@ -269,50 +235,20 @@ export default {
 	}
 	,
 	methods: {
+		/**
+		 * 使页面滚动到商铺列表位置
+		 */
 		scrollToStoreList(){
-			
-			if(this.$utils.getElementInfo('.store-list').top>this.navBarHeight){
+			this.$utils.log('scrollToStoreList','使页面滚动到商铺列表位置');
+			if(this.$system_info.screenHeight - parseInt(this.$utils.getElementInfo('.store-list').bottom) < 50 ){
 				
 				this.scrollTop = this.old.scrollTop;
 				this.$nextTick(function() {
-					this.scrollTop = this.$utils.getElementInfo('.store-list').top;
+					this.scrollTop = this.$utils.getElementInfo('.store-list').top + this.$system_info.screenHeight;
 				});
 			}
 		}
 		,
-		/**
-		 * 切换推荐商家分类选择
-		 * @param {Object} e
-		 */
-		tabSelect(e) {
-			this.$utils.log('tabSelect','切换商家排序筛选导航的选项');
-			// 用户唤起弹窗后再次点击相同的元素时，直接关闭弹窗
-			if(this.storeNavList[e.currentTarget.dataset.id].selected && this.pageState.storeNavSelected){
-				// 改变页面状态
-				this.changePageState({storeNavSelected:false});
-				return;
-			}
-			
-			// 将所有nav的状态切换为未选中
-			this.storeNavList.forEach(ele=>{
-				ele.selected = false;
-			});
-			
-			// 将用户选择的元素设置为选中状态
-			this.$set(this.storeNavList[e.currentTarget.dataset.id],'selected',true);
-			this.scrollLeft = (e.currentTarget.dataset.id - 1) * 60;
-			
-			// console.log(e.currentTarget);
-			// 开关筛选弹窗
-			// 通用排序被点击
-			if(e.currentTarget.dataset.id==0 || e.currentTarget.dataset.id==3){
-				// 改变页面状态
-				this.changePageState({storeNavSelected:true});
-			}else{
-				// 改变页面状态
-				this.changePageState({storeNavSelected:false});
-			}
-		},
 		/**
 		 * 改变页面状态的方法，页面所有的状态改变都在这里进行
 		 * @param {Object} state
@@ -358,82 +294,6 @@ export default {
 			this.$refs[ref].close();
 		}
 		,
-		/**
-		 * 点击选择排序方式
-		 * @param {Number} index 当前选中元素索引值
-		 */
-		orderTap(index){
-			this.$utils.log('orderTap','选择排序方式',this.storeNavList[0].list[index].name);
-			this.storeNavList[0].listSelected = true;
-			this.storeNavList[0].listSelectedIndex = index;
-			this.storeNavList[0].title = this.storeNavList[0].list[index].name;
-		}
-		,
-		/**
-		 * 点击选择筛选方式
-		 * @param {String} key 当前的分类名
-		 * @param {Number} index 当前选中元素索引值
-		 */
-		filterTap(key,index){
-			this.$utils.log('filterTap','选择筛选方式');
-			// 判断是否是多选
-			if(key == 'filterDataSupports'){
-				
-				// 判断当期选中的元素是否已经存在了 存在就将其删除
-				let eleIndex = this.storeNavList[3].selectedIndex[key].findIndex(ele=>{
-					return ele == index;
-				});
-				
-				if(eleIndex !== -1){
-					this.storeNavList[3].selectedIndex[key].splice(eleIndex,1);
-					return;
-				}
-				
-				// 不存在就加入数组
-				if(this.storeNavList[3].selectedIndex[key][0] == -1){
-					this.$set(this.storeNavList[3].selectedIndex[key],0,index);
-				}else{
-					this.storeNavList[3].selectedIndex[key].push(index);
-				}
-				
-				return;
-			}
-			
-			// 非多选操作
-			if(this.storeNavList[3].selectedIndex[key] == index) {
-				this.storeNavList[3].selectedIndex[key] = -1;
-				return;
-			}
-			
-			this.storeNavList[3].selectedIndex[key] = index;
-		}
-		,
-		/**
-		 * 筛选弹窗中的按钮点击事件
-		 * @param {String} option 按钮标记，表示当前是哪个按钮触发的事件
-		 */
-		storeNavBtnTap(option){
-			this.$utils.log('storeNavBtnTap','筛选中的底部按钮点击',option);
-			// 清空当前选择项
-			if(option == 'clear'){
-				// 将已经选择的选项都清空
-				this.storeNavList[3].selectedIndex.filterDataSupports = [];
-				this.storeNavList[3].selectedIndex.filterDataActivity = -1;
-				this.storeNavList[3].selectedIndex.averagePrice = -1;
-			}
-			
-			// 确定当前选择的筛选项
-			if(option == 'ok'){
-				// 发起确定请求
-				
-				// 监听结果
-				
-				// 关闭弹窗
-				this.changePageState({storeNavSelected:false});
-				// 根据结果渲染新的列表
-			}
-		}
-		,
 		...mapActions([
 			'getUserInfo',
 			'saveAddress'
@@ -446,18 +306,21 @@ export default {
             this.old.scrollTop = e.detail.scrollTop
 			
 			// console.log(this.$utils.getElementInfo('.store-list'));
-			// 如果商铺列表盒子滑动到顶部就打开其滑动控制让其能够滑动
-			if(this.$utils.getElementInfo('.store-list').top <= this.navBarHeight && !this.controlStoreScroll){
-				this.controlStoreScroll = true;
-			}
-			
 			// 如果商铺列表盒子离开顶部就关闭其滑动
-			if(this.$utils.getElementInfo('.store-list').top > this.navBarHeight && this.controlStoreScroll){
+			if(this.$system_info.screenHeight - parseInt(this.$utils.getElementInfo('.store-list').bottom) < 50 && this.controlStoreScroll){
 				this.controlStoreScroll = false;
 			}
         }
 		,
-		// content-body盒子中的内容滑动到指定位置
+		changeStoreScrollState(){
+			// 如果商铺列表盒子滑动到顶部就打开其滑动控制让其能够滑动
+			if(!this.controlStoreScroll){
+				this.controlStoreScroll = true;
+				this.scrollToStoreList();
+			}
+		}
+		,
+		// 使主页面回到顶部
 		goTop: function() {
 			this.scrollTop = this.old.scrollTop;
 			this.$nextTick(function() {

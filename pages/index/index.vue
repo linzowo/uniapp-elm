@@ -13,7 +13,7 @@
 		<!-- 导航栏 S -->
 		<navBar 
 		:address="address"
-		:style="{top:old.scrollTop>10?'-75rpx':0}"
+		:style="{top:old.scrollTop>10?'-37px':0}"
 		></navBar>
 		<!-- 导航栏 S -->
 		

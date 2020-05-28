@@ -4,7 +4,7 @@
 		<navigator
 		v-if="!hideAddress"
 		 url="/pages/address/address" 
-		 class="add-box font-34 font-w700">
+		 class="add-box font-w700">
 			<svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-Locationpinmarker"></use></svg>
 			<text class="add-content">{{address?address:'未能获取地址'}}</text>
 			<svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-sanjiao"></use></svg>
@@ -14,7 +14,7 @@
 		<!-- 搜索框 S -->
 		<view
 		@tap="searchTap"
-		class="search flex vs-space-center vs-align-center font-30 color-black9">
+		class="search flex vs-space-center vs-align-center color-black9">
 			<svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-fangdajing"></use></svg>
 			<text class="search-text color-black9">搜索饿了么商家、商品名称</text>
 		</view>
@@ -65,6 +65,7 @@
 	.add-box{
 		color: #fff;
 		height: 22px;
+		font-size: 17px;
 	}
 	.add-content{
 		margin: 0 10rpx;
@@ -74,6 +75,7 @@
 		padding: 10px 0;
 		margin: 10px 0;
 		height: 40px;
+		font-weight: 15px;
 		
 		&-text{
 			margin-left: 20rpx;

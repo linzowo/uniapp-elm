@@ -210,7 +210,9 @@
 		:positionTop="{top: 'calc(6.8vh + ' + (navStyle.top || '0px') + ')'}"
 		:zIndex="9"
 		>
-			<view class="bg-white flex-sub flex-direction">
+			<scroll-view
+			scroll-y
+			class="popup-box bg-white flex-sub flex-direction">
 				
 				<!-- 弹窗主体 S -->
 				<view 
@@ -304,7 +306,7 @@
 					
 				</view>
 				<!-- 弹窗主体 S -->
-			</view>
+			</scroll-view>
 		
 		</uni-popup>
 		<!-- 筛选及排序弹窗 S -->
@@ -445,6 +447,7 @@
 		mounted() {
 			// 获取
 			// console.log(this.$utils.getElementInfo('.content-list-tab-box'));
+			console.log(this.$system_info);
 		}
 		,
 		filters:{
@@ -741,6 +744,11 @@
 </script>
 
 <style lang="scss" scoped>
+	@media screen and (min-width: 760px) {
+		.popup-box{
+			height: 80vh;
+		}
+	}
 	.store-list-container{
 		position: relative;
 	}

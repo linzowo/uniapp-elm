@@ -114,6 +114,7 @@
 		<!-- 回到顶部模块 S -->
 		<gotop 
 		:gotopFn="goTop"
+		:targetTop="300"
 		:scrollTop="old.scrollTop"></gotop>
 		<!-- 回到顶部模块 E -->
 		
@@ -301,7 +302,6 @@ export default {
 		,
 		// 监听主页面滑动
         scroll: function(e) {
-			
 			// 为了实现点击滑动到指定位置效果，存储的滑动数据
             this.old.scrollTop = e.detail.scrollTop
 			

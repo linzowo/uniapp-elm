@@ -3,7 +3,9 @@
 	<view class="store-list-container flex-direction">
 		
 		<!-- 分类筛选nav S -->
-		<view class="content-list-tab-box bg-white flex-sub"
+		<view 
+		:style="{top:top + 'px'}"
+		class="content-list-tab-box bg-white flex-sub"
 		>
 			<scroll-view scroll-x class="nav">
 				<view class="flex text-center">
@@ -29,13 +31,7 @@
 		
 		<!-- content S -->
 		
-		<scroll-view 
-		@scrolltolower="getMore"
-		@scroll="listScroll"
-		@scrolltoupper="listToupperHandle"
-		:scroll-y="scroll"
-		:scroll-top="scrollTop"
-		:style="{height:'calc(100vh - 6vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - '+ (nativeTabbar?'50px - ':'') + (nativeNav?'44px - ' :'')+ (navStyle.top || '0px') + ')'}"
+		<view 
 		class="content-box flex-sub">
 			
 			<!-- 未登录 S -->
@@ -196,7 +192,7 @@
 			</view>
 			<!-- 登录 E -->
 			
-		</scroll-view>
+		</view>
 		<!-- content E -->
 		
 		<!-- 弹窗部分 S -->
@@ -208,7 +204,7 @@
 		@change="popupChange"
 		:animation="true"
 		class="filter-bar-popup-box"
-		:positionTop="{top: 'calc(6.8vh + ' + (navStyle.top || '0px') + ')'}"
+		:positionTop="{top: 'calc(6.8vh + ' + ((top + 'px') || '0px') + ')'}"
 		:zIndex="9"
 		>
 			<scroll-view
@@ -355,27 +351,17 @@
 				storeMaskIndex:null, // 控制店铺的遮罩开闭
 				gotopShow: false, // 控制回到顶部按钮的显示与隐藏
 				zIndexControl: false, // 控制导航栏的层级
-				pageScroll:0, // 用于控制回到顶部按钮显示的
-				scrollTop: 0,
 			}
 		},
 		components:{noLogin,gotop},
 		props:{
-			navStyle:{
-				type: Object,
-				default(){
-					return {
-						top:'0px'
-					}
-				}
+			// nav采用的sticky定位 通过设置top来确定其在屏幕中的固定位置
+			top:{
+				type: Number,
+				default: 0
 			},
-			// 是否显示回到顶部按钮，默认显示
+			// 是否渲染回到顶部按钮，默认渲染
 			showGotop:{
-				type: Boolean,
-				default: true
-			},
-			// 是否开启商铺列表的滚动，默认开启
-			scroll:{
 				type: Boolean,
 				default: true
 			},
@@ -394,16 +380,17 @@
 				type: Function,
 				default: null
 			},
-			// 触发列表回到顶部的参数，当其变为true时就将列表返回顶部
-			gotopFlag: {
+			// 触发获取更多数据的参数，当其变为true时发起获取更多数据的请求
+			getMoreFlag: {
 				type: Boolean,
 				default: false
-			},
-			// 列表滑动到顶部是触发的方法
-			scrolltoupper: {
-				type: Function,
-				default: null
-			},
+			}
+			,
+			// 页面滚动的距离通过绑定这个参数接收 用于控制何时显示回到顶部按钮
+			pageScroll: {
+				type: Number,
+				default: 0
+			}
 		},
 		computed:{
 			...mapState([
@@ -429,9 +416,9 @@
 				}
 			},
 			// 监听该参数的变化如果变为true就将列表回到顶部
-			gotopFlag(n){
+			getMoreFlag(n){
 				if(n){
-					this.goTop();
+					this.getMore();
 				}
 			}
 		}
@@ -463,30 +450,13 @@
 		,
 		methods:{
 			/**
-			 * 处理列表滑动到顶部时的事件
-			 */
-			listToupperHandle(){
-				if(this.scrolltoupper){
-					this.scrolltoupper();
-				}
-			}
-			,
-			/**
 			 * 回到顶部方法
 			 */
 			goTop() {
-				this.scrollTop = this.pageScroll
-				this.$nextTick(function() {
-					this.scrollTop = 0
-				});
-			}
-			,
-			/**
-			 * 监听页面滚动的方法
-			 * @param {Object} e
-			 */
-			listScroll(e){
-				this.pageScroll = e.detail.scrollTop;
+				uni.pageScrollTo({
+					duration:0,
+					scrollTop:0
+				})
 			}
 			,
 			/**
@@ -586,15 +556,6 @@
 			}
 			,
 			/**
-			 * 切换顶部分类列表
-			 * @param {Object} e
-			 */
-			categoryHeadtabSelect(e){
-					console.log(e.currentTarget.dataset.id);
-					this.categoryCur = e.currentTarget.dataset.id;
-			}
-			,
-			/**
 			 * 切换排序和筛选标记
 			 * @param {Object} e
 			 */
@@ -650,9 +611,20 @@
 				if(e.show == false){
 					this.popupStack.pop();
 					
+					// #ifdef H5
+					document.body.style = 'overflow: static;';
+					// #endif
+					
 					if(this.pageState.storeNavSelected){
 						this.pageState.storeNavSelected = false;
 					}
+				}
+				
+				if(e.show){
+					
+					// #ifdef H5
+					document.body.style = 'overflow: hidden;';
+					// #endif
 				}
 			}
 			,
@@ -763,11 +735,16 @@
 			height: 80vh;
 		}
 	}
+	
+	.nav .cu-item{
+		height: 6.8vh;
+	}
+	
 	.store-list-container{
 		position: relative;
 	}
 	.content-list-tab-box{
-		position: relative;
+		position: sticky;
 		z-index: 99;
 		height: 6.8vh!important;
 		width: 750rpx;

@@ -43,9 +43,11 @@
 		
 		<!-- content S -->
 		<store-list 
-		:nav-style="{top:'50px'}"
+		:top="50"
 		:nativeNav="false"
 		:nativeTabbar="false"
+		:getMoreFlag="reachBottom"
+		:pageScroll="pageScroll"
 		></store-list>
 		<!-- content E -->
 		
@@ -151,6 +153,8 @@
 				popupStack:[], // 弹窗栈用于帮助用户关闭多个弹窗
 				elementInfo:{}, // 存储元素的基本信息
 				style:{}, // 元素的style样式
+				reachBottom: false, // 当前页面是否到达了底部
+				pageScroll:0, // 页面滚动距离
 			}
 		},
 		components:{storeList},
@@ -180,6 +184,17 @@
 			}
 		}
 		,
+		onPageScroll(e) {
+			this.pageScroll = e.scrollTop;
+		}
+		,
+		onReachBottom(){
+			this.reachBottom = true;
+			setTimeout(()=>{
+				this.reachBottom = false;
+			},200);
+		}
+		,
 		created() {
 			// 请求一些渲染页面必须的数据
 			
@@ -197,14 +212,7 @@
 			
 		}
 		,
-		mounted() {
-			// this.navBarInfo = this.$utils.getElementInfo('.nav-bar');
-			
-			// console.log(this.navBarInfo.bottom + 'px');
-			// this.style.categoryContainer = {
-			// 			paddingTop: this.navBarInfo.bottom + 'px',
-			// 		}
-		}
+		mounted() {}
 		,
 		methods:{
 			/**

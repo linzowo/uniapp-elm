@@ -1,14 +1,6 @@
 <template>
-	<scroll-view 
+	<view 
 	class="container vs-flex-item vs-column" 
-	:style="{
-		height:'calc(100vh - 50px)',
-		paddingTop:old.scrollTop>10?'60px':'97px'
-	}" 
-	:scroll-y="controlPageScroll"
-	@scroll="scroll"
-	:scroll-top="scrollTop"
-	@scrolltolower="changeStoreScrollState"
 	>
 		<!-- 导航栏 S -->
 		<navBar 
@@ -18,7 +10,9 @@
 		<!-- 导航栏 S -->
 		
 		<!-- 主体内容部分 S -->
-		<view class="content-body flex flex-sub">
+		<view 
+		:style="{marginTop:old.scrollTop>10?'60px':'97px'}"
+		class="content-body flex flex-sub">
 			<!-- 获取到城市时显示 S -->
 			<view v-if="address" class="vs-column vs-space-center">
 				<!-- 导航区 S -->
@@ -84,12 +78,11 @@
 					
 					
 					<store-list 
-					:nav-style="{top:this.navBarHeight+'px'}"
+					:top="navBarHeight"
 					:showGotop="false"
-					:scroll="controlStoreScroll"
 					:nativeNav="false"
 					:navTapFn="scrollToStoreList"
-					:gotopFlag="scrollTop==0"
+					:getMoreFlag="reachBottom"
 					class="store-list"
 					></store-list>
 					
@@ -118,7 +111,7 @@
 		:scrollTop="old.scrollTop"></gotop>
 		<!-- 回到顶部模块 E -->
 		
-	</scroll-view>
+	</view>
 </template>
 
 <script>
@@ -179,10 +172,9 @@ const data = function() {
 		old: {
 			scrollTop: 0, // 记录当前页面的滚动位置的
 		},
-		controlStoreScroll: false, // 控制商铺列表是否可以滑动的
 		controlPageScroll: true, // 控制主页面是否可以滑动的
 		navBarHeight:60, // 顶部自定义navbar的默认高度用来设置其他元素的高度使用的
-		
+		reachBottom: false, // 页面是否滑动到底部
 	};
 };
 
@@ -225,6 +217,17 @@ export default {
 	,
 	mounted() {}
 	,
+	onPageScroll(e) {
+		this.old.scrollTop = e.scrollTop;
+	}
+	,
+	onReachBottom(){
+		this.reachBottom = true;
+		setTimeout(()=>{
+			this.reachBottom = false;
+		},200);
+	}
+	,
 	onBackPress(e) {
 		
 		// 当存在打开的弹窗时通过返回键可以关闭弹窗
@@ -241,13 +244,21 @@ export default {
 		 */
 		scrollToStoreList(){
 			this.$utils.log('scrollToStoreList','使页面滚动到商铺列表位置');
-			if(this.$system_info.screenHeight - parseInt(this.$utils.getElementInfo('.store-list').bottom) < 50 ){
-				
-				this.scrollTop = this.old.scrollTop;
-				this.$nextTick(function() {
-					this.scrollTop = this.$utils.getElementInfo('.store-list').top + this.$system_info.screenHeight;
-				});
+			
+			if(this.$utils.getElementInfo('.store-list').top > this.navBarHeight){
+				uni.pageScrollTo({
+					duration:0,
+					scrollTop: this.$utils.getElementInfo('.store-list').top - this.$utils.getElementInfo('.container').top - this.navBarHeight
+				})
 			}
+			
+			// if(this.$system_info.screenHeight - parseInt(this.$utils.getElementInfo('.store-list').bottom) < 50 ){
+				
+			// 	this.scrollTop = this.old.scrollTop;
+			// 	this.$nextTick(function() {
+			// 		this.scrollTop = this.$utils.getElementInfo('.store-list').top + this.$system_info.screenHeight;
+			// 	});
+			// }
 		}
 		,
 		/**
@@ -299,26 +310,6 @@ export default {
 			'getUserInfo',
 			'saveAddress'
 		])
-		,
-		// 监听主页面滑动
-        scroll: function(e) {
-			// 为了实现点击滑动到指定位置效果，存储的滑动数据
-            this.old.scrollTop = e.detail.scrollTop
-			
-			// console.log(this.$utils.getElementInfo('.store-list'));
-			// 如果商铺列表盒子离开顶部就关闭其滑动
-			if(this.$system_info.screenHeight - parseInt(this.$utils.getElementInfo('.store-list').bottom) < 50 && this.controlStoreScroll){
-				this.controlStoreScroll = false;
-			}
-        }
-		,
-		changeStoreScrollState(){
-			// 如果商铺列表盒子滑动到顶部就打开其滑动控制让其能够滑动
-			if(!this.controlStoreScroll){
-				this.controlStoreScroll = true;
-				this.scrollToStoreList();
-			}
-		}
 		,
 		// 使主页面回到顶部
 		goTop: function() {

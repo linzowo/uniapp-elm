@@ -32,6 +32,7 @@
 		<scroll-view 
 		@scrolltolower="getMore"
 		@scroll="listScroll"
+		@scrolltoupper="listToupperHandle"
 		:scroll-y="scroll"
 		:scroll-top="scrollTop"
 		:style="{height:'calc(100vh - 6vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - '+ (nativeTabbar?'50px - ':'') + (nativeNav?'44px - ' :'')+ (navStyle.top || '0px') + ')'}"
@@ -397,7 +398,12 @@
 			gotopFlag: {
 				type: Boolean,
 				default: false
-			}
+			},
+			// 列表滑动到顶部是触发的方法
+			scrolltoupper: {
+				type: Function,
+				default: null
+			},
 		},
 		computed:{
 			...mapState([
@@ -447,7 +453,6 @@
 		mounted() {
 			// 获取
 			// console.log(this.$utils.getElementInfo('.content-list-tab-box'));
-			console.log(this.$system_info);
 		}
 		,
 		filters:{
@@ -457,6 +462,15 @@
 		}
 		,
 		methods:{
+			/**
+			 * 处理列表滑动到顶部时的事件
+			 */
+			listToupperHandle(){
+				if(this.scrolltoupper){
+					this.scrolltoupper();
+				}
+			}
+			,
 			/**
 			 * 回到顶部方法
 			 */

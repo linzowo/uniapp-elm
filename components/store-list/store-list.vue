@@ -444,7 +444,7 @@
 		,
 		filters:{
 			distaceFilter(o){
-				return o > 1000 ? (o/1000).toFixed(2) + 'km' : o + 'm';
+				return o > 1000 ? (o / 1000).toFixed(2) + 'km' : o + 'm';
 			}
 		}
 		,

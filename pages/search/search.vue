@@ -33,7 +33,7 @@
 					</view>
 				</view>
 				<view class="action">
-					<button class="cu-btn bg-green shadow-blur round">搜索</button>
+					<button class="cu-btn bg-green shadow-blur round" @click="requestSearchRes">搜索</button>
 				</view>
 			</view>
 			<!-- searchbar E -->
@@ -52,16 +52,19 @@
 				class="history-search flex-direction margin-bottom">
 					<view class="title padding-tb padding-lr-sm justify-between align-center">
 						<text class="text-color-6 text-lg text-bold">历史搜索</text>
-						<view class="padding-lr-xs">
+						<view 
+						@tap="clearSearchHistory"
+						class="padding-lr-xs">
 							<text class="lg text-color-c cuIcon-deletefill"></text>
 						</view>
 					</view>
 					<view class="search-tag-list flex-wrap">
 						<view 
-						v-for="item in 10"
-						:key="item"
+						v-for="(item,i) in searchHistory"
+						:key="i"
+						@tap="fillSearch(item)"
 						class="search-tag-item padding-tb-xs radius padding-lr-sm bg-grey-f7 margin-xs">
-							<text>茶百道</text>
+							<text>{{item}}</text>
 						</view>
 					</view>
 				</view>
@@ -76,6 +79,7 @@
 						<view 
 						v-for="(item,index) in hotData"
 						:key="index"
+						@tap="fillSearch(item.word)"
 						class="search-tag-item padding-tb-sm radius padding-lr-sm bg-grey-f7 margin-xs">
 							<text>{{item.word}}</text>
 						</view>
@@ -215,11 +219,17 @@
 		,
 		watch:{
 			inputText(n,o){
-				console.log(n);
 				if(n){
+					// 清空旧数据 解决因为防抖带来的提示延迟出现的问题
+					this.searchCueData = {};
 					this.DB_getSearchCue();
 				}else{
 					this.searchCueData = {};
+					this.searchRes = [];
+				}
+				
+				if(n !== o){
+					this.searchRes = [];
 				}
 			}
 		}
@@ -245,12 +255,15 @@
 			// 获取必要数据
 			
 			// 搜索历史获取
-			uni.getStorage({
-			    key: 'search_history',
-			    success: function (res) {
-					this.searchHistory = res.data || [];
+			try {
+			    const res = uni.getStorageSync('SEARCH_HISTORY');
+			    if (res) {
+					this.searchHistory = res
 			    }
-			});
+			} catch (e) {
+			    // error
+				console.log(e);
+			}
 			
 			// 热门搜索
 			this.hotData = this.$t_d.HOT_SEARCH;
@@ -260,23 +273,66 @@
 		,
 		methods:{
 			/**
+			 * 将标签内容填充到搜索框中并发起搜索
+			 */
+			fillSearch(value){
+				this.inputText = value;
+				this.requestSearchRes();
+			}
+			,
+			/**
+			 * 清空搜索历史
+			 */
+			clearSearchHistory(){
+				this.searchHistory = [];
+				uni.setStorage({
+					key:'SEARCH_HISTORY',
+					data:this.searchHistory,
+					success() {
+						console.log('清空搜索历史成功');
+					}
+				})
+			}
+			,
+			/**
 			 * 根据用户输入请求搜索结果
 			 * @param {Object} e
 			 */
 			requestSearchRes(e){
 				this.$utils.log('requestSearchRes','请求搜索结果');
+				
+				// 将当前输入内容加入本地存储中作为搜索历史
+				if(!this.searchHistory.includes(this.inputText)){
+					this.searchHistory.push(this.inputText);
+					uni.setStorage({
+						key:'SEARCH_HISTORY',
+						data:this.searchHistory,
+						success() {
+							console.log('存储搜索历史成功');
+						}
+					});
+				}
+				
 				// 发起请求，获取搜索结果
+				
+				// 隐藏搜索提示结果
 				 
 				// 显示等待界面
 				
 				// 得到结果后改变页面视图
 				
 				// 模拟上述网络请求过程
+				this.searchCueData = {};
+				this.searchCueData.word_with_meta = true;
+				uni.showLoading({
+					title:''
+				})
 				setTimeout(()=>{
 					for (let key in this.$t_d.SEARCH_RES_1.inside) {
 						console.log(key);
 						this.searchRes.push(this.$t_d.SEARCH_RES_1.inside[key]);
 					}
+					uni.hideLoading();
 					
 					// this.searchRes = this.$t_d.SEARCH_RES_1.inside
 				},1000);
@@ -290,8 +346,13 @@
 			getSearchCue(){
 				this.$utils.log('getSearchCue','获取搜索提示');
 				
+				// 清空旧数据
+				this.searchCueData = {};
+				
 				// 模拟网络请求获取搜索提示数据
-				this.searchCueData = this.$t_d.SEARCH_CUE;
+				setTimeout(()=>{
+					this.searchCueData = this.$t_d.SEARCH_CUE;
+				},1000);
 			}
 			,
 			/**

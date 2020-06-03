@@ -1,39 +1,44 @@
 <template>
 	<view class="search-container flex-direction">
 		
-		<!-- nav S -->
-		<view class="search-nav padding-tb padding-lr-xs">
-			<text 
-			@tap="goback"
-			class="lg text-xxl text-gray cuIcon-back"></text>
-		</view>
-		<!-- nav E -->
-		
-		<!-- searchbar S -->
-		<view class="cu-bar search bg-white">
-			<view class="search-form round">
-				<text class="cuIcon-search"></text>
-				
-				<input 
-				v-model="inputText"
-				:adjust-position="false" 
-				type="text" 
-				placeholder="输入商家、商品名称" 
-				confirm-type="search"
-				></input>
-				
-				<view 
-				v-show="inputText"
-				@tap="clearSearch"
-				class="padding-xs">
-					<text class="lg text-gray cuIcon-close text-bold text-lg"></text>
+		<view class="header flex-direction">
+			
+			<!-- nav S -->
+			<view class="search-nav padding-tb padding-lr-xs">
+				<text 
+				@tap="goback"
+				class="lg text-xxl text-gray cuIcon-back"></text>
+			</view>
+			<!-- nav E -->
+			
+			<!-- searchbar S -->
+			<view class="cu-bar search bg-white">
+				<view class="search-form round">
+					<text class="cuIcon-search"></text>
+					
+					<input 
+					v-model="inputText"
+					:adjust-position="false" 
+					type="text" 
+					placeholder="输入商家、商品名称" 
+					confirm-type="search"
+					@confirm="requestSearchRes"
+					></input>
+					
+					<view 
+					v-show="inputText"
+					@tap="clearSearch"
+					class="padding-xs">
+						<text class="lg text-gray cuIcon-close text-bold text-lg"></text>
+					</view>
+				</view>
+				<view class="action">
+					<button class="cu-btn bg-green shadow-blur round">搜索</button>
 				</view>
 			</view>
-			<view class="action">
-				<button class="cu-btn bg-green shadow-blur round">搜索</button>
-			</view>
+			<!-- searchbar E -->
+			
 		</view>
-		<!-- searchbar E -->
 		
 		<view class="content">
 			
@@ -82,7 +87,7 @@
 			
 			<!-- 搜索提示 S -->
 			<view 
-			v-show="inputText"
+			v-show="inputText && !searchRes.length"
 			class="search-cue-box flex-sub padding-lr flex-direction">
 			
 				<!-- 输入内容显示 S -->
@@ -175,8 +180,13 @@
 			
 			<!-- 搜索结果 S -->
 			<view 
+			v-show="searchRes.length"
 			class="search-result-box">
-				
+				<storeList
+				:top="100"
+				:nativeNav="false"
+				:nativeTabbar="false"
+				></storeList>
 			</view>
 			<!-- 搜索结果 E -->
 		</view>
@@ -187,17 +197,25 @@
 <script>
 	
 	import {mapState} from 'vuex';
+	
+	// 店铺排序筛选模块
+	import storeList from '@/components/store-list/store-list.vue'; 
+	
 	export default {
 		data() {
 			return {
-				hotData:[], // 热搜数据
-				inputText:'', // 输入框数据
-				searchCueData:{}, // 搜索提示数据
-				searchHistory:[], // 搜索历史数据
+				hotData: [], // 热搜数据
+				inputText: '', // 输入框数据
+				searchCueData: {}, // 搜索提示数据
+				searchHistory: [], // 搜索历史数据
+				searchRes: [], // 搜索结果数据
 			}
 		},
+		components:{storeList}
+		,
 		watch:{
 			inputText(n,o){
+				console.log(n);
 				if(n){
 					this.DB_getSearchCue();
 				}else{
@@ -242,6 +260,31 @@
 		,
 		methods:{
 			/**
+			 * 根据用户输入请求搜索结果
+			 * @param {Object} e
+			 */
+			requestSearchRes(e){
+				this.$utils.log('requestSearchRes','请求搜索结果');
+				// 发起请求，获取搜索结果
+				 
+				// 显示等待界面
+				
+				// 得到结果后改变页面视图
+				
+				// 模拟上述网络请求过程
+				setTimeout(()=>{
+					for (let key in this.$t_d.SEARCH_RES_1.inside) {
+						console.log(key);
+						this.searchRes.push(this.$t_d.SEARCH_RES_1.inside[key]);
+					}
+					
+					// this.searchRes = this.$t_d.SEARCH_RES_1.inside
+				},1000);
+				
+				
+			}
+			,
+			/**
 			 * 获取搜索提示
 			 */
 			getSearchCue(){
@@ -274,7 +317,23 @@
 	page{
 		background-color: #fff;
 	}
+	.search-container{
+		
+	}
+	.header{
+		position: fixed;
+		top: 0;
+		background-color: #fff;
+		z-index: 99;
+		width: 750rpx;
+	}
+	.content{
+		margin-top: 100px;
+	}
 	.search-nav{
+		height: 50px;
+	}
+	.cu-bar{
 		height: 50px;
 	}
 	.search-cue-cover{

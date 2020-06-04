@@ -335,8 +335,6 @@
 		name:'store-list',
 		data() {
 			return {
-				storeListData:[], // 登录后要显示的商铺列表数据
-				hasNext:false, // 是否还存在下一组数据
 				// 商铺分类列表
 				storeNavList: [], // 商铺导航栏数据
 				// 记录当前页面状态
@@ -355,6 +353,20 @@
 		},
 		components:{noLogin,gotop},
 		props:{
+			// 是否还存在下一组数据
+			hasNext: {
+				type: Boolean,
+				default: false
+			}
+			,
+			// 登录后要显示的商铺列表数据
+			storeListData:{
+				type: Array,
+				default(){
+					return []
+				}
+			}
+			,
 			// nav采用的sticky定位 通过设置top来确定其在屏幕中的固定位置
 			top:{
 				type: Number,
@@ -380,12 +392,6 @@
 				type: Function,
 				default: null
 			},
-			// 触发获取更多数据的参数，当其变为true时发起获取更多数据的请求
-			getMoreFlag: {
-				type: Boolean,
-				default: false
-			}
-			,
 			// 页面滚动的距离通过绑定这个参数接收 用于控制何时显示回到顶部按钮
 			pageScroll: {
 				type: Number,
@@ -414,12 +420,6 @@
 						this.closePopup('filterBarPopup');
 					}
 				}
-			},
-			// 监听该参数的变化如果变为true就将列表回到顶部
-			getMoreFlag(n){
-				if(n){
-					this.getMore();
-				}
 			}
 		}
 		,
@@ -429,11 +429,6 @@
 			// 模拟网络请求需要数据
 			
 			this.storeNavList = this.$t_d.STORE_FILTER_DATA;
-			
-			if(this.login){
-				this.storeListData = [...this.$t_d.STORE_lIST_DATA_1.items];
-				this.hasNext = this.$t_d.STORE_lIST_DATA_1.has_next;
-			}
 			
 		}
 		,
@@ -457,36 +452,6 @@
 					duration:0,
 					scrollTop:0
 				})
-			}
-			,
-			/**
-			 * 当页面滑动底部时触发获取更多列表数据
-			 */
-			getMore(){
-				// console.log('滑到底部了');
-				// 发起请求获取新的数据
-				
-				
-				// 模拟请求过程
-				if(this.hasNext){
-					setTimeout(()=>{
-						if(this.storeListData.length>8){
-							this.storeListData = [
-									...this.storeListData,
-									...this.$t_d.STORE_lIST_DATA_3.items
-								];
-							this.hasNext = this.$t_d.STORE_lIST_DATA_3.has_next;
-							return;
-						}
-						
-						this.storeListData = [
-								...this.storeListData,
-								...this.$t_d.STORE_lIST_DATA_2.items
-							];
-						this.hasNext = this.$t_d.STORE_lIST_DATA_2.has_next;
-					},500);
-				}
-				
 			}
 			,
 			/**

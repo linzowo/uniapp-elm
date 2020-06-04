@@ -46,7 +46,8 @@
 		:top="50"
 		:nativeNav="false"
 		:nativeTabbar="false"
-		:getMoreFlag="reachBottom"
+		:storeListData="storeListData"
+		:hasNext="hasNext"
 		:pageScroll="pageScroll"
 		></store-list>
 		<!-- content E -->
@@ -153,8 +154,9 @@
 				popupStack:[], // 弹窗栈用于帮助用户关闭多个弹窗
 				elementInfo:{}, // 存储元素的基本信息
 				style:{}, // 元素的style样式
-				reachBottom: false, // 当前页面是否到达了底部
 				pageScroll:0, // 页面滚动距离
+				storeListData: [], // 商铺列表数据
+				hasNext: false, // 是否还存在下一组数据
 			}
 		},
 		components:{storeList},
@@ -189,10 +191,8 @@
 		}
 		,
 		onReachBottom(){
-			this.reachBottom = true;
-			setTimeout(()=>{
-				this.reachBottom = false;
-			},200);
+			// 调用getmore方法获取更多数据
+			this.getMore();
 		}
 		,
 		created() {
@@ -210,11 +210,47 @@
 			
 			this.storeNavList = this.$t_d.STORE_FILTER_DATA;
 			
+			// 获取默认商铺列表数据
+			if(this.login){
+				this.storeListData = [...this.$t_d.STORE_lIST_DATA_1.items];
+				this.hasNext = this.$t_d.STORE_lIST_DATA_1.has_next;
+			}
+			
 		}
 		,
 		mounted() {}
 		,
 		methods:{
+			/**
+			 * 当页面滑动底部时触发获取更多列表数据
+			 */
+			getMore(){
+				// console.log('滑到底部了');
+				// 发起请求获取新的数据
+				
+				
+				// 模拟请求过程
+				if(this.hasNext){
+					setTimeout(()=>{
+						if(this.storeListData.length>8){
+							this.storeListData = [
+									...this.storeListData,
+									...this.$t_d.STORE_lIST_DATA_3.items
+								];
+							this.hasNext = this.$t_d.STORE_lIST_DATA_3.has_next;
+							return;
+						}
+						
+						this.storeListData = [
+								...this.storeListData,
+								...this.$t_d.STORE_lIST_DATA_2.items
+							];
+						this.hasNext = this.$t_d.STORE_lIST_DATA_2.has_next;
+					},500);
+				}
+				
+			}
+			,
 			/**
 			 * 切换顶部分类列表
 			 * @param {Object} e

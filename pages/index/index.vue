@@ -82,7 +82,8 @@
 					:showGotop="false"
 					:nativeNav="false"
 					:navTapFn="scrollToStoreList"
-					:getMoreFlag="reachBottom"
+					:storeListData="storeListData"
+					:hasNext="hasNext"
 					class="store-list"
 					></store-list>
 					
@@ -164,9 +165,7 @@ const data = function() {
 		navList: [], // 顶部分类导航栏数据
 		loggedIn: false, // 登录状态 true-登录 false-未登录
 		// 记录当前页面状态
-		pageState:{
-			login:false, // 登录状态
-		}, 
+		pageState:{}, 
 		popupStack:[], // 弹窗栈用于帮助用户关闭多个弹窗
 		scrollTop: 0, // 用于控制页面滚动到哪个位置的
 		old: {
@@ -174,13 +173,15 @@ const data = function() {
 		},
 		controlPageScroll: true, // 控制主页面是否可以滑动的
 		navBarHeight:60, // 顶部自定义navbar的默认高度用来设置其他元素的高度使用的
-		reachBottom: false, // 页面是否滑动到底部
+		storeListData: [], // 商铺列表数据
+		hasNext: false, // 是否还存在下一组数据
 	};
 };
 
 const computed = {
 	...mapState([
-		'userInfo'
+		'userInfo',
+		'login'
 	]),
 	// 顶部收货地址
 	address(){
@@ -213,6 +214,11 @@ export default {
 		this.navList.fill(this.$t_d.NAV_LIST_DATA[0],0,5);
 		this.navList.fill(this.$t_d.NAV_LIST_DATA[1],5,10);
 		
+		if(this.login){
+			this.storeListData = [...this.$t_d.STORE_lIST_DATA_1.items];
+			this.hasNext = this.$t_d.STORE_lIST_DATA_1.has_next;
+		}
+		
 	}
 	,
 	mounted() {}
@@ -222,10 +228,8 @@ export default {
 	}
 	,
 	onReachBottom(){
-		this.reachBottom = true;
-		setTimeout(()=>{
-			this.reachBottom = false;
-		},200);
+		// 调用getmore方法获取更多数据
+		this.getMore();
 	}
 	,
 	onBackPress(e) {
@@ -240,6 +244,36 @@ export default {
 	,
 	methods: {
 		/**
+		 * 当页面滑动底部时触发获取更多列表数据
+		 */
+		getMore(){
+			// console.log('滑到底部了');
+			// 发起请求获取新的数据
+			
+			
+			// 模拟请求过程
+			if(this.hasNext){
+				setTimeout(()=>{
+					if(this.storeListData.length>8){
+						this.storeListData = [
+								...this.storeListData,
+								...this.$t_d.STORE_lIST_DATA_3.items
+							];
+						this.hasNext = this.$t_d.STORE_lIST_DATA_3.has_next;
+						return;
+					}
+					
+					this.storeListData = [
+							...this.storeListData,
+							...this.$t_d.STORE_lIST_DATA_2.items
+						];
+					this.hasNext = this.$t_d.STORE_lIST_DATA_2.has_next;
+				},500);
+			}
+			
+		}
+		,
+		/**
 		 * 使页面滚动到商铺列表位置
 		 */
 		scrollToStoreList(){
@@ -251,14 +285,6 @@ export default {
 					scrollTop: this.$utils.getElementInfo('.store-list').top - this.$utils.getElementInfo('.container').top - this.navBarHeight
 				})
 			}
-			
-			// if(this.$system_info.screenHeight - parseInt(this.$utils.getElementInfo('.store-list').bottom) < 50 ){
-				
-			// 	this.scrollTop = this.old.scrollTop;
-			// 	this.$nextTick(function() {
-			// 		this.scrollTop = this.$utils.getElementInfo('.store-list').top + this.$system_info.screenHeight;
-			// 	});
-			// }
 		}
 		,
 		/**
@@ -278,10 +304,6 @@ export default {
 			this.$utils.log('popupChange','弹窗状态改变==>' + (e.show?'开':'关'),e);
 			if(e.show == false){
 				this.popupStack.pop();
-				
-				if(this.pageState.storeNavSelected){
-					this.pageState.storeNavSelected = false;
-				}
 			}
 		}
 		,

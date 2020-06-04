@@ -4,10 +4,10 @@
 		<view class="header flex-direction">
 			
 			<!-- nav S -->
-			<view class="search-nav padding-tb padding-lr-xs">
+			<view class="search-nav padding-lr-xs align-center">
 				<text 
 				@tap="goback"
-				class="lg text-xxl text-gray cuIcon-back"></text>
+				class="lg text-gray cuIcon-back"></text>
 			</view>
 			<!-- nav E -->
 			
@@ -20,7 +20,7 @@
 					v-model="inputText"
 					:adjust-position="false" 
 					type="text" 
-					placeholder="输入商家、商品名称" 
+					placeholder="输入商家、商品名称(输入'没有结果'查看搜索无结果情况)" 
 					confirm-type="search"
 					@confirm="requestSearchRes"
 					></input>
@@ -40,7 +40,7 @@
 			
 		</view>
 		
-		<view class="content">
+		<view class="content flex-sub">
 			
 			<!-- 搜索标签 S -->
 			<view 
@@ -91,7 +91,7 @@
 			
 			<!-- 搜索提示 S -->
 			<view 
-			v-show="inputText && !searchRes.length"
+			v-show="inputText && (!searchRes.length && !recommendData.length)"
 			class="search-cue-box flex-sub padding-lr flex-direction">
 			
 				<!-- 输入内容显示 S -->
@@ -113,6 +113,7 @@
 				<view 
 				v-for="(item,index) in searchCueData.restaurants"
 				:key="index"
+				@tap="fillSearch(item.name)"
 				class="search-cue-item flex-sub flex-direction">
 					
 					<view class="align-center flex-sub special">
@@ -167,6 +168,7 @@
 				<view 
 				v-for="(item,index) in searchCueData.word_with_meta"
 				:key="'word_with_meta'+index"
+				@tap="fillSearch(item.word)"
 				class="search-cue-item flex-sub flex-direction">
 				
 					<view class="align-center flex-sub normal">
@@ -184,12 +186,16 @@
 			
 			<!-- 搜索结果 S -->
 			<view 
-			v-show="searchRes.length"
-			class="search-result-box">
+			v-show="searchRes.length || recommendData.length"
+			class="search-result-box flex-sub">
 				<storeList
 				:top="100"
 				:nativeNav="false"
 				:nativeTabbar="false"
+				:storeListData="searchRes"
+				:recommendData="recommendData"
+				:hasNext="hasNext"
+				:mode="'search'"
 				></storeList>
 			</view>
 			<!-- 搜索结果 E -->
@@ -213,6 +219,8 @@
 				searchCueData: {}, // 搜索提示数据
 				searchHistory: [], // 搜索历史数据
 				searchRes: [], // 搜索结果数据
+				hasNext: false, // 是否还存在下一组数据
+				recommendData:[], // 更多推荐数据
 			}
 		},
 		components:{storeList}
@@ -226,10 +234,12 @@
 				}else{
 					this.searchCueData = {};
 					this.searchRes = [];
+					this.recommendData = [];
 				}
 				
 				if(n !== o){
 					this.searchRes = [];
+					this.recommendData = [];
 				}
 			}
 		}
@@ -269,6 +279,14 @@
 			this.hotData = this.$t_d.HOT_SEARCH;
 			
 			
+		}
+		,
+		onReachBottom() {
+			// if(this.searchRes.length && !this.recommendData.length){
+			// 	setTimeout(()=>{
+			// 		this.recommendData = [...this.$t_d.SEARCH_RES_1.inside[1].restaurant_with_foods];
+			// 	},500);
+			// }
 		}
 		,
 		methods:{
@@ -328,13 +346,19 @@
 					title:''
 				})
 				setTimeout(()=>{
-					for (let key in this.$t_d.SEARCH_RES_1.inside) {
-						console.log(key);
-						this.searchRes.push(this.$t_d.SEARCH_RES_1.inside[key]);
-					}
-					uni.hideLoading();
 					
-					// this.searchRes = this.$t_d.SEARCH_RES_1.inside
+					if(this.inputText == '没有结果'){
+						// 模拟搜索没有结果的情况
+						this.searchRes = []
+						this.recommendData = [...this.$t_d.SEARCH_RES_1.inside[1].restaurant_with_foods];
+						
+					}else{
+						// 模拟搜索有结果的情况
+						this.searchRes = [...this.$t_d.SEARCH_RES_1.inside[0].restaurant_with_foods];
+						this.recommendData = [...this.$t_d.SEARCH_RES_1.inside[1].restaurant_with_foods];
+					}
+					
+					uni.hideLoading();
 				},1000);
 				
 				
@@ -378,23 +402,26 @@
 	page{
 		background-color: #fff;
 	}
-	.search-container{
-		
-	}
 	.header{
 		position: fixed;
 		top: 0;
 		background-color: #fff;
 		z-index: 99;
 		width: 750rpx;
+		height: 100px;
 	}
 	.content{
 		margin-top: 100px;
 	}
-	.search-nav{
-		height: 50px;
+	.cu-bar,.search-form,.search .action button{
+		max-height: 50px;
 	}
-	.cu-bar{
+	@media screen and (min-width: 760px){
+		.cu-bar{
+			min-height: 0;
+		}
+	}
+	.search-nav{
 		height: 50px;
 	}
 	.search-cue-cover{
@@ -405,5 +432,8 @@
 		color: #00e066;
 		border-color: #00e066;
 		margin-left: -40rpx;
+	}
+	.search-result-box{
+		width: 750rpx;
 	}
 </style>

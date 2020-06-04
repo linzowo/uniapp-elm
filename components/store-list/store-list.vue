@@ -4,6 +4,7 @@
 		
 		<!-- 分类筛选nav S -->
 		<view 
+		v-if="storeListData.length"
 		:style="{top:top + 'px'}"
 		class="content-list-tab-box bg-white flex-sub"
 		>
@@ -31,6 +32,18 @@
 		
 		<!-- content S -->
 		
+		<!-- 没有结果 S -->
+		<view 
+		v-if="!storeListData.length"
+		class="search-no-result padding-lg justify-center align-center">
+			<image :src="$i_u.search_no_result" mode="widthFix" class="search-no-result-img"></image>
+			<view class="search-no-result-text flex-direction">
+				<text class="text-lg margin-bottom-xs">附近没有搜索结果</text>
+				<text class="text-xs text-color-9">换个关键词试试吧</text>
+			</view>
+		</view>
+		<!-- 没有结果 E -->
+		
 		<view 
 		class="content-box flex-sub">
 			
@@ -50,7 +63,7 @@
 				<!-- store-list-item S -->
 				<view 
 				v-for="(item,index) in storeListData"
-				:key="index"
+				:key="item.restaurant.authentic_id"
 				@tap="gotoStoreIndex(index)"
 				class="store-list-item padding-tb padding-lr-sm border-bottom border-color-e align-start flex-sub">
 					<!-- 遮罩层 S -->
@@ -81,16 +94,36 @@
 								v-if="item.restaurant.brand_id"
 								class="ele-tag bg-tag-color-yellow">品牌</text>
 								<text
-								class="text-cut store-title-text text-bold flex-sub"
+								class="text-cut store-title-text text-bold"
 								>{{item.restaurant.name}}
 								</text>
 							</view>
 							
+							<!-- 普通模式-遮罩开关 S -->
 							<view
+							v-if="mode=='normal'"
 							@tap.stop.prevent="controlStoreMask(index)"
 							 class="dont-like-btn padding-left">
 								<text class="lg text-gray cuIcon-more"></text>
 							</view>
+							<!-- 普通模式-遮罩开关 E -->
+							
+							<!-- 搜索模式-商家支持服务标签 S -->
+							<view 
+							v-if="mode=='search'"
+							class="supports-box">
+								<text 
+								v-for="(ele,i) in item.restaurant.supports"
+								:key="i"
+								:style="{
+									color:'#'+ele.text_color, 
+									borderColor: '#'+ele.border
+								}"
+								class="supports-tag text-xs text-scale-8"
+								>{{ele.icon_name}}</text>
+							</view>
+							<!-- 搜索模式-商家支持服务标签 E -->
+							
 						</view>
 						<!-- 店铺名称 E -->
 						
@@ -150,13 +183,17 @@
 						<!-- 配送相关信息 E -->
 						
 						<!-- 店铺分类 S -->
-						<view class="">
+						<view
+						v-if="item.restaurant.flavors"
+						>
 							<text class="text-scale-8 store-categroy text-color-6 text-xs margin-tb-xs text-xs border border-color-e">{{item.restaurant.flavors[0].name}}</text>
 						</view>
 						<!-- 店铺分类 E -->
 						
 						<!-- 店铺促销活动 S -->
-						<view class="store-activities text-color-6 flex-sub text-xs align-start">
+						<view 
+						v-if="item.restaurant.activities"
+						class="store-activities text-color-6 flex-sub text-xs align-start">
 							<view class="active-left flex-direction text-scale-9">
 								<view 
 								v-for="(e,i) in item.restaurant.act_tag ? item.restaurant.activities : item.restaurant.activities.slice(0,2)"
@@ -180,15 +217,228 @@
 						</view>
 						<!-- 店铺促销活动 E -->
 						
+						<!-- 店铺商品列表 S -->
+						<view 
+						v-if="item.foods"
+						class="store-goods-list flex-direction">
+						
+							<!-- 图片展示模式 S -->
+							<view class="img-mode">
+								
+								<view 
+								v-for="(ele,i) in item.foods.slice(0,3)"
+								:key="i"
+								class="store-goods-item flex-direction margin-right-xs">
+									<image 
+									:src="ele.image_path|imgUrlFilter" 
+									mode="widthFix"
+									class="store-goods-img"
+									></image>
+									<text class="text-cut text-xs text-color-9 margin-tb-xs">{{ele.name}}</text>
+									<text class="text-price text-color-price text-lg">{{ele.price}}</text>
+								</view>
+								
+							</view>
+							<!-- 图片展示模式 E -->
+							
+							<!-- 文字模式 S -->
+							<view 
+							v-show="showTextModeGoods.includes(index)"
+							class="text-mode flex-direction">
+								<view 
+								v-for="(ele,i) in item.foods.slice(3)"
+								:key="i"
+								class="store-goods-item flex-sub flex-direction margin-top">
+									<view class="info flex-sub justify-between text-color-9 text-xs">
+										<text>{{ele.name}}</text>
+										<text>月售{{ele.month_sales}}份</text>
+									</view>
+									<text class="text-price text-color-price text-lg margin-top-xs">{{ele.price}}</text>
+								</view>
+							</view>
+							<!-- 文字模式 E -->
+							
+							<!-- 查看其他 S -->
+							<view 
+							v-if="item.foods.length"
+							@tap.stop.prevent="controlGoodsList(index)"
+							class="store-goods-show-more align-center flex-sub justify-center padding-sm text-xs">
+								<view v-show="!showTextModeGoods.includes(index)">
+									<text>查看其他相关商品 {{item.foods.length-3}} 个</text>
+									<text class="lg text-gray cuIcon-unfold margin-left-xs"></text>
+								</view>
+								
+								<view v-show="showTextModeGoods.includes(index)">
+									<text>收起</text>
+									<text class="lg text-gray cuIcon-fold margin-left-xs"></text>
+								</view>
+							</view>
+							<!-- 查看其他 E -->
+							
+						</view>
+						<!-- 店铺商品列表 E -->
+						
 					</view>
 					<!-- 店铺详情 E -->
 					
 				</view>
 				<!-- store-list-item E -->
 				
-				<view class="list-end align-center justify-center">
+				<!-- 加载提示 S -->
+				<view 
+				v-if="storeListData.length"
+				class="list-end align-center justify-center">
 					<view class="cu-load" :class="hasNext?'loading':'over'"></view>
 				</view>
+				<!-- 加载提示 E -->
+				
+				<!-- 为你推荐 S -->
+				<view
+				v-if="recommendData.length"
+				 class="recommend-box flex-direction">
+					
+					<!-- 推荐标题 S -->
+					<view class="recommend-title padding justify-center align-center bg-grey-f5 text-color-3 text-bold">
+						<text class="line"></text>
+						<text class="lg cuIcon-appreciate margin-left-xs"></text>
+						<text class="text-bold margin-lr-xs">为你推荐</text>
+						<text class="line"></text>
+					</view>
+					<!-- 推荐标题 E -->
+					
+					<view 
+					v-for="(item,index) in recommendData"
+					:key="item.restaurant.authentic_id"
+					@tap="gotoStoreIndex(index)"
+					class="store-list-item padding-tb padding-lr-sm border-bottom border-color-e align-start flex-sub">
+						
+						<!-- 店铺封面 S -->
+						<image 
+						class="store-cover margin-right-xs" 
+						:src="item.restaurant.image_path|imgUrlFilter" 
+						mode="widthFix"></image>
+						<!-- 店铺封面 E -->
+						
+						<!-- 店铺详情 S -->
+						<view class="store-info-box flex-direction flex-sub">
+							
+							<!-- 店铺名称 S -->
+							<view class="store-title flex-sub align-center justify-between">
+								<view class="">
+									<text 
+									v-if="item.restaurant.brand_id"
+									class="ele-tag bg-tag-color-yellow">品牌</text>
+									<text
+									class="text-cut store-title-text text-bold"
+									>{{item.restaurant.name}}
+									</text>
+								</view>
+								
+								<!-- 搜索模式-商家支持服务标签 S -->
+								<view 
+								v-if="mode=='search'"
+								class="supports-box">
+									<text 
+									v-for="(ele,i) in item.restaurant.supports"
+									:key="i"
+									:style="{
+										color:'#'+ele.text_color, 
+										borderColor: '#'+ele.border
+									}"
+									class="supports-tag text-xs text-scale-8"
+									>{{ele.icon_name}}</text>
+								</view>
+								<!-- 搜索模式-商家支持服务标签 E -->
+								
+							</view>
+							<!-- 店铺名称 E -->
+							
+							<!-- 店铺销售及评价情况 S -->
+							<view class="store-star padding-tb-xs justify-between">
+								<view class="left align-center">
+									<!-- star S -->
+									<view class="star-box star-size">
+										<view class="star-bg">
+											<image class="star-size" :src="$i_u.star_bg" mode="left"></image>
+										</view>
+										<view 
+										class="star"
+										:style="{width:parseInt(120 * (item.restaurant.rating/5)) + 'rpx'}"
+										>
+											<image class="star-size" :src="$i_u.star" mode="left"></image>
+										</view>
+									</view>
+									<!-- star E -->
+									
+									<!-- rate S -->
+									<text class="text-scale-9 text-sm text-color-6 margin-lr-xs">{{item.restaurant.rating}}</text>
+									<!-- rate E -->
+									
+									<!-- 销售量 S -->
+									<text class="text-scale-9 text-sm text-color-6">月售{{item.restaurant.recent_order_num}}单</text>
+									<!-- 销售量 E -->
+								</view>
+								
+								<view
+								v-if="item.restaurant.delivery_mode"
+								 class="right">
+									<text 
+									:style="{
+											color:'#'+item.restaurant.delivery_mode.text_color,
+											backgroundColor:'#'+item.restaurant.delivery_mode.color
+										}"
+									class="text-scale-8 text-sm padding-lr-xs">{{item.restaurant.delivery_mode.text}}</text>
+								</view>
+								
+							</view>
+							<!-- 店铺销售及评价情况 E -->
+							
+							<!-- 配送相关信息 S -->
+							<view class="text-xs store-distance-box text-color-6 justify-between align-center">
+								<view class="text-scale-9 left align-center">
+									<text>￥{{item.restaurant.float_minimum_order_amount}}起送</text>
+									<text class="margin-lr-xs text-color-d">|</text>
+									<text>配送￥{{item.restaurant.float_delivery_fee}}</text>
+								</view>
+								<view class="text-scale-9 right align-center text-color-9">
+									<text>{{item.restaurant.distance|distaceFilter}}</text>
+									<text class="margin-lr-xs text-color-d">|</text>
+									<text>{{item.restaurant.order_lead_time}}分钟</text>
+								</view>
+							</view>
+							<!-- 配送相关信息 E -->
+							
+							<!-- 店铺分类 S -->
+							<view
+							v-if="item.restaurant.flavors"
+							>
+								<text class="text-scale-8 store-categroy text-color-6 margin-tb-xs text-xs border border-color-e">{{item.restaurant.flavors[0].name}}</text>
+							</view>
+							<!-- 店铺分类 E -->
+							
+							<!-- 店铺标签 S -->
+							<view class="store-tag-list flex-wrap">
+								<text 
+								v-for=" (ele,i) in item.restaurant.support_tags"
+								:key="i"
+								class="store-tag-item border text-xs margin-top-xs text-scale-8 padding-lr-xs"
+								:style="{
+									color:'#'+ele.color,
+									borderColor: '#'+ele.border
+								}"
+								>{{ele.text}}</text>
+							</view>
+							<!-- 店铺标签 E -->
+							
+							
+						</view>
+						<!-- 店铺详情 E -->
+						
+					</view>
+					
+				</view>
+				
+				<!-- 为你推荐 E -->
 			</view>
 			<!-- 登录 E -->
 			
@@ -349,6 +599,7 @@
 				storeMaskIndex:null, // 控制店铺的遮罩开闭
 				gotopShow: false, // 控制回到顶部按钮的显示与隐藏
 				zIndexControl: false, // 控制导航栏的层级
+				showTextModeGoods:[], // 索引值在这个列表中的即为显示状态不在的即为隐藏状态
 			}
 		},
 		components:{noLogin,gotop},
@@ -361,6 +612,14 @@
 			,
 			// 登录后要显示的商铺列表数据
 			storeListData:{
+				type: Array,
+				default(){
+					return []
+				}
+			}
+			,
+			// 更多推荐数据
+			recommendData:{
 				type: Array,
 				default(){
 					return []
@@ -396,6 +655,13 @@
 			pageScroll: {
 				type: Number,
 				default: 0
+			},
+			// 组件的呈现模式
+			// 默认为 normal模式，就是普通的商铺列表呈现模式
+			// search模式会显示商铺的特色商品及支持服务
+			mode: {
+				type: String,
+				default: 'normal'
 			}
 		},
 		computed:{
@@ -444,6 +710,19 @@
 		}
 		,
 		methods:{
+			/**
+			 * 控制商铺列表中的商品显示区是否显示全部商品
+			 * @param {Object} index 该商品渲染是的索引值
+			 */
+			controlGoodsList(index){
+				if(this.showTextModeGoods.includes(index)){
+					this.showTextModeGoods.splice(this.showTextModeGoods.indexOf(index),1);
+				}else{
+					this.showTextModeGoods.push(index);
+				}
+				
+			}
+			,
 			/**
 			 * 回到顶部方法
 			 */
@@ -704,7 +983,9 @@
 	.nav .cu-item{
 		height: 6.8vh;
 	}
-	
+	.content-box{
+		width: 750rpx;
+	}
 	.store-list-container{
 		position: relative;
 	}
@@ -726,6 +1007,7 @@
 	/* // 店铺列表区域样式 */
 	.store-list-item{
 		position: relative;
+		width: 750rpx;
 	}
 	.store-item-mask{
 		position: absolute;
@@ -748,7 +1030,14 @@
 	
 	.store-title-text{
 		font-size: 30rpx;
+		width: 440rpx;
 	}
+	
+	.supports-tag{
+		border-width: 1px;
+		border-style: solid;
+	}
+	
 	.star-size{
 		width: 120rpx;
 		height: 20rpx;
@@ -799,5 +1088,24 @@
 		0%{transform: rotate(180deg);}
 		50%{transform: rotate(90deg);}
 		100%{transform: rotate(0deg);}
+	}
+	
+	.store-goods-img{
+		width: 176rpx;
+		height: 176rpx;
+	}
+	
+	.img-mode .store-goods-item {
+		width: 176rpx;
+	}
+	
+	.line{
+		height: 1px;
+		width: 20rpx;
+		background-color: #999;
+	}
+	
+	.search-no-result-img{
+		width: 180rpx;
 	}
 </style>

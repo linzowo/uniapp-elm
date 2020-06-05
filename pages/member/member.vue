@@ -20,11 +20,27 @@
 		<!-- 顶部banner E -->
 		
 		<!-- 特权列表 S -->
-		<view class="card-list">
+		<view class="card-list padding-lr flex-direction">
 			
 			<!-- 内容盒子 S -->
-			<view class="card-box">
-				
+			<view class="card-box margin-tb-xs flex-sub bg-white padding-sm">
+				<text>特权盒子</text>
+			</view>
+			
+			<view class="card-box margin-tb-xs flex-sub bg-white padding-sm">
+				<text>特权盒子</text>
+			</view>
+			
+			<view class="card-box margin-tb-xs flex-sub bg-white padding-sm">
+				<text>特权盒子</text>
+			</view>
+			
+			<view class="card-box margin-tb-xs flex-sub bg-white padding-sm">
+				<text>特权盒子</text>
+			</view>
+			
+			<view class="card-box margin-tb-xs flex-sub bg-white padding-sm">
+				<text>特权盒子</text>
 			</view>
 			<!-- 内容盒子 E -->	
 		
@@ -54,6 +70,7 @@
 <style lang="scss" scoped>
 	.member-banner{
 		position: relative;
+		height: 340rpx;
 	}
 	.member-banner-bgimg{
 		position: absolute;
@@ -78,5 +95,9 @@
 	}
 	.text-color-banner{
 		color: #8a7a5c;
+	}
+	.card-box{
+		border-radius: 10rpx;
+		box-shadow: 0 8rpx 10rpx 0 rgba(0,0,0,.03);
 	}
 </style>

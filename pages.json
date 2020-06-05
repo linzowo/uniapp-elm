@@ -58,7 +58,8 @@
 		}, {
 			"path": "pages/combo/combo",
 			"style": {
-				"navigationBarTitleText": "品质套餐页"
+				"navigationBarTitleText": "品质套餐页",
+				"navigationStyle": "custom"
 			}
 		}, {
 			"path": "pages/member/member",

@@ -390,9 +390,20 @@
 			 * 返回上一页
 			 */
 			goback(){
-				uni.navigateBack({
-					delta:1
-				})
+				if(getCurrentPages().length<=1){
+					uni.switchTab({
+						url:'/pages/index/index',
+						fail(e) {
+							console.log(e);
+						}
+					})
+				}else{
+					uni.navigateBack({
+						delta:1
+					})
+				}
+				
+				
 			}
 		}
 	}

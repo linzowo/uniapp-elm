@@ -64,7 +64,8 @@
 		}, {
 			"path": "pages/member/member",
 			"style": {
-				"navigationBarTitleText": "会员页"
+				"navigationBarTitleText": "会员页",
+				"navigationStyle": "custom"
 			}
 		}, {
 			"path": "pages/login/login",

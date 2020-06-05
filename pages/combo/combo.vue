@@ -22,7 +22,7 @@
 		</scroll-view>
 		<!-- 顶部自定义导航栏 E -->
 		
-		<view class="body flex-sub">
+		<view class="body flex-sub flex-direction">
 			
 			<!-- 商铺列表 S -->
 			<view class="store-list flex-direction flex-sub">
@@ -34,7 +34,9 @@
 				class="store-item flex-direction flex-sub border-bottom border-color-e padding">
 					
 					<!-- 商铺基本信息 S -->
-					<view class="store-info justify-between align-center margin-bottom">
+					<view 
+					@tap="storeTap"
+					class="store-info justify-between align-center margin-bottom">
 						
 						<!-- 店铺头像 -->
 						<image 
@@ -71,9 +73,12 @@
 					<!-- 套餐列表 S -->
 					<view class="combo-list flex-direction">
 						<!-- 套餐 S -->
+						
+						<!-- 默认显示的第一件商品 S -->
 						<view 
-						v-for="(ele,i) in item.foods"
-						:key="i"
+						v-for="(ele,i) in item.foods.slice(0,1)"
+						:key="ele.food_id"
+						@tap="comboTap(ele.food_id)"
 						class="combo-item margin-bottom">
 							<!-- 套餐图片 -->
 							<image 
@@ -94,14 +99,53 @@
 								</view>
 							</view>
 						</view>
+						<!-- 默认显示的第一件商品 E -->
+						
+						<!-- 更多商品 S -->
+						<view 
+						v-show="showMoreGoods.includes(index)"
+						v-for="(ele,i) in item.foods.slice(1)"
+						:key="ele.food_id"
+						class="combo-item margin-bottom">
+							<!-- 套餐图片 -->
+							<image 
+							class="combo-img margin-right-sm"
+							:src="ele.image_path|imgUrlFilter"
+							 mode="widthFix"
+							 ></image>
+							<!-- 套餐详情 -->
+							<view class="combo-info flex-direction justify-between">
+								<view class="flex-direction">
+									<text class="combo-title text-lg text-cut margin-bottom-xs">{{ele.name}}</text>
+									<text class="combo-description text-sm text-color-9">{{ele.description.replace(/\n/g,'')}}</text>
+								</view>
+								
+								<view class="combo-buy justify-between">
+									<text class="text-price text-xl text-bold">{{ele.price}}</text>
+									<text class="lg text-xxl text-color-3 cuIcon-roundaddfill"></text>
+								</view>
+							</view>
+						</view>
+						<!-- 更多商品 E -->
+						
 						<!-- 套餐 E -->
 					</view>
 					<!-- 套餐列表 S -->
 					
 					<!-- 显示更多套餐 S -->
-					<view class="show-more padding-sm justify-center text-color-9">
+					<view 
+					@tap.stop.prevent="controlGoodsList(index)"
+					v-show="!showMoreGoods.includes(index)"
+					class="show-more padding-sm justify-center text-color-9 align-center">
 						<text>展开更多套餐 {{item.foods.length-1}}个</text>
+						<text class="lg text-gray cuIcon-unfold margin-left-xs"></text>
+					</view>
+					<view 
+					@tap.stop.prevent="controlGoodsList(index)"
+					v-show="showMoreGoods.includes(index)"
+					class="show-more padding-sm justify-center text-color-9 align-center">
 						<text>收起</text>
+						<text class="lg text-gray cuIcon-fold margin-left-xs"></text>
 					</view>
 					<!-- 显示更多套餐 E -->
 					
@@ -110,6 +154,10 @@
 				
 			</view>
 			<!-- 商铺列表 E -->
+			
+			<view class="list-end align-center justify-center">
+				<view class="cu-load" :class="hasNext?'loading':'over'"></view>
+			</view>
 			
 		</view>
 		
@@ -124,6 +172,8 @@
 				categotyID:null, // 锚点定位id
 				navData:[], // 导航栏分类数据
 				storeList: [], // 商铺数据
+				showMoreGoods:[], // 索引值在这个列表中的即为显示状态不在的即为隐藏状态
+				hasNext: false, // 是否还有下一组数据
 				
 			}
 		},
@@ -135,10 +185,68 @@
 			
 		}
 		,
+		onReachBottom() {
+			// 获取更多数据
+			this.getMore();
+		}
+		,
 		methods: {
+			/**
+			 * 套餐商品点击事件
+			 * @param {Number} id 商品id用于传递到商铺主页定位其在页面中的位置
+			 */
+			comboTap(id){
+				// 跳转至商铺主页 并定位到该套餐
+				
+				uni.navigateTo({
+					url:'/pages/storeIndex/storeIndex?food_id='+id,
+					fail(e) {
+						console.log('跳转失败');
+					}
+				})
+			}
+			,
+			/**
+			 * 店铺标题点击事件
+			 */
+			storeTap(){
+				// 跳转至商铺主页
+				uni.navigateTo({
+					url:'/pages/storeIndex/storeIndex',
+					fail(e) {
+						console.log('跳转失败');
+					}
+				})
+			}
+			,
+			/**
+			 * 切换顶部分类
+			 * @param {Object} index
+			 */
 			tabSelect(index) {
+				this.$utils.log('tabSelect','切换分类');
 				this.TabCur = index;
 				this.categotyID = 'cu-item' + index;
+			},
+			/**
+			 * 控制商铺列表中的商品显示区是否显示全部商品
+			 * @param {Object} index 该商品渲染是的索引值
+			 */
+			controlGoodsList(index){
+				if(this.showMoreGoods.includes(index)){
+					this.showMoreGoods.splice(this.showMoreGoods.indexOf(index),1);
+				}else{
+					this.showMoreGoods.push(index);
+				}
+				
+			}
+			,
+			/**
+			 * 获取更多数据
+			 */
+			getMore(){
+				// 发起获取更多数据请求
+				this.$utils.log('getMore','获取更多套餐数据')
 			}
 		}
 		

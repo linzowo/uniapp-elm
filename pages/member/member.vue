@@ -14,7 +14,9 @@
 					<text>专属红包</text>
 				</view>
 				<text class="text-color-banner margin-bottom">再享4大会员专属特权</text>
-				<button class="head-open-vip-btn round cu-btn lg" type="default">超低价格开通会员</button>
+				<button 
+				@click="openVip"
+				class="head-open-vip-btn round cu-btn lg" type="default">超低价格开通会员</button>
 			</view>
 		</view>
 		<!-- 顶部banner E -->
@@ -36,7 +38,7 @@
 					v-for="item in 4"
 					:key="item"
 					class="red-packets-box flex-direction justify-center align-center padding-lr padding-tb-sm">
-						<text class="text-price text-color-price text-sl margin-bottom-xs">5</text>
+						<text class="red-packets-value text-price text-color-price margin-bottom-xs">5</text>
 						<text class="text-color-b47738">无门槛</text>
 					</view>
 				</view>
@@ -212,7 +214,9 @@
 		class="fixed-btn-box justify-center padding-bottom footer-open-vip-btn-box"
 		:class="[showFooterBtn?'animation-slide-bottom':'btn-hidden']"
 		>
-			<button class="footer-open-vip-btn round cu-btn padding-xl flex-sub" type="default">超低价格开通会员</button>
+			<button 
+			@click="openVip"
+			class="footer-open-vip-btn round cu-btn padding-xl flex-sub" type="default">超低价格开通会员</button>
 		</view>
 		<!-- 底部固定按钮 E -->
 		
@@ -221,6 +225,12 @@
 </template>
 
 <script>
+	/**
+	 * @module 会员介绍页
+	 */
+	
+	import {mapState} from 'vuex';
+	
 	export default {
 		data() {
 			return {
@@ -230,6 +240,12 @@
 				showFooterBtn:false, // 控制底部按钮出现的指标
 			}
 		},
+		computed:{
+			...mapState([
+				'login'
+			])
+		}
+		,
 		created() {
 			
 			// 模拟获取必要数据过程
@@ -246,6 +262,24 @@
 				this.showFooterBtn = true;
 			}else if(this.$utils.getElementInfo('.card-box-3').bottom > this.$system_info.screenHeight && this.showFooterBtn){
 				this.showFooterBtn = false;
+			}
+		},
+		methods:{
+			/**
+			 * 开通vip
+			 */
+			openVip(){
+				this.$utils.log('openVip','开通vip按钮被点击，如果已登录就跳转至开通页，未登录就跳转至登录页')
+				if(this.login){
+					console.log('跳转至会员开通页面');
+				}else{
+					uni.navigateTo({
+						url:'/pages/login/login',
+						fail(e) {
+							console.log('跳转登录页失败：',e);
+						}
+					})
+				}
 			}
 		}
 		
@@ -298,6 +332,10 @@
 		border-radius: 10rpx;
 		position: relative;
 		overflow: hidden;
+	}
+	.red-packets-value{
+		font-size: 65rpx;
+		font-weight: 500;
 	}
 	.red-packets-box::before,.red-packets-box::after{
 		content: "";
@@ -380,7 +418,7 @@
 	.sale-goods-list{
 		
 	}
-	.sale-goods-cover,.store-item,.sale-goods-title{
+	.sale-goods-cover,.sale-goods-title{
 		width: 310rpx;
 	}
 	.sale-goods-cover{

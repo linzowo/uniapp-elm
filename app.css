@@ -162,9 +162,29 @@ view {
 .border-color-blue {
 	border-color: #2395ff;
 }
+
+
 .link-blue{
 	color: #2395ff;
 }
+
+/* 圆角样式 */
+.border-radius-10{
+	border-radius: 10rpx;
+}
+.border-radius-20{
+	border-radius: 20rpx;
+}
+.border-radius-30{
+	border-radius: 30rpx;
+}
+.border-radius-40{
+	border-radius: 40rpx;
+}
+.border-radius-50{
+	border-radius: 50rpx;
+}
+
 
 /* 按钮样式 */
 .btn-bg-green{
@@ -204,4 +224,9 @@ view {
 }
 .text-scale-9{
 	transform: scale(.9);
+}
+
+/* 文本删除线 */
+.delete-line{
+	text-decoration:line-through;
 }

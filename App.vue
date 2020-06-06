@@ -39,5 +39,6 @@ export default {
 <style lang="scss">
 @import 'colorui/icon.css';
 @import 'colorui/main.css';
+@import 'colorui/animation.css';
 @import "app.css";
 </style>

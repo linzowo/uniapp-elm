@@ -45,6 +45,11 @@
 				"navigationBarTitleText": "添加地址"
 			}
 		}, {
+			"path": "pages/address/manage_address",
+			"style": {
+				"navigationBarTitleText": "地址管理"
+			}
+		}, {
 			"path": "pages/search/search",
 			"style": {
 				"navigationBarTitleText": "搜索页",
@@ -88,6 +93,41 @@
 			"path": "pages/storeIndex/storeIndex",
 			"style": {
 				"navigationBarTitleText": "店铺主页"
+			}
+		}, {
+			"path": "pages/userSetting/userSetting",
+			"style": {
+				"navigationBarTitleText": "用户信息设置"
+			}
+		}, {
+			"path": "pages/gold/goldShop",
+			"style": {
+				"navigationBarTitleText": "金币商城"
+			}
+		}, {
+			"path": "pages/gold/goldExchange",
+			"style": {
+				"navigationBarTitleText": "金币兑换"
+			}
+		}, {
+			"path": "pages/share/share",
+			"style": {
+				"navigationBarTitleText": "分享得现金"
+			}
+		}, {
+			"path": "pages/service/service",
+			"style": {
+				"navigationBarTitleText": "客服"
+			}
+		}, {
+			"path": "pages/rulerCenter/rulerCenter",
+			"style": {
+				"navigationBarTitleText": "规则中心"
+			}
+		}, {
+			"path": "pages/redPacket/redPacket",
+			"style": {
+				"navigationBarTitleText": "红包管理"
 			}
 		}
 	],

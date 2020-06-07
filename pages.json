@@ -20,7 +20,8 @@
 		}, {
 			"path": "pages/user/user",
 			"style": {
-				"navigationBarTitleText": "我的"
+				"navigationBarTitleText": "我的",
+				"navigationStyle":"custom"
 			}
 		}, {
 			"path": "pages/address/address",

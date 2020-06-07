@@ -63,7 +63,7 @@
 				<!-- store-list-item S -->
 				<view 
 				v-for="(item,index) in storeListData"
-				:key="item.restaurant.authentic_id"
+				:key="item.restaurant.authentic_id + index"
 				@tap="gotoStoreIndex(index)"
 				class="store-list-item padding-tb padding-lr-sm border-bottom border-color-e align-start flex-sub">
 					<!-- 遮罩层 S -->

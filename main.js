@@ -8,6 +8,14 @@ Vue.prototype.$store = store;
 // 阻止生产环境消息输出
 // Vue.config.productionTip = false
 
+const isDebug_mode = process.env.NODE_ENV !== 'production';
+
+Vue.config.debug = isDebug_mode;
+
+Vue.config.devtools = isDebug_mode;
+
+Vue.config.productionTip = isDebug_mode;
+
 // 引入工具文件
 import utils from '@/common/utils.js';
 Vue.prototype.$utils = utils;

@@ -2389,6 +2389,7 @@ export const CATEGORE_DATA = [{
 export const USER_DATA = [{
 	name: "linzowo",
 	phone: 13645678520,
+	avatar: 'https://shadow.elemecdn.com/faas/h5/static/sprite.3ffb5d8.png',
 	currentCity: "成都",
 	shipAddress: {},
 	balance: 0,

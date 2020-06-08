@@ -5,18 +5,18 @@
 		@tap="loginTap"
 		class="user-nav mbg-gradual-blue padding-lr padding-tb-xl align-center justify-between">
 			<view class="align-center">
-				<view class="user-avatar-box margin-right">
+				<view class="user-avatar-box margin-right round">
 					<image 
-					class="user-avatar round"
-					:src="$i_u.user_default_avatar" 
+					class="user-avatar"
+					:src="login ? userInfo.avatar : $i_u.user_default_avatar" 
 					mode="widthFix"
 					></image>
 				</view>
 				<view class="user-name-box flex-direction">
-					<text class="text-bold text-xxl margin-xs">登录/注册</text>
+					<text class="text-bold text-xxl margin-xs">{{login ? userInfo.name : '登录/注册'}}</text>
 					<view class="align-center">
 						<text class="lg text-white cuIcon-mobilefill"></text>
-						<text>登录后享受更多特权</text>
+						<text>{{login ? userInfo.phone.toString().replace(/(\d{3})\d{4}(\d{4})/, '$1****$2') : '登录后享受更多特权'}}</text>
 					</view>
 				</view>
 			</view>
@@ -148,8 +148,13 @@
 		},
 		computed:{
 			...mapState([
-				'login'
+				'login',
+				'userInfo'
 			])
+		}
+		,
+		created() {
+			// console.log(this.userInfo);
 		}
 		,
 		methods:{
@@ -195,9 +200,10 @@
 </script>
 
 <style lang="scss" scoped>
-	.user-avatar{
+	.user-avatar-box{
 		width: 120rpx;
 		height: 120rpx;
+		overflow: hidden;
 	}
 	.user-icon-bg-orange{
 		background-color: #FF5F3E;

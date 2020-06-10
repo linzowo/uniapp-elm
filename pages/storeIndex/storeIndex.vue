@@ -173,52 +173,216 @@
 					<!-- 评价 S -->
 					<view 
 					v-show="TabCur == 1"
-					class="align-center justify-around flex-sub">
+					class="flex-sub flex-direction bg-grey-f5">
 					
-						<!-- 店铺评分 -->
-						<text class="rating text-sl text-color-orange">4.4</text>
-						
-						<!-- 店铺星级 -->
-						<view class="flex-direction">
-							<text>商家评分</text>
+						<!-- 顶部店铺评分栏 S -->
+						<view class="align-center justify-around flex-sub text-color-6 padding-top-lg padding-bottom-xl bg-white margin-bottom-sm">
+							<!-- 店铺评分 -->
+							<text class="rating text-sl text-color-orange"
+							>
+								{{storeCommentData.rating.fixedShopScore}}
+							</text>
 							
-							<!-- star S -->
-							<view class="star-box star-size">
-								<view class="star-bg">
-									<image class="star-size" :src="$i_u.star_bg" mode="left"></image>
+							<!-- 店铺星级 -->
+							<view class="flex-direction">
+								<text class="margin-bottom-xs">商家评分</text>
+								
+								<!-- star S -->
+								<view class="star-box star-size">
+									<view class="star-bg">
+										<image class="star-size" :src="$i_u.star_bg" mode="left"></image>
+									</view>
+									<view 
+									class="star"
+									:style="{width:parseInt(120 * (parseFloat(storeCommentData.rating.fixedShopScore).toFixed(1)/5)) + 'rpx'}"
+									>
+										<image 
+										class="star-size" 
+										:src="$i_u.star" 
+										mode="left"
+										></image>
+									</view>
 								</view>
-								<view 
-								class="star"
-								:style="{width:parseInt(120 * (4.4/5)) + 'rpx'}"
-								>
-									<image 
-									class="star-size" 
-									:src="$i_u.star" 
-									mode="left"
-									></image>
+								<!-- star E -->
+								
+							</view>
+							
+							<view class="border-right border-color-e">
+								<!-- 味道评分 -->
+								<view class="flex-direction align-center padding-lr">
+									<text class="text-xs margin-bottom-xs">味道</text>
+									<text class="text-xxl">{{storeCommentData.rating.fixedTasteScore}}</text>
+								</view>
+								
+								<!-- 包装评分 -->
+								<view class="flex-direction align-center padding-lr">
+									<text class="text-xs margin-bottom-xs">包装</text>
+									<text class="text-xxl">{{storeCommentData.rating.fixedPackageScore}}</text>
 								</view>
 							</view>
-							<!-- star E -->
+							
+							<!-- 配送评分 -->
+							<view class="flex-direction align-cente padding-lr">
+								<text class="text-xs margin-bottom-xs">配送</text>
+								<text class="text-xxl">{{storeCommentData.rating.fixedRiderScore}}</text>
+							</view>
+						</view>
+						<!-- 顶部店铺评分栏 E -->
+						
+						<!-- 用户评论区 S -->
+						<view class="comment-content-box bg-white flex-direction">
+							
+							<!-- 评论标签 S -->
+							<view class="comment-tag-list padding-sm flex-wrap">
+								
+								<view 
+								class="comment-tag-item padding-tb-xs padding-lr-sm comment-tag-bg border-radius-6 text-sm"
+								v-for="(item,index) in storeCommentData.tags"
+								:key="index"
+								:class="[
+									index == pageState.commentTagCur ? 'cur' : '',
+									item.unsatisfied ? 'bad' : ''
+								]"
+								>
+									<text>{{item.name}} {{item.count > 0 ? item.count : ''}}</text>
+								</view>
+								
+							</view>
+							<!-- 评论标签 E -->
+							
+							<!-- 查看有内容评价开关 S -->
+							<view class="padding-tb-sm padding-lr border-top border-color-e align-center">
+								<text 
+								class="lg cuIcon-roundcheckfill margin-right-xs"
+								:class="pageState.showHasContentCommentOnly ? 'icon-color-76d572' : 'icon-color-e8'"
+								></text>
+								<text class="">只看有内容的评价</text>
+							</view>
+							<!-- 查看有内容评价开关 E -->
+							
+							<!-- 用户评论列表 S -->
+							<view class="comment-list flex-direction">
+								
+								<view 
+								v-for="(item,index) in storeCommentData.comments"
+								:key="index"
+								class="comment-item border-top border-color-e padding-sm flex-sub"
+								:class="foodsFilter(item.food_ratings)?'':'padding-bottom-xl'"
+								>
+									
+									<!-- 用户头像 -->
+									<view class="user-avatar-box margin-right round">
+										<image 
+										class="user-avatar"
+										:src="item.avatar|userAvatarUrlFilter" 
+										mode="widthFix"
+										></image>
+									</view>
+									
+									<!-- 评论内容 -->
+									<view class="comment-content flex-direction flex-sub">
+										
+										<view class="comment-content-head flex-direction margin-bottom-xs">
+											
+											<view class="justify-between margin-bottom-xs">
+												<text>{{item.username}}</text>
+												<text class="text-color-9 text-sm">{{item.rated_at}}</text>
+											</view>
+											
+											<view class="align-center">
+												
+												<!-- star S -->
+												<view class="star-box star-size margin-right-xs">
+													<view class="star-bg">
+														<image class="star-size" :src="$i_u.star_bg" mode="left"></image>
+													</view>
+													<view 
+													class="star"
+													:style="{
+														width:parseInt((120 * item.rating)/5) + 'rpx'
+													}"
+													>
+														<image 
+														class="star-size" 
+														:src="$i_u.star" 
+														mode="left"
+														></image>
+													</view>
+												</view>
+												<!-- star E -->
+												
+												<text
+												class="text-sm"
+												:class="item.rating<5?'bad':'super-good'"
+												>
+													{{item.rating|rating2text}}
+												</text>
+											</view>
+											
+										</view>
+										
+										<view class="comment-content-body flex-direction">
+											<!-- 文本评论 -->
+											<view class="comment-content-text margin-bottom-xs">
+												<text>{{item.rating_text}}</text>
+											</view>
+											
+											<!-- 商家回复 -->
+											<view 
+											v-if="item.reply"
+											class="store-reply-box padding-sm text-sm margin-tb-sm border-radius-6">
+												<text>商家回复：{{item.reply.content}}</text>
+											</view>
+											
+											<!-- 图片列表 -->
+											<view 
+											v-if="item.order_images"
+											class="comment-content-img-list flex-wrap flex-sub">
+												<view 
+												v-for="(ele,i) in item.order_images"
+												:key="i"
+												:style="{
+													height:item.order_images.length > 4 ? '196rpx' : '300rpx',
+													width:item.order_images.length > 4 ? '196rpx' : '300rpx'
+												}"
+												class="comment-content-img-item margin-right-xs margin-bottom-xs">
+													<image 
+													:src="ele.image_hash,(item.order_images.length > 4?'w_196':'w_300')|imgUrlFilter" 
+													mode="heightFix"></image>
+												</view>
+											</view>
+											
+											<!-- 单件商品点赞 -->
+											<view 
+											v-if="foodsFilter(item.food_ratings)"
+											class="good-goods-tag-list align-center flex-wrap">
+												<text class="lg text-gray cuIcon-appreciate"></text>
+												<view 
+												v-for="(ele,i) in foodsFilter(item.food_ratings)"
+												:key="i"
+												class="good-goods-tag-item padding-xs text-sm border-radius-6">
+													<text>{{ele.rate_name}}</text>
+												</view>
+											</view>
+											
+										</view>
+										
+									</view>
+									
+								</view>
+								
+							</view>
+							
+							<!-- 加载提示 S -->
+							<view 
+							class="list-end align-center justify-center">
+								<view class="cu-load" :class="hasNext?'loading':'over'"></view>
+							</view>
+							<!-- 加载提示 E -->
+							<!-- 用户评论列表 E -->
 							
 						</view>
-						
-						<!-- 味道评分 -->
-						<view class="flex-direction">
-							<text>味道</text>
-							<text>4.5</text>
-						</view>
-						
-						<!-- 包装评分 -->
-						<view class="flex-direction">
-							<text>包装</text>
-							<text>4.5</text>
-						</view>
-						
-						<!-- 配送评分 -->
-						<view class="flex-direction">
-							<text>配送</text>
-							<text>4.7</text>
-						</view>
+						<!-- 用户评论区 E -->
 						
 					</view>
 					<!-- 评价 E -->
@@ -262,9 +426,11 @@
 				TabCur: 0,
 				tabList:['点餐','评价','商家'],
 				pageState:{
-					
+					commentTagCur:0, // 当前用户选择的是第几个评论标签
+					showHasContentCommentOnly: true, // 是否只显示有内容的评论
 				}, // 页面状态
 				popupStack:[], // 弹窗栈
+				hasNext:false,
 			}
 		},
 		watch:{
@@ -286,12 +452,38 @@
 			
 			// 请求店铺评论数据
 			this.$http.get.storeCommentData().then((res)=>{
-				this.storeCommentData = res.data;
+				this.storeCommentData = res;
 			},(err)=>{console.log('请求失败：',err);});
 			
 			
 		},
+		filters:{
+			userAvatarUrlFilter(imgHash,size='w_30,h_30,m_fixed'){
+				
+				if(imgHash){
+					return 'https://cube.elemecdn.com/' + imgHash[0] + '/' + imgHash.slice(1, 3) + '/' + imgHash.slice(3) + '.' + (imgHash.slice(-3) == 'png' ? 'png' : imgHash.slice(-4)) +'?x-oss-process=image/format,webp/resize,' + size;
+				}else{
+					return '//shadow.elemecdn.com/faas/h5/static/sprite.3ffb5d8.png';
+				}
+			},
+			rating2text(rating){
+				let ratingTextList = ['吐槽','较差','一般','很好','超赞'];
+				
+				return ratingTextList[parseInt(rating)-1];
+			}
+		}
+		,
 		methods: {
+			/**
+			 * 点赞商品过滤器，将点赞商品中5星的过滤出来
+			 * @param {Array} foodList 点赞食品列表
+			 */
+			foodsFilter(foodList){
+				let res = foodList.filter((ele)=>{
+					return ele.rating >= 5;
+				});
+				return res.length?res:null;
+			},
 			tabSelect(e) {
 				this.TabCur = e.currentTarget.dataset.id;
 			},
@@ -478,5 +670,69 @@
 	.star{
 		position: relative;
 		z-index: 1;
+	}
+	
+	
+	.comment-tag-item{
+		margin: 8rpx;
+	}
+	
+	.comment-tag-bg{
+		color: #6d7885;
+		background-color: #ebf5ff;
+	}
+	.comment-tag-bg.cur{
+		color: #fff;
+		background-color: #0097ff;
+	}
+	.comment-tag-bg.bad{
+		color: #aaa;
+		background-color: #f5f5f5;
+	}
+	
+	.icon-color-76d572{
+		color: #76d572;
+	}
+	
+	.icon-color-e8{
+		color: #e8e8e8;
+	}
+	
+	.user-avatar-box{
+		width: 60rpx;
+		height: 60rpx;
+		overflow: hidden;
+	}
+	
+	.comment-content-img-item{
+		overflow: hidden;
+	}
+	
+	.bad{
+		color: rgb(137, 159, 188);
+	}
+	.super-good{
+		color: rgb(255, 96, 0);
+	}
+	
+	.store-reply-box{
+		background-color: #f3f3f3;
+		position: relative;
+	}
+	.store-reply-box::after{
+		content: "";
+		position: absolute;
+		width: 0;
+		height: 0;
+		border-style: solid;
+		border-color: transparent transparent #f3f3f3;
+		border-width: 0 18rpx 18rpx;
+		top: -18rpx;
+	}
+	
+	.good-goods-tag-item{
+		color: #6d7885;
+		background-color: #ebf5ff;
+		margin: 5rpx;
 	}
 </style>

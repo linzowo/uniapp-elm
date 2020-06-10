@@ -164,7 +164,7 @@
 								<view class="sale-goods-cover-box">
 									<image
 									class="sale-goods-cover border-radius-10"
-									:src="ele.foods[0].image_path|imgUrlFilter" 
+									:src="ele.foods[0].image_path,'w_250,h_250'|imgUrlFilter" 
 									mode="top|aspectFill"
 									></image>
 									<text 

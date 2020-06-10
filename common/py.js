@@ -1,3 +1,7 @@
+/**
+ * @module 字符串转拼音模块
+ */
+
 export const pinyin = (function (){
     var Pinyin = function (ops){
         this.initialize(ops);

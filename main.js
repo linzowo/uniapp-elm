@@ -21,6 +21,9 @@ import utils from '@/common/utils.js';
 Vue.prototype.$utils = utils;
 import _ from 'lodash';
 Vue.prototype._ = _;
+// 网络请求模块
+import http from '@/common/http/service.js';
+Vue.prototype.$http = http;
 
 // 引入配置文件
 // 公共文本
@@ -46,9 +49,13 @@ uni.getSystemInfo({
 });
 
 // 创建全局过滤器
-Vue.filter('imgUrlFilter', origin => {
+
+// 图片hash转url
+Vue.filter('imgUrlFilter', (origin,resize='w_130,h_130,m_fixed') => {
+	
+	
 	return 'https://cube.elemecdn.com/' + origin[0] + '/' + origin.slice(1, 3) + '/' + origin.slice(3) + '.' + (origin.slice(
-		-3) == 'png' ? 'png' : origin.slice(-4)) + '?x-oss-process=image/format,webp/resize,w_130,h_130,m_fixed';
+		-3) == 'png' ? 'png' : origin.slice(-4)) + '?x-oss-process=image/format,webp/resize,'+resize;
 });
 
 App.mpType = 'app';

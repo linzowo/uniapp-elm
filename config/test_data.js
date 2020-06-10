@@ -15542,6 +15542,8 @@ export const MEMBER_SALE_GOODS = {
 		}
 	}]
 }
+
+
 // 默认导出对象
 export default {
 	NAV_LIST_DATA,

@@ -92,7 +92,8 @@
 		}, {
 			"path": "pages/storeIndex/storeIndex",
 			"style": {
-				"navigationBarTitleText": "店铺主页"
+				"navigationBarTitleText": "店铺主页",
+				"navigationStyle": "custom"
 			}
 		}, {
 			"path": "pages/userSetting/userSetting",

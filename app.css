@@ -74,6 +74,9 @@ view {
 	color: #ff5339;
 }
 
+.text-color-orange{
+	color: #ff6000;
+}
 
 /* 背景颜色 */
 .bg-grey-fa{
@@ -169,6 +172,12 @@ view {
 }
 
 /* 圆角样式 */
+.border-radius-3{
+	border-radius: 3rpx;
+}
+.border-radius-6{
+	border-radius: 6rpx;
+}
 .border-radius-10{
 	border-radius: 10rpx;
 }

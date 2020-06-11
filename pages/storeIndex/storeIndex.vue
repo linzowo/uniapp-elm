@@ -4,7 +4,10 @@
 		<view 
 		v-show="!lodingEnd"
 		class="loding">
-			数据加载中
+			<image 
+			:style="{width:'750rpx'}"
+			:src="$i_u.lodding_bg" 
+			mode="widthFix"></image>
 		</view>
 		<!-- 数据加载完成前显示 E -->
 		
@@ -183,17 +186,17 @@
 									scroll-y 
 									scroll-with-animation 
 									:scroll-top="verticalNavTop" 
-									style="height:calc(100vh - 375upx)"
+									style="height:100vh"
 									>
 										<view 
-										class="cu-item" 
-										:class="index==tabCur?'text-green cur':''" 
+										class="cu-item text-xs justify-center flex-direction" 
+										:class="index==foodsCategoryTabCur?'text-green cur':''" 
 										v-for="(item,index) in storeData.menu" 
 										:key="index" 
-										@tap="TabSelect"
+										@tap="foodsCategoryTabSelect"
 										:data-id="index"
 										 >
-											{{item.name}}
+											<text>{{item.name}}</text>
 										</view>
 									</scroll-view>
 									<!-- 左侧分类滑动条 E -->
@@ -203,7 +206,7 @@
 									class="VerticalMain" 
 									scroll-y 
 									scroll-with-animation 
-									style="height:calc(100vh - 375upx)"
+									style="height:100vh"
 									:scroll-into-view="'main-'+mainCur" 
 									@scroll="VerticalMain"
 									>
@@ -237,7 +240,9 @@
 												class="cu-item flex-sub align-start margin-bottom-lg">
 													
 													<!-- 商品图片 -->
-													<view class="food-img-box margin-right-sm">
+													<view 
+													v-if="ele.image_path"
+													class="food-img-box margin-right-sm">
 														<image 
 														:src="ele.image_path,'w_70,h_70'|imgUrlFilter" 
 														mode="widthFix"
@@ -252,7 +257,7 @@
 														<!-- 名称 -->
 														<text class="food-title text-cut text-bold text-color-3">{{ele.name}}</text>
 														<!-- 材料 -->
-														<text class="food-des text-xs">{{ele.materials}}</text>
+														<text class="food-des text-xs">{{ele.materials||ele.description}}</text>
 														<!-- 销量 -->
 														<view class="text-xs">
 															<text class="margin-right-xs">月售{{ele.month_sales_text}}份</text>
@@ -303,7 +308,65 @@
 							<!-- 商铺菜单 E -->
 							
 							<!-- 底部购物车 S -->
-							<view class="car-box">
+							<view class="shopping-cart-box justify-between align-center">
+								<!-- 
+								 存在两种状态
+								 1.无商品状态
+								 2.有商品状态
+								 -->
+								
+								<!-- 购物车图标 -->
+								<view 
+								class="shopping-cart-icon-box round border border-xl align-center justify-center"
+								:style="{backgroundColor:shopCart.length?'':'#363636'}"
+								>
+									<text 
+									class="lg text-xxl cuIcon-cartfill"
+									:class="shopCart.length?'text-white':'text-color-6'"
+									></text>
+									<view 
+									v-show="shopCart.length"
+									class="cu-tag badge">{{shopCart.length}}</view>
+								</view>
+								
+								<!-- 选购商品提示 -->
+								<view 
+								class="shopping-cart-tips-box flex-direction text-scale-9"
+								:class="'text-color-9'"
+								>
+								
+									<view 
+									v-if="shopCart.length"
+									class="align-center">
+										<text class="text-price text-bold text-white text-xl margin-right">178.6</text>
+										<text class="text-price delete-line text-color-9">390</text>
+									</view>
+									
+									<text 
+									v-if="!shopCart.length"
+									class="text-lg"
+									>
+										未选购商品
+									</text>
+									
+									
+									<text class="text-xs">另需配送费{{parseInt(storeData.rst.float_delivery_fee)}}元</text>
+								</view>
+								
+								<!-- 结算按钮 -->
+								<view 
+								class="shopping-cart-pay-btn-box text-white align-center justify-center"
+								:style="{backgroundColor:shopCart.length?'':'#535356'}"
+								>
+									<text 
+									v-show="shopCart.length"
+									class="text-lg">去结算</text>
+									
+									<text 
+									v-show="!shopCart.length"
+									class="text-lg"
+									>¥{{parseInt(storeData.rst.float_minimum_order_amount)}}起送</text>
+								</view>
 								
 							</view>
 							<!-- 底部购物车 E -->
@@ -519,7 +582,7 @@
 							<!-- 加载提示 S -->
 							<view 
 							class="list-end align-center justify-center">
-								<view class="cu-load" :class="hasNext?'loading':'over'"></view>
+								<view class="cu-load" :class="commentHasNext?'loading':'over'"></view>
 							</view>
 							<!-- 加载提示 E -->
 							<!-- 用户评论列表 E -->
@@ -655,12 +718,12 @@
 					showHasContentCommentOnly: true, // 是否只显示有内容的评论
 				}, // 页面状态
 				popupStack:[], // 弹窗栈
-				hasNext:false,
-				list: [],
-				tabCur: 0,
-				mainCur: 0,
-				verticalNavTop: 0,
-				load: true
+				commentHasNext:false, // 是否还有更多评论
+				foodsCategoryTabCur: 0, // 当前被选中的商品列表的分类导航
+				mainCur: 0, // 用于控制商品列表滑动到哪个位置的参数，记录的值与foodsCategoryTabCur一致
+				verticalNavTop: 0, // 存储商品列表的分类导航滑动距离的参数
+				load: true, // 记录滑动动画是否执行完毕的参数
+				shopCart:[], // 临时存储购物车数据
 			}
 		},
 		watch:{
@@ -673,7 +736,6 @@
 		}
 		,
 		created() {
-			
 			// 请求店铺主要数据
 			this.$http.get.storeIndexData().then((res)=>{
 					this.lodingEnd = true;
@@ -758,11 +820,21 @@
 				this.$refs[ref].close();
 			}
 			,
-			TabSelect(e) {
-				this.tabCur = e.currentTarget.dataset.id;
+			/**
+			 * 商品列表侧边导航栏点击事件
+			 * 点击时切换右侧分类商品位置
+			 * @param {Object} e
+			 */
+			foodsCategoryTabSelect(e) {
+				this.foodsCategoryTabCur = e.currentTarget.dataset.id;
 				this.mainCur = e.currentTarget.dataset.id;
 				this.verticalNavTop = (e.currentTarget.dataset.id - 1) * 50
 			},
+			/**
+			 * 商品列表滑动事件监听
+			 * 当滑动到下一个分类时自动切换左侧分类
+			 * @param {Object} e
+			 */
 			VerticalMain(e) {
 				// #ifdef MP-ALIPAY
 				   return false  //支付宝小程序暂时不支持双向联动 
@@ -771,7 +843,7 @@
 				let tabHeight = 0;
 				if (this.load) {
 					for (let i = 0; i < this.storeData.menu.length; i++) {
-						let view = uni.createSelectorQuery().select("#main-" + this.storeData.menu[i].id);
+						let view = uni.createSelectorQuery().select("#main-" + i);
 						view.fields({
 							size: true
 						}, data => {
@@ -785,9 +857,9 @@
 				let scrollTop = e.detail.scrollTop + 10;
 				for (let i = 0; i < this.storeData.menu.length; i++) {
 					if (scrollTop > this.storeData.menu[i].top && scrollTop < this.storeData.menu[i].bottom) {
-						this.verticalNavTop = (this.storeData.menu[i].id - 1) * 50
-						this.tabCur = this.storeData.menu[i].id
-						console.log(scrollTop)
+						this.verticalNavTop = (i - 1) * 50
+						this.foodsCategoryTabCur = i
+						// console.log(scrollTop)
 						return false
 					}
 				}
@@ -1018,6 +1090,12 @@
 		width: 500rpx;
 	}
 	
+	.store-menu-box{
+		position: relative;
+		z-index: 99;
+		background-color: #fff;
+	}
+	
 	// 垂直商铺菜单列表相关样式
 
 	.VerticalNav.nav {
@@ -1027,16 +1105,18 @@
 
 	.VerticalNav.nav .cu-item {
 		width: 100%;
-		text-align: center;
-		background-color: #fff;
+		background-color: #f8f8f8;
 		margin: 0;
 		border: none;
 		height: 50px;
 		position: relative;
+		line-height: 1.5;
+		padding: 0 10rpx;
+		display: inline-flex;
 	}
 
 	.VerticalNav.nav .cu-item.cur {
-		background-color: #f1f1f1;
+		background-color: #fff;
 	}
 
 	.VerticalNav.nav .cu-item.cur::after {
@@ -1072,5 +1152,32 @@
 	}
 	.sale-tag{
 		border: 1px solid hsla(8,79%,62%,.3);
+	}
+	
+	// 底部购物车相关样式
+	.shopping-cart-box{
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		height: 96rpx;
+		background-color: rgba(61,61,63,.9);
+		padding-left: 158rpx;
+	}
+	
+	.shopping-cart-icon-box{
+		position: absolute;
+		width: 100rpx;
+		height: 100rpx;
+		left: 29rpx;
+		bottom: 20rpx;
+		background-color: #3190e8;
+		border-color: #444;
+	}
+	
+	.shopping-cart-pay-btn-box{
+		background-color: #38ca73;
+		height: 96rpx;
+		width: 210rpx;
 	}
 </style>

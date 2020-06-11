@@ -167,6 +167,149 @@
 								
 							</scroll-view>
 						</view>
+					
+						<!-- 店铺菜单模块 -->
+						<view class="store-menu-box">
+						
+							<!-- 商铺菜单 S -->
+							<view class="store-menu flex-sub">
+								
+								<!-- 垂直菜单区 S -->
+								<view class="VerticalBox flex-sub">
+									
+									<!-- 左侧分类滑动条 S -->
+									<scroll-view 
+									class="VerticalNav nav" 
+									scroll-y 
+									scroll-with-animation 
+									:scroll-top="verticalNavTop" 
+									style="height:calc(100vh - 375upx)"
+									>
+										<view 
+										class="cu-item" 
+										:class="index==tabCur?'text-green cur':''" 
+										v-for="(item,index) in storeData.menu" 
+										:key="index" 
+										@tap="TabSelect"
+										:data-id="index"
+										 >
+											{{item.name}}
+										</view>
+									</scroll-view>
+									<!-- 左侧分类滑动条 E -->
+									
+									<!-- 右侧菜单内容滑动列表 S -->
+									<scroll-view 
+									class="VerticalMain" 
+									scroll-y 
+									scroll-with-animation 
+									style="height:calc(100vh - 375upx)"
+									:scroll-into-view="'main-'+mainCur" 
+									@scroll="VerticalMain"
+									>
+										<!-- 菜单分区 -->
+										<view 
+										class="padding-lr flex-direction flex-sub" 
+										v-for="(item,index) in storeData.menu" 
+										:key="index" 
+										:id="'main-'+index"
+										>
+											<!-- 分区标题 -->
+											<view 
+											class="cu-bar solid-bottom bg-white"
+											>
+												<view 
+												class="text-xs category-title-box"
+												>
+													<text class="text-bold text-cut margin-right-xs category-title">{{item.name}}</text>
+													<text class="text-color-9 text-cut category-des">{{item.description}}</text>
+												</view>
+											</view>
+											
+											<!-- 分区内容列表 -->
+											<view 
+											class="cu-list flex-direction flex-sub bg-white"
+											>
+												<view 
+												v-for="(ele,i) in item.foods"
+												:key="'cu-item'+i"
+												
+												class="cu-item flex-sub align-start margin-bottom-lg">
+													
+													<!-- 商品图片 -->
+													<view class="food-img-box margin-right-sm">
+														<image 
+														:src="ele.image_path,'w_70,h_70'|imgUrlFilter" 
+														mode="widthFix"
+														></image>
+													</view>
+													
+													<!-- 商品介绍 -->
+													<view 
+													class="flex-direction flex-sub text-color-9 justify-around"
+													:style="{height:'190rpx'}"
+													>
+														<!-- 名称 -->
+														<text class="food-title text-cut text-bold text-color-3">{{ele.name}}</text>
+														<!-- 材料 -->
+														<text class="food-des text-xs">{{ele.materials}}</text>
+														<!-- 销量 -->
+														<view class="text-xs">
+															<text class="margin-right-xs">月售{{ele.month_sales_text}}份</text>
+															<text>好评率{{ele.satisfy_rate_text||ele.satisfy_rate}}%</text>
+														</view>
+														
+														<!-- 打折信息 -->
+														<view class="text-xs">
+															<text 
+															class="sale-tag padding-lr-xs border-radius-3 text-scale-8"
+															:style="{color:'#eb6551'}"
+															>{{ele.discount_rate}}折</text>
+															<text
+															v-if="ele.activity"
+															class="text-scale-8"
+															:style="{color:'#f07373'}"
+															>{{ele.activity.applicable_quantity_text}}</text>
+														</view>
+														
+														<!-- 价格 -->
+														<view class="align-center justify-between">
+															<view class="align-center">
+																<text class="text-price text-color-price margin-right-xs text-lg">{{ele.price}}</text>
+																<text class="text-price delete-line text-sm">{{ele.origin_price}}</text>
+															</view>
+															<view class="align-center">
+																<text
+																class="text-sm text-color-6 margin-right-xs"
+																v-if="ele.min_purchase>1"
+																>{{ele.min_purchase}}份起售</text>
+																<text class="lg add-btn-blue text-xxl cuIcon-roundaddfill"></text>
+															</view>
+														</view>
+														
+													</view>
+													
+												</view>
+												
+											</view>
+										</view>
+									</scroll-view>
+									<!-- 右侧菜单内容滑动列表 E -->
+								
+								</view>
+								<!-- 垂直菜单区 E -->
+								
+							</view>
+							<!-- 商铺菜单 E -->
+							
+							<!-- 底部购物车 S -->
+							<view class="car-box">
+								
+							</view>
+							<!-- 底部购物车 E -->
+							
+						</view>
+						
 					</view>
 					<!-- 点餐 E -->
 					
@@ -493,18 +636,6 @@
 				
 			</view>
 			<!-- 商家餐点、评价、详细信息 E -->
-			
-			<!-- 商铺菜单 S -->
-			<view class="store-menu">
-				
-			</view>
-			<!-- 商铺菜单 E -->
-			
-			<!-- 底部购物车 S -->
-			<view class="car-box">
-				
-			</view>
-			<!-- 底部购物车 E -->
 		</view>
 		<!-- 数据加载完成后显示 E -->
 	</view>
@@ -525,6 +656,11 @@
 				}, // 页面状态
 				popupStack:[], // 弹窗栈
 				hasNext:false,
+				list: [],
+				tabCur: 0,
+				mainCur: 0,
+				verticalNavTop: 0,
+				load: true
 			}
 		},
 		watch:{
@@ -621,7 +757,41 @@
 				this.$utils.log('closePopup','关闭弹窗'+ref);
 				this.$refs[ref].close();
 			}
-			
+			,
+			TabSelect(e) {
+				this.tabCur = e.currentTarget.dataset.id;
+				this.mainCur = e.currentTarget.dataset.id;
+				this.verticalNavTop = (e.currentTarget.dataset.id - 1) * 50
+			},
+			VerticalMain(e) {
+				// #ifdef MP-ALIPAY
+				   return false  //支付宝小程序暂时不支持双向联动 
+				// #endif
+				let that = this;
+				let tabHeight = 0;
+				if (this.load) {
+					for (let i = 0; i < this.storeData.menu.length; i++) {
+						let view = uni.createSelectorQuery().select("#main-" + this.storeData.menu[i].id);
+						view.fields({
+							size: true
+						}, data => {
+							this.storeData.menu[i].top = tabHeight;
+							tabHeight = tabHeight + data.height;
+							this.storeData.menu[i].bottom = tabHeight;
+						}).exec();
+					}
+					this.load = false
+				}
+				let scrollTop = e.detail.scrollTop + 10;
+				for (let i = 0; i < this.storeData.menu.length; i++) {
+					if (scrollTop > this.storeData.menu[i].top && scrollTop < this.storeData.menu[i].bottom) {
+						this.verticalNavTop = (this.storeData.menu[i].id - 1) * 50
+						this.tabCur = this.storeData.menu[i].id
+						console.log(scrollTop)
+						return false
+					}
+				}
+			}
 		}
 	}
 </script>
@@ -846,5 +1016,61 @@
 	
 	.store-address{
 		width: 500rpx;
+	}
+	
+	// 垂直商铺菜单列表相关样式
+
+	.VerticalNav.nav {
+		width: 200upx;
+		white-space: initial;
+	}
+
+	.VerticalNav.nav .cu-item {
+		width: 100%;
+		text-align: center;
+		background-color: #fff;
+		margin: 0;
+		border: none;
+		height: 50px;
+		position: relative;
+	}
+
+	.VerticalNav.nav .cu-item.cur {
+		background-color: #f1f1f1;
+	}
+
+	.VerticalNav.nav .cu-item.cur::after {
+		content: "";
+		width: 8upx;
+		height: 30upx;
+		border-radius: 10upx 0 0 10upx;
+		position: absolute;
+		background-color: currentColor;
+		top: 0;
+		right: 0upx;
+		bottom: 0;
+		margin: auto;
+	}
+	
+	// 垂直商铺菜单列表相关样式
+	.category-title-box{
+		max-width: 600rpx;
+	}
+	.category-title{
+		max-width: 200rpx;
+	}
+	.category-des{
+		max-width: 300rpx;
+	}
+	.food-img-box{
+		width: 190rpx;
+		height: 190rpx;
+	}
+	.food-title{
+		max-width: 300rpx;
+		font-size: 30rpx;
+	}
+	.sale-tag{
+		border: 1px solid hsla(8,79%,62%,.3);
 	}
 </style>

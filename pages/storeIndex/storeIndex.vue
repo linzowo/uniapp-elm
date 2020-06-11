@@ -204,7 +204,7 @@
 									<!-- 右侧菜单内容滑动列表 S -->
 									<scroll-view 
 									class="VerticalMain" 
-									scroll-y 
+									:scroll-y="pageState.foodsListScroll"
 									scroll-with-animation 
 									style="height:100vh"
 									:scroll-into-view="'main-'+mainCur" 
@@ -716,11 +716,12 @@
 				pageState:{
 					commentTagCur:0, // 当前用户选择的是第几个评论标签
 					showHasContentCommentOnly: true, // 是否只显示有内容的评论
+					foodsListScroll: false, // 当前商品列表是否可以滑动
 				}, // 页面状态
 				popupStack:[], // 弹窗栈
 				commentHasNext:false, // 是否还有更多评论
 				foodsCategoryTabCur: 0, // 当前被选中的商品列表的分类导航
-				mainCur: 0, // 用于控制商品列表滑动到哪个位置的参数，记录的值与foodsCategoryTabCur一致
+				mainCur: null, // 用于控制商品列表滑动到哪个位置的参数，记录的值与foodsCategoryTabCur一致
 				verticalNavTop: 0, // 存储商品列表的分类导航滑动距离的参数
 				load: true, // 记录滑动动画是否执行完毕的参数
 				shopCart:[], // 临时存储购物车数据
@@ -749,6 +750,19 @@
 			
 			
 		},
+		onPageScroll(e) {
+			
+			// 当页面到达底部时将商品列表状态变为可滑动状态
+			if(this.$utils.getElementInfo('.store-index-container').bottom == this.$system_info.screenHeight && !this.pageState.foodsListScroll){
+				this.pageState.foodsListScroll = true;
+			}
+			
+			// 当页面离开底部时将商品列表状态变为不可滑动状态
+			if(this.$utils.getElementInfo('.store-index-container').bottom !== this.$system_info.screenHeight && this.pageState.foodsListScroll){
+				this.pageState.foodsListScroll = false;
+			}
+		}
+		,
 		filters:{
 			userAvatarUrlFilter(imgHash,size='w_30,h_30,m_fixed'){
 				
@@ -826,6 +840,17 @@
 			 * @param {Object} e
 			 */
 			foodsCategoryTabSelect(e) {
+				
+				// 如果当前商品列表不能滑动就阻止分类点击事件
+				if(!this.pageState.foodsListScroll) {
+					uni.pageScrollTo({
+						duration:0,
+						scrollTop:this.$system_info.windowHeight
+					})
+					
+					return false;
+				}
+				
 				this.foodsCategoryTabCur = e.currentTarget.dataset.id;
 				this.mainCur = e.currentTarget.dataset.id;
 				this.verticalNavTop = (e.currentTarget.dataset.id - 1) * 50
@@ -1097,7 +1122,9 @@
 	}
 	
 	// 垂直商铺菜单列表相关样式
-
+	.VerticalMain{
+		padding-bottom: 100rpx;
+	}
 	.VerticalNav.nav {
 		width: 200upx;
 		white-space: initial;

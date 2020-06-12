@@ -286,7 +286,9 @@
 														</view>
 														
 														<!-- 打折信息 -->
-														<view class="text-xs">
+														<view 
+														v-if="ele.discount_rate<10"
+														class="text-xs">
 															<text 
 															class="sale-tag padding-lr-xs border-radius-3 text-scale-8"
 															:style="{color:'#eb6551'}"
@@ -302,7 +304,9 @@
 														<view class="price-box align-center justify-between">
 															<view class="align-center">
 																<text class="text-price text-color-price margin-right-xs text-lg">{{ele.price}}</text>
-																<text class="text-price delete-line text-sm">{{ele.origin_price}}</text>
+																<text 
+																v-if="ele.price != ele.origin_price"
+																class="text-price delete-line text-sm">{{ele.origin_price}}</text>
 															</view>
 															<view class="align-center">
 																<text
@@ -804,18 +808,34 @@
 				};
 				
 				for (let key in this.shopCart) {
-					res.price += parseInt(
-						(
-							(
-								this.shopCart[key].count - 
-								this.shopCart[key].info.activity.applicable_quantity
-							) * this.shopCart[key].info.origin_price + 
-							this.shopCart[key].info.activity.applicable_quantity *
-							this.shopCart[key].info.price
-						) * 100
-					);
+					
+					if(this.shopCart[key].info.activity){
+					
+						if(this.shopCart[key].count > this.shopCart[key].info.activity.applicable_quantity){
+							res.price += parseInt(
+								(
+									(
+										this.shopCart[key].count - 
+										this.shopCart[key].info.activity.applicable_quantity
+									) * this.shopCart[key].info.origin_price + 
+									this.shopCart[key].info.activity.applicable_quantity *
+									this.shopCart[key].info.price
+								) * 100
+							);
+						} // end if
+						
+					} // end if
+					
+					if(!this.shopCart[key].info.activity || 
+						(this.shopCart[key].count <=
+						this.shopCart[key].info.activity.applicable_quantity)
+					){
+						res.price += parseInt((this.shopCart[key].count  * this.shopCart[key].info.price) * 100);
+					} // end if
+					
 					res.origin_price += parseInt((this.shopCart[key].count * this.shopCart[key].info.origin_price)*100);
-				}
+				} // end for
+				
 				res.price /= 100;
 				res.origin_price /= 100;
 				res.save_money = res.origin_price - res.price;
@@ -877,7 +897,22 @@
 				
 				// 该对象数量超过基础数量
 				if(this.shopCart[food.item_id].count > food.min_purchase){
+					
 					this.$set(this.shopCart[food.item_id],'count',this.shopCart[food.item_id].count-1);
+					if(food.activity){
+						
+						if(
+							this.shopCart[food.item_id].count >
+							food.activity.applicable_quantity
+						){
+							uni.showToast({
+								title:food.activity.applicable_quantity_detail_text,
+								icon:'none'
+							});
+						} // end if
+						
+					} // end if
+					
 					return;
 				}
 				
@@ -892,9 +927,26 @@
 				this.$utils.log('add2cart','添加到购物车');
 				
 				if(this.shopCart[food.item_id]){
+					
+					
+					if(food.activity){
+						
+						if(
+							this.shopCart[food.item_id].count >=
+							food.activity.applicable_quantity
+						){
+							uni.showToast({
+								title:food.activity.applicable_quantity_detail_text,
+								icon:'none'
+							});
+						} // end if
+						
+					} // end if
+					
 					this.$set(this.shopCart[food.item_id],'count',this.shopCart[food.item_id].count+1);
 					return;
-				}
+				} // end if
+				
 				this.$set(this.shopCart,food.item_id,{
 					info:food,
 					count:food.min_purchase

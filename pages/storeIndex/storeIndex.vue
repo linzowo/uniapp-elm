@@ -350,6 +350,14 @@
 								 1.无商品状态
 								 2.有商品状态
 								 -->
+								 
+								<!-- 节省金额提示 S -->
+								<view 
+								v-show="shopCartPriceCount.save_money"
+								class="save-money-tips flex-sub align-center justify-center text-xs text-color-3">
+									<text>已减{{shopCartPriceCount.save_money}}元</text>
+								</view>
+								<!-- 节省金额提示 E -->
 								
 								<!-- 购物车图标 -->
 								<view 
@@ -392,16 +400,16 @@
 								<!-- 结算按钮 -->
 								<view 
 								class="shopping-cart-pay-btn-box text-white align-center justify-center"
-								:style="{backgroundColor:shopCartLength?'':'#535356'}"
+								:style="{backgroundColor:shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount?'':'#535356'}"
 								>
 									<text 
-									v-show="shopCartLength"
+									v-show="shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount"
 									class="text-lg">去结算</text>
 									
 									<text 
-									v-show="!shopCartLength"
+									v-show="shopCartPriceCount.price < storeData.rst.float_minimum_order_amount"
 									class="text-lg"
-									>¥{{parseInt(storeData.rst.float_minimum_order_amount)}}起送</text>
+									>{{shopCartPriceCount.price?'差':''}}¥{{parseInt(storeData.rst.float_minimum_order_amount - shopCartPriceCount.price)}}起送</text>
 								</view>
 								
 							</view>
@@ -791,14 +799,26 @@
 			shopCartPriceCount(){
 				let res = {
 					origin_price:0,
-					price:0
+					price:0,
+					save_money:0
 				};
 				
 				for (let key in this.shopCart) {
-					res.price = (res.price*100 + (this.shopCart[key].count * this.shopCart[key].info.price)*100)/100;
-					res.origin_price = (res.origin_price*100 + (this.shopCart[key].count * this.shopCart[key].info.origin_price)*100)/100;
+					res.price += parseInt(
+						(
+							(
+								this.shopCart[key].count - 
+								this.shopCart[key].info.activity.applicable_quantity
+							) * this.shopCart[key].info.origin_price + 
+							this.shopCart[key].info.activity.applicable_quantity *
+							this.shopCart[key].info.price
+						) * 100
+					);
+					res.origin_price += parseInt((this.shopCart[key].count * this.shopCart[key].info.origin_price)*100);
 				}
-				
+				res.price /= 100;
+				res.origin_price /= 100;
+				res.save_money = res.origin_price - res.price;
 				return res;
 			}
 		}
@@ -856,7 +876,7 @@
 				if(!this.shopCart[food.item_id]) return false;
 				
 				// 该对象数量超过基础数量
-				if(this.shopCart[food.item_id].count > 1){
+				if(this.shopCart[food.item_id].count > food.min_purchase){
 					this.$set(this.shopCart[food.item_id],'count',this.shopCart[food.item_id].count-1);
 					return;
 				}
@@ -877,7 +897,7 @@
 				}
 				this.$set(this.shopCart,food.item_id,{
 					info:food,
-					count:1
+					count:food.min_purchase
 				});
 			}
 			,
@@ -1283,6 +1303,17 @@
 	}
 	
 	// 底部购物车相关样式
+	
+	.save-money-tips{
+		background-color: #fffad6;
+		border-top: 5rpx solid #f9e8a3;
+		opacity: .96;
+		position: absolute;
+		height: 40rpx;
+		top: -40rpx;
+		left: 0;
+		right: 0;
+	}
 	.shopping-cart-box{
 		position: fixed;
 		bottom: 0;

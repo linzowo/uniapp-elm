@@ -164,7 +164,28 @@
 										>
 										{{item.price}}
 										</text>
-										<text class="lg add-btn-blue text-xxl cuIcon-roundaddfill"></text>
+										<view class="align-center">
+											<text
+											class="text-sm text-color-6 margin-right-xs"
+											v-if="item.min_purchase>1&&!shopCart[item.item_id]"
+											>{{item.min_purchase}}份起售</text>
+											<view class="add-remove-box align-center">
+												<text 
+												v-if="shopCart[item.item_id]"
+												@tap="cutFromCart(item)"
+												class="lg add-btn-blue text-xxl cuIcon-rounddown"></text>
+												
+												<text 
+												v-if="shopCart[item.item_id]"
+												class="margin-lr-sm"
+												>{{shopCart[item.item_id].count}}</text>
+												
+												<text 
+												@tap="add2cart(item)"
+												class="lg add-btn-blue text-xxl cuIcon-roundaddfill"
+												></text>
+											</view>
+										</view>
 									</view>
 								</view>
 								
@@ -251,7 +272,7 @@
 													
 													<!-- 商品介绍 -->
 													<view 
-													class="flex-direction flex-sub text-color-9 justify-around"
+													class="food-info-box flex-direction flex-sub text-color-9 justify-around"
 													:style="{height:'190rpx'}"
 													>
 														<!-- 名称 -->
@@ -278,7 +299,7 @@
 														</view>
 														
 														<!-- 价格 -->
-														<view class="align-center justify-between">
+														<view class="price-box align-center justify-between">
 															<view class="align-center">
 																<text class="text-price text-color-price margin-right-xs text-lg">{{ele.price}}</text>
 																<text class="text-price delete-line text-sm">{{ele.origin_price}}</text>
@@ -286,9 +307,24 @@
 															<view class="align-center">
 																<text
 																class="text-sm text-color-6 margin-right-xs"
-																v-if="ele.min_purchase>1"
+																v-if="ele.min_purchase>1&&!shopCart[ele.item_id]"
 																>{{ele.min_purchase}}份起售</text>
-																<text class="lg add-btn-blue text-xxl cuIcon-roundaddfill"></text>
+																<view class="add-remove-box align-center">
+																	<text 
+																	v-if="shopCart[ele.item_id]"
+																	@tap="cutFromCart(ele)"
+																	class="lg add-btn-blue text-xxl cuIcon-rounddown"></text>
+																	
+																	<text 
+																	v-if="shopCart[ele.item_id]"
+																	class="margin-lr-sm"
+																	>{{shopCart[ele.item_id].count}}</text>
+																	
+																	<text 
+																	@tap="add2cart(ele)"
+																	class="lg add-btn-blue text-xxl cuIcon-roundaddfill"
+																	></text>
+																</view>
 															</view>
 														</view>
 														
@@ -318,15 +354,15 @@
 								<!-- 购物车图标 -->
 								<view 
 								class="shopping-cart-icon-box round border border-xl align-center justify-center"
-								:style="{backgroundColor:shopCart.length?'':'#363636'}"
+								:style="{backgroundColor:shopCartLength?'':'#363636'}"
 								>
 									<text 
 									class="lg text-xxl cuIcon-cartfill"
-									:class="shopCart.length?'text-white':'text-color-6'"
+									:class="shopCartLength?'text-white':'text-color-6'"
 									></text>
 									<view 
-									v-show="shopCart.length"
-									class="cu-tag badge">{{shopCart.length}}</view>
+									v-show="shopCartLength"
+									class="cu-tag badge">{{shopCartLength}}</view>
 								</view>
 								
 								<!-- 选购商品提示 -->
@@ -336,14 +372,14 @@
 								>
 								
 									<view 
-									v-if="shopCart.length"
+									v-if="shopCartLength"
 									class="align-center">
-										<text class="text-price text-bold text-white text-xl margin-right">178.6</text>
-										<text class="text-price delete-line text-color-9">390</text>
+										<text class="text-price text-bold text-white text-xl margin-right">{{shopCartPriceCount.price}}</text>
+										<text class="text-price delete-line text-color-9">{{shopCartPriceCount.origin_price}}</text>
 									</view>
 									
 									<text 
-									v-if="!shopCart.length"
+									v-if="!shopCartLength"
 									class="text-lg"
 									>
 										未选购商品
@@ -356,14 +392,14 @@
 								<!-- 结算按钮 -->
 								<view 
 								class="shopping-cart-pay-btn-box text-white align-center justify-center"
-								:style="{backgroundColor:shopCart.length?'':'#535356'}"
+								:style="{backgroundColor:shopCartLength?'':'#535356'}"
 								>
 									<text 
-									v-show="shopCart.length"
+									v-show="shopCartLength"
 									class="text-lg">去结算</text>
 									
 									<text 
-									v-show="!shopCart.length"
+									v-show="!shopCartLength"
 									class="text-lg"
 									>¥{{parseInt(storeData.rst.float_minimum_order_amount)}}起送</text>
 								</view>
@@ -724,7 +760,7 @@
 				mainCur: null, // 用于控制商品列表滑动到哪个位置的参数，记录的值与foodsCategoryTabCur一致
 				verticalNavTop: 0, // 存储商品列表的分类导航滑动距离的参数
 				load: true, // 记录滑动动画是否执行完毕的参数
-				shopCart:[], // 临时存储购物车数据
+				shopCart:{}, // 临时存储购物车数据
 			}
 		},
 		watch:{
@@ -734,6 +770,37 @@
 			 * @param {Object} o
 			 */
 			pageState(n,o){}
+		}
+		,
+		computed:{
+			/**
+			 * 监听购物车中商品数量变化
+			 */
+			shopCartLength(){
+				let len = 0;
+				
+				for (let key in this.shopCart) {
+					len += this.shopCart[key].count;
+				}
+				return len;
+			}
+			,
+			/**
+			 * 统计购物车价格
+			 */
+			shopCartPriceCount(){
+				let res = {
+					origin_price:0,
+					price:0
+				};
+				
+				for (let key in this.shopCart) {
+					res.price = (res.price*100 + (this.shopCart[key].count * this.shopCart[key].info.price)*100)/100;
+					res.origin_price = (res.origin_price*100 + (this.shopCart[key].count * this.shopCart[key].info.origin_price)*100)/100;
+				}
+				
+				return res;
+			}
 		}
 		,
 		created() {
@@ -780,6 +847,40 @@
 		}
 		,
 		methods: {
+			/**
+			 * 从购物车中删除
+			 */
+			cutFromCart(food){
+				this.$utils.log('cutFromCart','从购物车中删除');
+				// 该对象不存在
+				if(!this.shopCart[food.item_id]) return false;
+				
+				// 该对象数量超过基础数量
+				if(this.shopCart[food.item_id].count > 1){
+					this.$set(this.shopCart[food.item_id],'count',this.shopCart[food.item_id].count-1);
+					return;
+				}
+				
+				// 将该对象从购物车中删除
+				this.$delete(this.shopCart,food.item_id);
+			}
+			,
+			/**
+			 * 添加到购物车
+			 */
+			add2cart(food){
+				this.$utils.log('add2cart','添加到购物车');
+				
+				if(this.shopCart[food.item_id]){
+					this.$set(this.shopCart[food.item_id],'count',this.shopCart[food.item_id].count+1);
+					return;
+				}
+				this.$set(this.shopCart,food.item_id,{
+					info:food,
+					count:1
+				});
+			}
+			,
 			/**
 			 * 点赞商品过滤器，将点赞商品中5星的过滤出来
 			 * @param {Array} foodList 点赞食品列表
@@ -1166,7 +1267,7 @@
 	.category-title{
 		max-width: 200rpx;
 	}
-	.category-des{
+	.category-des,.price-box{
 		max-width: 300rpx;
 	}
 	.food-img-box{

@@ -36,15 +36,17 @@
 			<!-- 店铺基础信息 S -->
 			<view class="store-base-info padding-lr-xl padding-top-xl flex-direction align-center flex-sub">
 				<!-- 店名 -->
-				<view class="store-name-box align-center flex-direction padding-lr-sm margin-bottom-xs">
+				<view 
+				@tap="openPopup('storeInfoPopup')"
+				class="store-name-box align-center flex-direction padding-lr-sm margin-bottom-xs">
 					<view class="align-end margin-bottom-xs">
 						<text class="store-name text-cut text-bold text-xxl margin-right-xs">{{storeData.rst.name}}</text>
 						<text class="lg text-color-3 cuIcon-playfill"></text>
 					</view>
 					<view class="text-xs text-color-6">
-						<text class="margin-right-xs">评价</text>
-						<text class="margin-right-xs">月售</text>
-						<text>商家配送约넫눾分钟</text>
+						<text class="margin-right-xs">评价{{storeData.rst.rating}}</text>
+						<text class="margin-right-xs">月售{{storeData.rst.recent_order_num}}</text>
+						<text>商家配送约{{storeData.rst.order_lead_time}}分钟</text>
 					</view>
 				</view>
 				
@@ -752,12 +754,102 @@
 				
 			</view>
 			<!-- 商家餐点、评价、详细信息 E -->
+			
+			
+			<!-- 页面弹窗组件 S -->
+			
+			<!-- 店铺信息弹窗 S -->
+			<uni-popup
+			ref="storeInfoPopup" 
+			:type="'center'"
+			@change="popupChange"
+			:animation="true"
+			id="store-info-popup-box"
+			>
+				<!-- 弹窗填充内容 -->
+				<view class="store-info-popup-box flex-direction align-center">
+					
+					<!-- 弹窗主体 -->
+					<view class="bg-white border-radius-10 flex-direction align-center padding-bottom-xl padding-top-sm">
+						<!-- 店铺名称 -->
+						<view class="padding-lr-sm flex-wrap text-center padding">
+							<text class="text-color-3 text-bold text-xxl margin-right-xs">{{storeData.rst.name}}</text>
+						</view>
+						
+						<!-- 基础信息 -->
+						<view 
+						:style="{width:'100%'}"
+						class="align-end justify-around padding-lr-xs">
+							
+							<!-- 评分 -->
+							<view class="flex-direction align-center">
+								<text class="text-color-3 margin-bottom-xs text-bold text-lg">{{storeData.rst.rating}}</text>
+								<text class="text-xs text-color-9">评分</text>
+							</view>
+							
+							<!-- 月售 -->
+							<view class="flex-direction align-center">
+								<text class="text-color-3 margin-bottom-xs text-bold text-lg">{{storeData.rst.recent_order_num}}单</text>
+								<text class="text-xs text-color-9">月售</text>
+							</view>
+							
+							<!-- 商家配送 -->
+							<view class="flex-direction align-center">
+								<text class="text-color-3 margin-bottom-xs text-bold text-lg">商家配送</text>
+								<text class="text-xs text-color-9">约{{storeData.rst.order_lead_time}}分钟</text>
+							</view>
+							
+							<!-- 配送费 -->
+							<view class="flex-direction align-center">
+								<text class="text-color-3 margin-bottom-xs text-bold text-lg">{{storeData.rst.float_delivery_fee}}元</text>
+								<text class="text-xs text-color-9">配送费</text>
+							</view>
+							
+							<!-- 距离 -->
+							<view class="flex-direction align-center">
+								<text class="text-color-3 margin-bottom-xs text-bold text-lg">{{storeData.rst.distance_text}}</text>
+								<text class="text-xs text-color-9">距离</text>
+							</view>
+							
+						</view>
+						
+						<!-- 公告 -->
+						<view class="flex-direction align-center">
+							
+							<view class="announcement justify-center padding">
+								<text class="text-color-9 text-sm bg-white">公告</text>
+							</view>
+							<text>{{storeData.rst.promotion_info}}</text>
+						</view>
+					</view>
+					
+					<!-- 关闭按钮 -->
+					<text 
+					@tap="closePopup('storeInfoPopup')"
+					class="margin-top-xl lg text-gray cuIcon-roundclose text-sl"></text>
+					
+				</view>
+				
+			</uni-popup>
+			<!-- 店铺信息弹窗 E -->
+			
+			<!-- 页面弹窗组件 E -->
+			
 		</view>
 		<!-- 数据加载完成后显示 E -->
+		
 	</view>
 </template>
 
 <script>
+	/**
+	 * @module 店铺主页模块
+	 * 用于呈现店铺主页及购物车相关模块
+	 */
+	
+	// 引入官方组件
+	import uniPopup from '@/components/uni-popup/uni-popup.vue';
+	
 	export default {
 		data() {
 			return {
@@ -1430,5 +1522,19 @@
 		background-color: #38ca73;
 		height: 96rpx;
 		width: 210rpx;
+	}
+	
+	// 弹窗区域相关样式
+	
+	// 店铺详情
+	.store-info-popup-box{
+		width: 600rpx;
+	}
+	.announcement{
+		width: 152rpx;
+		background-image: linear-gradient(90deg,#fff,#333 50%,#fff);
+		background-size: 100% 1px;
+		background-position: 50%;
+		background-repeat: no-repeat;
 	}
 </style>

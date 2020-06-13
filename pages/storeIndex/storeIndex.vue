@@ -217,7 +217,12 @@
 										@tap="foodsCategoryTabSelect"
 										:data-id="index"
 										 >
-											<text>{{item.name}}</text>
+											<view class="food-category-item">
+												<text>{{item.name}}</text>
+												<view 
+												v-if="shopCartFoodCategoryLen[item.id]"
+												class="cu-tag badge">{{shopCartFoodCategoryLen[item.id]}}</view>
+											</view>
 										</view>
 									</scroll-view>
 									<!-- 左侧分类滑动条 E -->
@@ -797,6 +802,21 @@
 				return len;
 			}
 			,
+			shopCartFoodCategoryLen(){
+				let res = {};
+				
+				for (let key in this.shopCart) {
+					if(res[this.shopCart[key].info.category_id]){
+						res[this.shopCart[key].info.category_id] += this.shopCart[key].count;
+					}else{
+						res[this.shopCart[key].info.category_id] = this.shopCart[key].count;
+					} // end if
+					
+				} // end for
+				
+				return res;
+			}
+			,
 			/**
 			 * 统计购物车价格
 			 */
@@ -926,6 +946,7 @@
 			add2cart(food){
 				this.$utils.log('add2cart','添加到购物车');
 				
+				// 该商品存在购物车中
 				if(this.shopCart[food.item_id]){
 					
 					
@@ -947,10 +968,25 @@
 					return;
 				} // end if
 				
+				// 该商品不存在购物车中
 				this.$set(this.shopCart,food.item_id,{
 					info:food,
 					count:food.min_purchase
 				});
+				
+				if(food.activity){
+					
+					if(
+						this.shopCart[food.item_id].count >
+						food.activity.applicable_quantity
+					){
+						uni.showToast({
+							title:food.activity.applicable_quantity_detail_text,
+							icon:'none'
+						});
+					} // end if
+					
+				} // end if
 			}
 			,
 			/**
@@ -1330,6 +1366,10 @@
 		right: 0upx;
 		bottom: 0;
 		margin: auto;
+	}
+	
+	.food-category-item{
+		position: relative;
 	}
 	
 	// 垂直商铺菜单列表相关样式

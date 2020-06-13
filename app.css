@@ -80,6 +80,9 @@ view {
 .text-color-orange{
 	color: #ff6000;
 }
+.text-color-brown{
+	color: #594519;
+}
 
 /* 背景颜色 */
 .bg-grey-fa{
@@ -101,6 +104,14 @@ view {
 }
 .mbg-gradual-blue{
 	background-image: linear-gradient(90deg, #0af, #0085ff);
+	color: #fff;
+}
+.app-bg-brown{
+	background-color: #594519;
+	color: #ffeeab;
+}
+.app-bg-red{
+	background-color: #ff5339;
 	color: #fff;
 }
 
@@ -241,4 +252,25 @@ view {
 /* 文本删除线 */
 .delete-line{
 	text-decoration:line-through;
+}
+
+
+/* 卡片边缘处的半圆分割标记 */
+.card-round-icon{
+	position: relative;
+}
+.card-round-icon::before,.card-round-icon::after{
+	content: "";
+	border-radius: 50%;
+	width: 10rpx;
+	height: 10rpx;
+	background-color: #fff;
+	display: block;
+	position: absolute;
+}
+.card-round-icon::before{
+	top: -5rpx;
+}
+.card-round-icon::after{
+	bottom: -5rpx;
 }

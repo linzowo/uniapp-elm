@@ -51,7 +51,9 @@
 				</view>
 				
 				<!-- 红包 -->
-				<view class="red-packets-list justify-around margin-top-xs margin-bottom-sm">
+				<view 
+				@tap="openPopup('redpackPopup')"
+				class="red-packets-list justify-around margin-top-xs margin-bottom-sm">
 					<!-- 任意使用 -->
 					<view class="red-packets-item red-packets-item1 padding-left-lg padding-right-xs align-center border-radius-3 justify-around">
 						<text class="text-price margin-right-xs text-bold text-lg">7</text>
@@ -833,6 +835,168 @@
 			</uni-popup>
 			<!-- 店铺信息弹窗 E -->
 			
+			<!-- 红包信息弹窗 S -->
+			<uni-popup
+			ref="redpackPopup" 
+			:type="'bottom'"
+			@change="popupChange"
+			:animation="true"
+			>
+				<!-- 弹窗主体 -->
+				<view 
+				:style="{width:'750rpx'}"
+				class="flex-direction bg-grey-f5">
+				
+					<!-- 顶部标题 -->
+					<view class="padding align-center">
+						<view class="text-black flex-sub justify-center text-bold text-xl">
+							<text>店铺专享红包</text>
+						</view>
+						<text 
+						@tap="closePopup('redpackPopup')"
+						class="lg text-gray cuIcon-close text-xxl"></text>
+					</view>
+					
+					<!-- 滑动红包列表 -->
+					<scroll-view 
+					scroll-y="true" 
+					:style="{height:'567rpx'}"
+					class="padding-lr"
+					>
+						<!-- 会员红包 -->
+						<view 
+						v-if="redpackFilter(storeData.redpack).member.length"
+						class="flex-direction">
+							<!-- 标题 -->
+							<view class="text-xs margin-bottom-sm">
+								<text class="text-bold text-color-6 margin-right-xs">超级会员特权</text>
+								<text class="text-color-9">限超级会员用户兑换</text>
+							</view>
+							<!-- 红包列表 -->
+							<view class="redpack-list flex-direction">
+								
+								<view 
+								v-for="(item,index) in redpackFilter(storeData.redpack).member"
+								:key="index"
+								class="redpack-item card-round-icon member-redpack-item-bg justify-between padding-tb-sm align-center margin-bottom-sm">
+									<view class="align-center">
+										<text 
+										class="text-price redpack-price text-bold text-color-brown margin-lr"
+										>{{item.value}}</text>
+										<view class="flex-direction">
+											<view class="text-bold text-color-brown margin-bottom-xs align-center">
+												<text class="lg text-yellow cuIcon-crownfill margin-right-xs"></text>
+												<text>满任意金额可用</text>
+											</view>
+											<text 
+											:style="{color:'#735b27'}"
+											class="text-xs"
+											>限本店使用, 2020-06-16到期</text>
+										</view>
+									</view>
+									<view class="redpack-btn-box align-center justify-center padding-lr padding-tb-lg border-left border-color-e">
+										<text 
+										@tap="openPopup('openSvipPopup')"
+										class="padding-lr padding-tb-xs app-bg-brown round ">兑换</text>
+									</view>
+								</view>
+								
+							</view>
+						</view>
+						
+						<!-- 店铺红包  -->
+						
+						<!-- 红包列表 -->
+						<view 
+						v-if="redpackFilter(storeData.redpack).normal.length"
+						class="redpack-list flex-direction">
+							
+							<view 
+							v-for="(item,index) in redpackFilter(storeData.redpack).normal"
+							:key="index"
+							class="redpack-item card-round-icon justify-between padding-tb-sm align-center margin-bottom-sm">
+								<view class="align-center">
+									<text 
+									:style="{color:'#ff5339'}"
+									class="text-price redpack-price text-bold margin-lr"
+									>{{item.value}}</text>
+									<view class="flex-direction">
+										<view class="text-bold text-color-3 margin-bottom-xs align-center">
+											<text>{{item.title_detail}}</text>
+										</view>
+										<text 
+										class="text-xs text-color-6"
+										>限本店使用, 2020-06-16到期</text>
+									</view>
+								</view>
+								<view class="redpack-btn-box align-center justify-center padding-lr padding-tb-lg border-left border-color-e">
+									<text class="padding-lr padding-tb-xs app-bg-red round ">领取</text>
+								</view>
+							</view>
+								
+						</view>
+						
+					</scroll-view>
+					
+				</view>
+				
+			</uni-popup>
+			<!-- 红包信息弹窗 E -->
+			
+			<!-- 超级会员开通弹窗 S -->
+			<uni-popup
+			ref="openSvipPopup" 
+			:type="'center'"
+			@change="popupChange"
+			:animation="true"
+			>
+				<view 
+				:style="{width:'640rpx'}"
+				class="bg-white flex-direction border-radius-10 align-center">
+				
+					<!-- 顶部标签 -->
+					<view class="svip-popup-title-box">
+						<!-- 背景图片 -->
+						<image 
+						class="svip-popup-title-bg"
+						src="/static/image/open-svip-title.png" 
+						mode="widthFix"></image>
+					</view>
+					
+					<!-- 展示图片 -->
+					<view class="sale-value-box">
+						<image 
+						class="sale-value-bg"
+						src="/static/image/open-svip-bg.png" 
+						mode="widthFix"></image>
+						<view class="sale-value-text flex-direction align-center">
+							<text class="text-white text-lg margin-top-sm">本单立享</text>
+							<text 
+							:style="{color:'#7d490f'}"
+							class="text-price text-sl text-bold margin-top">7</text>
+						</view>
+					</view>
+					
+					<!-- 超级会员介绍 -->
+					<text class="svip-popup-info-box flex-wrap margin-tb">
+						<text class="text-color-6">开通会员每月领至少20元无门槛红包平均每年</text><text class="text-color-price">可省785元</text>
+					</text>
+					
+					<!-- 开通 放弃 按钮 -->
+					<view class="svip-popup-btn-box justify-around margin-bottom">
+						<button 
+						@click="closePopup('openSvipPopup')"
+						class="svip-popup-btn svip-popup-btn-giveup" type="default">放弃优惠</button>
+						<button 
+						@click="openSvip"
+						class="svip-popup-btn svip-popup-btn-open" type="default">立即开通</button>
+					</view>
+					
+					
+				</view>
+			</uni-popup>
+			<!-- 超级会员开通弹窗 E -->
+			
 			<!-- 页面弹窗组件 E -->
 			
 		</view>
@@ -999,6 +1163,31 @@
 		}
 		,
 		methods: {
+			/**
+			 * 用户选择开通超级vip
+			 */
+			openSvip(){
+				uni.navigateTo({
+					url:'/pages/member/member',
+					fail(e) {
+						console.log('跳转失败:',e);
+					}
+				})
+			}
+			,
+			/**
+			 * 将红包数据拆分为普通和超级会员两种
+			 * @param {Array} data 红包列表
+			 */
+			redpackFilter(data){
+				let res = {};
+				
+				res.member = data.filter(ele => ele.type == 1);
+				res.normal = data.filter(ele => ele.type == 0);
+				
+				return res;
+			}
+			,
 			/**
 			 * 从购物车中删除
 			 */
@@ -1526,7 +1715,7 @@
 	
 	// 弹窗区域相关样式
 	
-	// 店铺详情
+	// 弹窗-店铺详情
 	.store-info-popup-box{
 		width: 600rpx;
 	}
@@ -1536,5 +1725,80 @@
 		background-size: 100% 1px;
 		background-position: 50%;
 		background-repeat: no-repeat;
+	}
+	
+	// 弹窗-店铺红包
+	.redpack-item{
+		border: 1px dotted #eae5b9;
+	}
+	.member-redpack-item-bg{
+		background: #fff4be;
+	}
+	.redpack-price{
+		font-size: 64rpx;
+	}
+	.redpack-btn-box{
+		width: 180rpx;
+	}
+	.card-round-icon::after,.card-round-icon::before{
+		right: 170rpx;
+		background-color: #F5F5F5;
+		width: 12rpx;
+		height: 12rpx;
+		border: 1px solid #eae5b9;
+	}
+	.card-round-icon::after{
+		bottom: -6rpx;
+		border-bottom: none;
+	}
+	.card-round-icon::before{
+		top: -6rpx;
+		border-top: none;
+	}
+	
+	// 开通超级vip弹窗
+	.svip-popup-title-box{
+		width: 360rpx;
+		height: 79rpx;
+		position: relative;
+	}
+	.svip-popup-title-bg{
+		width: 360rpx;
+		height: 79rpx;
+		position: absolute;
+		top: -30rpx;
+		left: 0;
+	}
+	.sale-value-box{
+		width: 392rpx;
+		height: 246rpx;
+		position: relative;
+	}
+	.sale-value-bg{
+		width: 392rpx;
+		height: 246rpx;
+		position: absolute;
+		left: 0;
+		z-index: 0;
+	}
+	.sale-value-text{
+		width: 243rpx;
+		height: 243rpx;
+		position: absolute;
+		left: 80rpx;
+	}
+	.svip-popup-info-box{
+		width: 320rpx;
+	}
+	.svip-popup-btn-box{
+		width: 100%;
+	}
+	.svip-popup-btn{
+		width: 280rpx;
+		background: #fff;
+	}
+	.svip-popup-btn-open{
+		color: #7b460a;
+		background-image: linear-gradient(90deg,#ffeda1,#e3c957);
 	}
 </style>

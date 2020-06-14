@@ -14,6 +14,7 @@
 		<!-- 数据加载完成后显示 S -->
 		<view 
 		v-if="lodingEnd"
+		v-show="!pageState.showBannercontent"
 		class="loding-end flex-direction">
 			<!-- nav S -->
 			<view class="store-index-nav">
@@ -127,7 +128,9 @@
 					v-show="TabCur == 0"
 					class="flex-direction">
 						<!-- 广告 -->
-						<view class="banner padding-lr margin-top-xs margin-bottom">
+						<view 
+						@tap="controlBannerPage(true)"
+						class="banner padding-lr margin-top-xs margin-bottom">
 							<image 
 							class="banner-img border-radius-10"
 							:src="storeData.rst.posters[0].image_hash,'w_686'|imgUrlFilter" 
@@ -1069,6 +1072,167 @@
 		</view>
 		<!-- 数据加载完成后显示 E -->
 		
+		<!-- banner弹窗 S -->
+		<view 
+		v-if="pageState.showBannercontent"
+		:style="{paddingBottom:'100rpx'}"
+		class="banner-content-box flex-direction">
+			
+			<!-- nav S -->
+			<view class="store-index-nav">
+				<view class="store-cover-bg-box">
+					<image 
+					class="store-cover-bg"
+					:src="storeData.rst.shop_sign.image_hash,'w_750'|imgUrlFilter"
+					mode="widthFix"></image>
+				</view>
+				<text 
+				@tap="controlBannerPage(false)"
+				class="nav-back-btn lg text-white cuIcon-back text-xxl padding-xs"></text>
+			</view>
+			<!-- nav E -->
+			
+			<view class="banner-list flex-wrap flex-sub padding-tb">
+				
+				<view 
+				v-for="(item,index) in storeData.recommend[0].items"
+				:key="index"
+				class="banner-item flex-direction border-radius-6 margin-left-sm margin-bottom-sm"
+				>
+					<image 
+					class="border-radius-6"
+					:src="item.image_path,'w_240'|imgUrlFilter" 
+					mode="widthFix"
+					></image>
+					<text 
+					class="recommend-foods-name text-cut"
+					>
+					{{item.name}}
+					</text>
+					<!-- 商品售卖情况 -->
+					<view class="text-xs text-grey margin-bottom-xs">
+						<text class="margin-right-xs">月售{{item.month_sales}}</text>
+						<text>好评率{{item.satisfy_rate_text?item.satisfy_rate_text:0}}%</text>
+					</view>
+					
+					<!-- 价格及添加购物车 -->
+					<view class="justify-between align-center">
+						<text 
+						class="text-price text-xl text-color-price"
+						>
+						{{item.price}}
+						</text>
+						<view class="align-center">
+							<text
+							class="text-sm text-color-6 margin-right-xs"
+							v-if="item.min_purchase>1&&!shopCart.foodsList[item.item_id]"
+							>{{item.min_purchase}}份起售</text>
+							<view class="add-remove-box align-center">
+								<text 
+								v-if="shopCart.foodsList[item.item_id]"
+								@tap="cutFromCart(item)"
+								class="lg add-btn-blue text-xxl cuIcon-rounddown"></text>
+								
+								<text 
+								v-if="shopCart.foodsList[item.item_id]"
+								class="margin-lr-sm"
+								>{{shopCart.foodsList[item.item_id].count}}</text>
+								
+								<text 
+								@tap="add2cart(item)"
+								class="lg add-btn-blue text-xxl cuIcon-roundaddfill"
+								></text>
+							</view>
+						</view>
+					</view>
+				</view>
+				
+				
+			</view>
+			
+			<!-- 加载提示 S -->
+			<view 
+			class="list-end align-center justify-center">
+				<view class="cu-load" :class="bannerDataHasNext?'loading':'over'"></view>
+			</view>
+			<!-- 加载提示 E -->
+			
+			<!-- 底部购物车 S -->
+			<view class="shopping-cart-box justify-between align-center">
+				<!-- 
+				 存在两种状态
+				 1.无商品状态
+				 2.有商品状态
+				 -->
+				 
+				<!-- 节省金额提示 S -->
+				<view 
+				v-show="shopCartPriceCount.save_money"
+				class="save-money-tips flex-sub align-center justify-center text-xs text-color-3">
+					<text>已减{{shopCartPriceCount.save_money}}元</text>
+				</view>
+				<!-- 节省金额提示 E -->
+				
+				<!-- 购物车图标 -->
+				<view 
+				class="shopping-cart-icon-box round border border-xl align-center justify-center"
+				:style="{backgroundColor:shopCartLength?'':'#363636'}"
+				>
+					<text 
+					class="lg text-xxl cuIcon-cartfill"
+					:class="shopCartLength?'text-white':'text-color-6'"
+					></text>
+					<view 
+					v-show="shopCartLength"
+					class="cu-tag badge">{{shopCartLength}}</view>
+				</view>
+				
+				<!-- 选购商品提示 -->
+				<view 
+				class="shopping-cart-tips-box flex-direction text-scale-9"
+				:class="'text-color-9'"
+				>
+				
+					<view 
+					v-if="shopCartLength"
+					class="align-center">
+						<text class="text-price text-bold text-white text-xl margin-right">{{shopCartPriceCount.price}}</text>
+						<text class="text-price delete-line text-color-9">{{shopCartPriceCount.origin_price}}</text>
+					</view>
+					
+					<text 
+					v-if="!shopCartLength"
+					class="text-lg"
+					>
+						未选购商品
+					</text>
+					
+					
+					<text class="text-xs">另需配送费{{parseInt(storeData.rst.float_delivery_fee)}}元</text>
+				</view>
+				
+				<!-- 结算按钮 -->
+				<view 
+				class="shopping-cart-pay-btn-box text-white align-center justify-center"
+				:style="{backgroundColor:shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount?'':'#535356'}"
+				>
+					<text 
+					v-show="shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount"
+					class="text-lg">去结算</text>
+					
+					<text 
+					v-show="shopCartPriceCount.price < storeData.rst.float_minimum_order_amount"
+					class="text-lg"
+					>{{shopCartPriceCount.price?'差':''}}¥{{parseInt(storeData.rst.float_minimum_order_amount - shopCartPriceCount.price)}}起送</text>
+				</view>
+				
+			</view>
+			<!-- 底部购物车 E -->
+			
+			
+		</view>
+		<!-- banner弹窗 E -->
+		
 	</view>
 </template>
 
@@ -1095,9 +1259,11 @@
 					commentTagCur:0, // 当前用户选择的是第几个评论标签
 					showHasContentCommentOnly: true, // 是否只显示有内容的评论
 					foodsListScroll: false, // 当前商品列表是否可以滑动
+					showBannercontent: false, // 是否显示banner内容区域
 				}, // 页面状态
 				popupStack:[], // 弹窗栈
 				commentHasNext:false, // 是否还有更多评论
+				bannerDataHasNext:false, // 是否还有更多banner商品数据
 				foodsCategoryTabCur: 0, // 当前被选中的商品列表的分类导航
 				mainCur: null, // 用于控制商品列表滑动到哪个位置的参数，记录的值与foodsCategoryTabCur一致
 				verticalNavTop: 0, // 存储商品列表的分类导航滑动距离的参数
@@ -1241,6 +1407,15 @@
 		}
 		,
 		methods: {
+			/**
+			 * 控制店铺中的banner展示区的开关
+			 * @param {Boolean} status true-显示banner区域 false-关闭banner区域
+			 */
+			controlBannerPage(status){
+				this.$utils.log('controlBannerPage','控制店铺中的banner展示区的开关');
+				this.pageState.showBannercontent = status;
+			}
+			,
 			/**
 			 * 用户选择开通超级vip
 			 */
@@ -1942,5 +2117,11 @@
 	.svip-popup-btn-open{
 		color: #7b460a;
 		background-image: linear-gradient(90deg,#ffeda1,#e3c957);
+	}
+	
+	// 广告展示区域
+	.banner-item{
+		width: 346rpx;
+		box-shadow: 0 5rpx 10rpx 0 rgba(0,0,0,.04);
 	}
 </style>

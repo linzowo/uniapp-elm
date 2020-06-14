@@ -155,47 +155,54 @@
 									:src="item.image_path,'w_240'|imgUrlFilter" 
 									mode="widthFix"
 									></image>
-									<text 
-									class="recommend-foods-name text-cut"
-									>
-									{{item.name}}
-									</text>
-									<!-- 商品售卖情况 -->
-									<view class="text-xs text-grey margin-bottom-xs">
-										<text class="margin-right-xs">月售{{item.month_sales}}</text>
-										<text>好评率{{item.satisfy_rate_text?item.satisfy_rate_text:0}}%</text>
-									</view>
 									
-									<!-- 价格及添加购物车 -->
-									<view class="justify-between align-center">
-										<text 
-										class="text-price text-xl text-color-price"
+									<view 
+									@tap="showGoodsInfoPopup(item)"
+									class="flex-direction">
+										<text
+										class="recommend-foods-name text-cut"
 										>
-										{{item.price}}
+										{{item.name}}
 										</text>
-										<view class="align-center">
-											<text
-											class="text-sm text-color-6 margin-right-xs"
-											v-if="item.min_purchase>1&&!shopCart.foodsList[item.item_id]"
-											>{{item.min_purchase}}份起售</text>
-											<view class="add-remove-box align-center">
-												<text 
-												v-if="shopCart.foodsList[item.item_id]"
-												@tap="cutFromCart(item)"
-												class="lg add-btn-blue text-xxl cuIcon-rounddown"></text>
-												
-												<text 
-												v-if="shopCart.foodsList[item.item_id]"
-												class="margin-lr-sm"
-												>{{shopCart.foodsList[item.item_id].count}}</text>
-												
-												<text 
-												@tap="add2cart(item)"
-												class="lg add-btn-blue text-xxl cuIcon-roundaddfill"
-												></text>
+										<!-- 商品售卖情况 -->
+										<view class="text-xs text-grey margin-bottom-xs">
+											<text class="margin-right-xs">月售{{item.month_sales}}</text>
+											<text>好评率{{item.satisfy_rate_text?item.satisfy_rate_text:0}}%</text>
+										</view>
+										
+										<!-- 价格及添加购物车 -->
+										<view class="justify-between align-center">
+											<text 
+											class="text-price text-xl text-color-price"
+											>
+											{{item.price}}
+											</text>
+											<view class="align-center">
+												<text
+												class="text-sm text-color-6 margin-right-xs"
+												v-if="item.min_purchase>1&&!shopCart.foodsList[item.item_id]"
+												>{{item.min_purchase}}份起售</text>
+												<view class="add-remove-box align-center">
+													<text 
+													v-if="shopCart.foodsList[item.item_id]"
+													@tap.stop.prevent="cutFromCart(item)"
+													class="lg add-btn-blue text-xxl cuIcon-rounddown"></text>
+													
+													<text 
+													v-if="shopCart.foodsList[item.item_id]"
+													class="margin-lr-sm"
+													>{{shopCart.foodsList[item.item_id].count}}</text>
+													
+													<text 
+													@tap.stop.prevent="add2cart(item)"
+													class="lg add-btn-blue text-xxl cuIcon-roundaddfill"
+													></text>
+												</view>
 											</view>
+											
 										</view>
 									</view>
+									
 								</view>
 								
 							</scroll-view>
@@ -271,7 +278,7 @@
 												<view 
 												v-for="(ele,i) in item.foods"
 												:key="'cu-item'+i"
-												
+												@tap="showGoodsInfoPopup(ele)"
 												class="cu-item flex-sub align-start margin-bottom-lg">
 													
 													<!-- 商品图片 -->
@@ -330,7 +337,7 @@
 																<view class="add-remove-box align-center">
 																	<text 
 																	v-if="shopCart.foodsList[ele.item_id]"
-																	@tap="cutFromCart(ele)"
+																	@tap.stop.prevent="cutFromCart(ele)"
 																	class="lg add-btn-blue text-xxl cuIcon-rounddown"></text>
 																	
 																	<text 
@@ -339,7 +346,7 @@
 																	>{{shopCart.foodsList[ele.item_id].count}}</text>
 																	
 																	<text 
-																	@tap="add2cart(ele)"
+																	@tap.stop.prevent="add2cart(ele)"
 																	class="lg add-btn-blue text-xxl cuIcon-roundaddfill"
 																	></text>
 																</view>
@@ -362,7 +369,10 @@
 							<!-- 商铺菜单 E -->
 							
 							<!-- 底部购物车 S -->
-							<view class="shopping-cart-box justify-between align-center">
+							<view 
+							class="shopping-cart-box justify-between align-center"
+							:style="{zIndex:100}"
+							>
 								<!-- 
 								 存在两种状态
 								 1.无商品状态
@@ -1066,6 +1076,102 @@
 			</uni-popup>
 			<!-- 优惠活动弹窗 E -->
 			
+			<!-- 商品大图介绍 S -->
+			<uni-popup
+			ref="goodsInfoPopup" 
+			:type="'bottom'"
+			@change="popupChange"
+			:animation="true"
+			:zIndex="99"
+			>
+				<view 
+				v-if="goodsInfoPopupData"
+				class="flex-direction bg-white"
+				:style="{height:'100vh',width:'750rpx'}"
+				>
+					<!-- 顶部大图展示区 -->
+					<view class="goods-cover-box">
+						<image 
+						class="goods-cover"
+						:src="goodsInfoPopupData.image_path,'w_376,h_376'|imgUrlFilter" 
+						mode="widthFix"
+						></image>
+						<text 
+						@tap="closePopup('goodsInfoPopup')"
+						class="goods-cover-icon lg text-white cuIcon-close text-xxl"></text>
+					</view>
+					
+					<!-- 商品介绍区 -->
+					<view class="flex-direction padding">
+						
+						<text class="margin-bottom-sm text-bold text-xxl text-color-0">{{goodsInfoPopupData.name}}</text>
+						
+						<view class="margin-bottom-sm text-xs">
+							<text class="margin-right-xs">月售{{goodsInfoPopupData.month_sales}}份</text>
+							<text class="">好评率{{goodsInfoPopupData.satisfy_rate_text?goodsInfoPopupData.satisfy_rate_text:0}}%</text>
+						</view>
+						
+						<view class="margin-bottom-sm align-center justify-between">
+							
+							<view class="align-center">
+								<text class="text-price text-color-price text-lg margin-right-sm">{{goodsInfoPopupData.price}}</text>
+								<text class="delete-line text-price text-color-9">{{goodsInfoPopupData.origin_price}}</text>
+								<text 
+								class="sale-tag padding-lr-xs border-radius-3 text-scale-8"
+								:style="{color:'#eb6551'}"
+								>{{goodsInfoPopupData.discount_rate}}折</text>
+								<text
+								v-if="goodsInfoPopupData.activity"
+								class="text-xs"
+								:style="{color:'#f07373'}"
+								>{{goodsInfoPopupData.activity.applicable_quantity_text}}</text>
+							</view>
+							
+							<view class="add-remove-box align-center">
+								<text 
+								v-if="shopCart.foodsList[goodsInfoPopupData.item_id]"
+								@tap="cutFromCart(goodsInfoPopupData)"
+								class="lg add-btn-blue text-xxl cuIcon-rounddown"></text>
+								
+								<text 
+								v-if="shopCart.foodsList[goodsInfoPopupData.item_id]"
+								class="margin-lr-sm"
+								>{{shopCart.foodsList[goodsInfoPopupData.item_id].count}}</text>
+								
+								<text 
+								@tap="add2cart(goodsInfoPopupData)"
+								class="lg add-btn-blue text-xxl cuIcon-roundaddfill"
+								></text>
+							</view>
+							
+						</view>
+						
+						<text class="text-xs margin-bottom-xs">主要原料：其他</text>
+						
+						<view 
+						@tap="goToPriceDescription"
+						class="text-xs align-center">
+							<text class="">价格说明</text>
+							<text class="lg text-gray cuIcon-questionfill"></text>
+						</view>
+						
+					</view>
+					
+				</view>
+			</uni-popup>
+			<!-- 商品大图介绍 E -->
+			
+			<!-- 商品口味选择 S -->
+			<uni-popup
+			ref="foodTasteChoosePopup" 
+			:type="'bottom'"
+			@change="popupChange"
+			:animation="true"
+			>
+				
+			</uni-popup>
+			
+			<!-- 商品口味选择 E -->
 			
 			<!-- 页面弹窗组件 E -->
 			
@@ -1272,6 +1378,7 @@
 					foodsList:{}, // 购物车商品数据详情
 					redpackList:[], // 用户兑换的红包
 				}, // 店铺私有购物车数据，加入数据后会同步到总购物车中
+				goodsInfoPopupData:null, // 临时存储商品详情弹窗所需的数据
 			}
 		},
 		watch:{
@@ -1407,6 +1514,28 @@
 		}
 		,
 		methods: {
+			/**
+			 * 跳转到价格说明页
+			 */
+			goToPriceDescription(){
+				uni.navigateTo({
+					url:'/pages/address/add_address',
+					fail(e) {
+						console.log('跳转失败',e);
+					}
+				})
+			}
+			,
+			/**
+			 * 查看商品详情弹窗
+			 * @param {Object} goods 商品数据
+			 */
+			showGoodsInfoPopup(goods){
+				this.goodsInfoPopupData = goods;
+				
+				this.openPopup('goodsInfoPopup');
+			}
+			,
 			/**
 			 * 控制店铺中的banner展示区的开关
 			 * @param {Boolean} status true-显示banner区域 false-关闭banner区域
@@ -1921,13 +2050,11 @@
 	.store-address{
 		width: 500rpx;
 	}
-	
-	.store-menu-box{
+	.store-menu{
 		position: relative;
 		z-index: 99;
 		background-color: #fff;
 	}
-	
 	// 垂直商铺菜单列表相关样式
 	.VerticalMain{
 		padding-bottom: 100rpx;
@@ -2123,5 +2250,19 @@
 	.banner-item{
 		width: 346rpx;
 		box-shadow: 0 5rpx 10rpx 0 rgba(0,0,0,.04);
+	}
+	
+	// 商品详情展示页
+	.goods-cover-box{
+		position: relative;
+		
+	}
+	.goods-cover{
+		width: 750rpx;
+	}
+	.goods-cover-icon{
+		position: absolute;
+		right: 20rpx;
+		top: 20rpx;
 	}
 </style>

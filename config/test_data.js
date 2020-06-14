@@ -2396,7 +2396,8 @@ export const USER_DATA = [{
 	points: 0,
 	coupons: 0,
 	order: {},
-	history: {}
+	history: {},
+	vip:false
 }]
 
 // 商铺列表数据

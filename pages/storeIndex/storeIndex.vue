@@ -74,7 +74,9 @@
 				</view>
 				
 				<!-- 优惠 -->
-				<view class="sale-box justify-between margin-bottom-sm">
+				<view 
+				@tap="openPopup('saleActPopup')"
+				class="sale-box justify-between margin-bottom-sm">
 					<view class="sale-tag-list">
 						<view 
 						v-for="item in 4"
@@ -171,18 +173,18 @@
 										<view class="align-center">
 											<text
 											class="text-sm text-color-6 margin-right-xs"
-											v-if="item.min_purchase>1&&!shopCart[item.item_id]"
+											v-if="item.min_purchase>1&&!shopCart.foodsList[item.item_id]"
 											>{{item.min_purchase}}份起售</text>
 											<view class="add-remove-box align-center">
 												<text 
-												v-if="shopCart[item.item_id]"
+												v-if="shopCart.foodsList[item.item_id]"
 												@tap="cutFromCart(item)"
 												class="lg add-btn-blue text-xxl cuIcon-rounddown"></text>
 												
 												<text 
-												v-if="shopCart[item.item_id]"
+												v-if="shopCart.foodsList[item.item_id]"
 												class="margin-lr-sm"
-												>{{shopCart[item.item_id].count}}</text>
+												>{{shopCart.foodsList[item.item_id].count}}</text>
 												
 												<text 
 												@tap="add2cart(item)"
@@ -320,18 +322,18 @@
 															<view class="align-center">
 																<text
 																class="text-sm text-color-6 margin-right-xs"
-																v-if="ele.min_purchase>1&&!shopCart[ele.item_id]"
+																v-if="ele.min_purchase>1&&!shopCart.foodsList[ele.item_id]"
 																>{{ele.min_purchase}}份起售</text>
 																<view class="add-remove-box align-center">
 																	<text 
-																	v-if="shopCart[ele.item_id]"
+																	v-if="shopCart.foodsList[ele.item_id]"
 																	@tap="cutFromCart(ele)"
 																	class="lg add-btn-blue text-xxl cuIcon-rounddown"></text>
 																	
 																	<text 
-																	v-if="shopCart[ele.item_id]"
+																	v-if="shopCart.foodsList[ele.item_id]"
 																	class="margin-lr-sm"
-																	>{{shopCart[ele.item_id].count}}</text>
+																	>{{shopCart.foodsList[ele.item_id].count}}</text>
 																	
 																	<text 
 																	@tap="add2cart(ele)"
@@ -896,8 +898,13 @@
 									</view>
 									<view class="redpack-btn-box align-center justify-center padding-lr padding-tb-lg border-left border-color-e">
 										<text 
-										@tap="openPopup('openSvipPopup')"
+										v-if="!redpackInShopcart(item)"
+										@tap="exchangeRedpack('vip',item)"
 										class="padding-lr padding-tb-xs app-bg-brown round ">兑换</text>
+										<image 
+										v-if="redpackInShopcart(item)"
+										:src="$i_u.exchange_redpack_success" 
+										mode="widthFix"></image>
 									</view>
 								</view>
 								
@@ -930,7 +937,14 @@
 									</view>
 								</view>
 								<view class="redpack-btn-box align-center justify-center padding-lr padding-tb-lg border-left border-color-e">
-									<text class="padding-lr padding-tb-xs app-bg-red round ">领取</text>
+									<text 
+									v-if="!redpackInShopcart(item)"
+									@tap="exchangeRedpack('normal',item)"
+									class="padding-lr padding-tb-xs app-bg-red round ">领取</text>
+									<image 
+									v-if="redpackInShopcart(item)"
+									:src="$i_u.exchange_redpack_success" 
+									mode="widthFix"></image>
 								</view>
 							</view>
 								
@@ -997,6 +1011,59 @@
 			</uni-popup>
 			<!-- 超级会员开通弹窗 E -->
 			
+			
+			<!-- 优惠活动弹窗 S -->
+			<uni-popup
+			ref="saleActPopup" 
+			:type="'bottom'"
+			@change="popupChange"
+			:animation="true"
+			>
+				<!-- 弹窗主体 -->
+				<view 
+				:style="{width:'750rpx'}"
+				class="flex-direction bg-grey-f5">
+				
+					<!-- 顶部标题 -->
+					<view class="padding align-center">
+						<view class="text-black flex-sub justify-center text-bold text-xl">
+							<text>优惠活动</text>
+						</view>
+						<text 
+						@tap="closePopup('saleActPopup')"
+						class="lg text-gray cuIcon-close text-xxl"></text>
+					</view>
+					
+					<!-- 滑动红包列表 -->
+					<scroll-view 
+					scroll-y="true" 
+					:style="{height:'380rpx'}"
+					class="padding-lr"
+					>
+						<!-- 优惠活动列表 -->
+						<view class="flex-direction">
+							<view 
+							v-for="(e,i) in storeData.rst.activities"
+							:key="e.id"
+							class="align-start margin-tb-xs">
+								<text class="radius active-tag text-xs margin-right-xs border text-scale-9 padding-lr-xs"
+								:style="{color:e.text_color,borderColor:e.border}"
+								>{{e.icon_name}}</text>
+								<text
+								class="text-color-6"
+								:style="{width:'580rpx'}"
+								>{{e.tips}}</text>
+							</view>
+						</view>
+						
+					</scroll-view>
+					
+				</view>
+				
+			</uni-popup>
+			<!-- 优惠活动弹窗 E -->
+			
+			
 			<!-- 页面弹窗组件 E -->
 			
 		</view>
@@ -1013,6 +1080,8 @@
 	
 	// 引入官方组件
 	import uniPopup from '@/components/uni-popup/uni-popup.vue';
+	
+	import {mapState} from 'vuex';
 	
 	export default {
 		data() {
@@ -1033,7 +1102,10 @@
 				mainCur: null, // 用于控制商品列表滑动到哪个位置的参数，记录的值与foodsCategoryTabCur一致
 				verticalNavTop: 0, // 存储商品列表的分类导航滑动距离的参数
 				load: true, // 记录滑动动画是否执行完毕的参数
-				shopCart:{}, // 临时存储购物车数据
+				shopCart:{
+					foodsList:{}, // 购物车商品数据详情
+					redpackList:[], // 用户兑换的红包
+				}, // 店铺私有购物车数据，加入数据后会同步到总购物车中
 			}
 		},
 		watch:{
@@ -1052,8 +1124,8 @@
 			shopCartLength(){
 				let len = 0;
 				
-				for (let key in this.shopCart) {
-					len += this.shopCart[key].count;
+				for (let key in this.shopCart.foodsList) {
+					len += this.shopCart.foodsList[key].count;
 				}
 				return len;
 			}
@@ -1061,11 +1133,12 @@
 			shopCartFoodCategoryLen(){
 				let res = {};
 				
-				for (let key in this.shopCart) {
-					if(res[this.shopCart[key].info.category_id]){
-						res[this.shopCart[key].info.category_id] += this.shopCart[key].count;
+				for (let key in this.shopCart.foodsList) {
+					
+					if(res[this.shopCart.foodsList[key].info.category_id]){
+						res[this.shopCart.foodsList[key].info.category_id] += this.shopCart.foodsList[key].count;
 					}else{
-						res[this.shopCart[key].info.category_id] = this.shopCart[key].count;
+						res[this.shopCart.foodsList[key].info.category_id] = this.shopCart.foodsList[key].count;
 					} // end if
 					
 				} // end for
@@ -1083,33 +1156,33 @@
 					save_money:0
 				};
 				
-				for (let key in this.shopCart) {
+				for (let key in this.shopCart.foodsList) {
 					
-					if(this.shopCart[key].info.activity){
+					if(this.shopCart.foodsList[key].info.activity){
 					
-						if(this.shopCart[key].count > this.shopCart[key].info.activity.applicable_quantity){
+						if(this.shopCart.foodsList[key].count > this.shopCart.foodsList[key].info.activity.applicable_quantity){
 							res.price += parseInt(
 								(
 									(
-										this.shopCart[key].count - 
-										this.shopCart[key].info.activity.applicable_quantity
-									) * this.shopCart[key].info.origin_price + 
-									this.shopCart[key].info.activity.applicable_quantity *
-									this.shopCart[key].info.price
+										this.shopCart.foodsList[key].count - 
+										this.shopCart.foodsList[key].info.activity.applicable_quantity
+									) * this.shopCart.foodsList[key].info.origin_price + 
+									this.shopCart.foodsList[key].info.activity.applicable_quantity *
+									this.shopCart.foodsList[key].info.price
 								) * 100
 							);
 						} // end if
 						
 					} // end if
 					
-					if(!this.shopCart[key].info.activity || 
-						(this.shopCart[key].count <=
-						this.shopCart[key].info.activity.applicable_quantity)
+					if(!this.shopCart.foodsList[key].info.activity || 
+						(this.shopCart.foodsList[key].count <=
+						this.shopCart.foodsList[key].info.activity.applicable_quantity)
 					){
-						res.price += parseInt((this.shopCart[key].count  * this.shopCart[key].info.price) * 100);
+						res.price += parseInt((this.shopCart.foodsList[key].count  * this.shopCart.foodsList[key].info.price) * 100);
 					} // end if
 					
-					res.origin_price += parseInt((this.shopCart[key].count * this.shopCart[key].info.origin_price)*100);
+					res.origin_price += parseInt((this.shopCart.foodsList[key].count * this.shopCart.foodsList[key].info.origin_price)*100);
 				} // end for
 				
 				res.price /= 100;
@@ -1117,6 +1190,11 @@
 				res.save_money = res.origin_price - res.price;
 				return res;
 			}
+			,
+			...mapState([
+				'login',
+				'userInfo'
+			])
 		}
 		,
 		created() {
@@ -1167,6 +1245,7 @@
 			 * 用户选择开通超级vip
 			 */
 			openSvip(){
+				this.$utils.log('openSvip','用户选择开通超级vip');
 				uni.navigateTo({
 					url:'/pages/member/member',
 					fail(e) {
@@ -1176,10 +1255,71 @@
 			}
 			,
 			/**
+			 * 检查当前这个红包是否已经加入了购物车中
+			 * @param {Object} redpackObj 红包对象
+			 */
+			redpackInShopcart(redpackObj){
+				// this.$utils.log('redpackInShopcart','检查当前这个红包是否已经加入了购物车中');
+				return JSON.stringify(
+						this.shopCart.redpackList
+					).includes(
+						JSON.stringify(redpackObj)
+					);
+			}
+			,
+			/**
+			 * 将兑换的红包加入购物车中
+			 * @param {Number} redpackObj 红包对象
+			 */
+			redpack2shopcart(redpackObj){
+				this.$utils.log('redpack2shopcart','将兑换的红包加入购物车中');
+				// 当前这个红包已经存在了
+				if(JSON.stringify(
+						this.shopCart.redpackList
+					).includes(
+						JSON.stringify(redpackObj)
+					)
+				) return;
+				
+				this.shopCart.redpackList.push(redpackObj);
+			}
+			,
+			/**
+			 * 兑换红包事件
+			 * @param {String} type 兑换那种类型的 normal为普通红包 vip为vip红包
+			 * @param {Number} redpackObj 红包对象
+			 */
+			exchangeRedpack(type,redpackObj){
+				this.$utils.log('exchangeRedpack','兑换红包事件');
+				// 用户兑现换红包
+				
+				// 处理vip红包兑换
+				if(type == 'vip'){
+					
+					// 判断是否为会员
+					if(this.userInfo.vip){
+						// 将红包加入购物车中
+						this.redpack2shopcart(redpackObj);
+						return;
+					} // end if
+					
+					// 不是vip提示用户开通
+					this.openPopup('openSvipPopup');
+					
+				} // end if vip
+				
+				if(type == 'normal'){
+					// 将兑换按钮转换为兑换成功
+					this.redpack2shopcart(redpackObj);
+				} // end if normal 
+			}
+			,
+			/**
 			 * 将红包数据拆分为普通和超级会员两种
 			 * @param {Array} data 红包列表
 			 */
 			redpackFilter(data){
+				// this.$utils.log('redpackFilter','将红包数据拆分为普通和超级会员两种');
 				let res = {};
 				
 				res.member = data.filter(ele => ele.type == 1);
@@ -1194,16 +1334,16 @@
 			cutFromCart(food){
 				this.$utils.log('cutFromCart','从购物车中删除');
 				// 该对象不存在
-				if(!this.shopCart[food.item_id]) return false;
+				if(!this.shopCart.foodsList[food.item_id]) return false;
 				
 				// 该对象数量超过基础数量
-				if(this.shopCart[food.item_id].count > food.min_purchase){
+				if(this.shopCart.foodsList[food.item_id].count > food.min_purchase){
 					
-					this.$set(this.shopCart[food.item_id],'count',this.shopCart[food.item_id].count-1);
+					this.$set(this.shopCart.foodsList[food.item_id],'count',this.shopCart.foodsList[food.item_id].count-1);
 					if(food.activity){
 						
 						if(
-							this.shopCart[food.item_id].count >
+							this.shopCart.foodsList[food.item_id].count >
 							food.activity.applicable_quantity
 						){
 							uni.showToast({
@@ -1218,7 +1358,7 @@
 				}
 				
 				// 将该对象从购物车中删除
-				this.$delete(this.shopCart,food.item_id);
+				this.$delete(this.shopCart.foodsList,food.item_id);
 			}
 			,
 			/**
@@ -1228,13 +1368,13 @@
 				this.$utils.log('add2cart','添加到购物车');
 				
 				// 该商品存在购物车中
-				if(this.shopCart[food.item_id]){
+				if(this.shopCart.foodsList[food.item_id]){
 					
 					
 					if(food.activity){
 						
 						if(
-							this.shopCart[food.item_id].count >=
+							this.shopCart.foodsList[food.item_id].count >=
 							food.activity.applicable_quantity
 						){
 							uni.showToast({
@@ -1245,12 +1385,13 @@
 						
 					} // end if
 					
-					this.$set(this.shopCart[food.item_id],'count',this.shopCart[food.item_id].count+1);
+					this.$set(this.shopCart.foodsList[food.item_id],'count',this.shopCart.foodsList[food.item_id].count+1);
+					
 					return;
 				} // end if
 				
 				// 该商品不存在购物车中
-				this.$set(this.shopCart,food.item_id,{
+				this.$set(this.shopCart.foodsList,food.item_id,{
 					info:food,
 					count:food.min_purchase
 				});
@@ -1258,7 +1399,7 @@
 				if(food.activity){
 					
 					if(
-						this.shopCart[food.item_id].count >
+						this.shopCart.foodsList[food.item_id].count >
 						food.activity.applicable_quantity
 					){
 						uni.showToast({
@@ -1275,6 +1416,7 @@
 			 * @param {Array} foodList 点赞食品列表
 			 */
 			foodsFilter(foodList){
+				// this.$utils.log('foodsFilter','点赞商品过滤器，将点赞商品中5星的过滤出来');
 				let res = foodList.filter((ele)=>{
 					return ele.rating >= 5;
 				});
@@ -1330,7 +1472,7 @@
 			 * @param {Object} e
 			 */
 			foodsCategoryTabSelect(e) {
-				
+				this.$utils.log('foodsCategoryTabSelect','商品列表侧边导航栏点击事件');
 				// 如果当前商品列表不能滑动就阻止分类点击事件
 				if(!this.pageState.foodsListScroll) {
 					uni.pageScrollTo({

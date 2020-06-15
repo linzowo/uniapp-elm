@@ -151,6 +151,7 @@
 								class="scroll-view-item_H recommend-foods-item flex-direction border-radius-6 margin-left-sm"
 								>
 									<image 
+									@tap="showFoodTasteChoosePopup(item)"
 									class="border-radius-6"
 									:src="item.image_path,'w_240'|imgUrlFilter" 
 									mode="widthFix"
@@ -194,7 +195,7 @@
 													>{{shopCart.foodsList[item.item_id].count}}</text>
 													
 													<text 
-													@tap.stop.prevent="add2cart(item)"
+													@tap.stop.prevent="item.attrs.length?showFoodTasteChoosePopup(item):add2cart(item)"
 													class="lg add-btn-blue text-xxl cuIcon-roundaddfill"
 													></text>
 												</view>
@@ -346,7 +347,7 @@
 																	>{{shopCart.foodsList[ele.item_id].count}}</text>
 																	
 																	<text 
-																	@tap.stop.prevent="add2cart(ele)"
+																	@tap.stop.prevent="ele.attrs.length?showFoodTasteChoosePopup(ele):add2cart(ele)"
 																	class="lg add-btn-blue text-xxl cuIcon-roundaddfill"
 																	></text>
 																</view>
@@ -371,7 +372,7 @@
 							<!-- 底部购物车 S -->
 							<view 
 							class="shopping-cart-box justify-between align-center"
-							:style="{zIndex:100}"
+							:style="{zIndex:11}"
 							>
 								<!-- 
 								 存在两种状态
@@ -1082,7 +1083,7 @@
 			:type="'bottom'"
 			@change="popupChange"
 			:animation="true"
-			:zIndex="99"
+			:zIndex="10"
 			>
 				<view 
 				v-if="goodsInfoPopupData"
@@ -1139,7 +1140,7 @@
 								>{{shopCart.foodsList[goodsInfoPopupData.item_id].count}}</text>
 								
 								<text 
-								@tap="add2cart(goodsInfoPopupData)"
+								@tap="goodsInfoPopupData.attrs.length?showFoodTasteChoosePopup(goodsInfoPopupData):add2cart(goodsInfoPopupData)"
 								class="lg add-btn-blue text-xxl cuIcon-roundaddfill"
 								></text>
 							</view>
@@ -1168,9 +1169,98 @@
 			@change="popupChange"
 			:animation="true"
 			>
+				<view 
+				v-if="goodsInfoPopupData"
+				class="food-taste-box flex-direction bg-white padding"
+				>
 				
+					<!-- 关闭弹窗按钮 -->
+					<text 
+					@tap="closePopup('foodTasteChoosePopup')"
+					class="food-taste-close-btn lg text-grey cuIcon-close text-xxl"></text>
+					
+					<!-- 商品基本情况 -->
+					<view class="margin-bottom">
+						<view class="food-cover-box margin-right-sm">
+							<image 
+							:src="goodsInfoPopupData.image_path,'w_95'|imgUrlFilter" 
+							mode="widthFix"></image>
+						</view>
+						
+						<view class="flex-direction justify-between">
+							<view class="flex-direction">
+								<!-- 商品名称 -->
+								<view class="margin-bottom-xs">
+									<text class="text-cut text-bold text-lg text-color-0"
+									:style="{width:'400rpx'}"
+									>{{goodsInfoPopupData.name}}</text>
+								</view>
+								<!-- 已选口味 -->
+								<view 
+								v-if="goodsInfoPopupData.attrs.length"
+								class="text-xs">
+									<text>已选：</text>
+									<text
+									v-for="(item,index) in goodsInfoPopupData.attrs"
+									:key="index"
+									>
+									{{item.values[0]}}{{( (goodsInfoPopupData.attrs.length > 1) && ((goodsInfoPopupData.attrs.length - 1)>index) ) ? '/' : ''}}
+									</text>
+								</view>
+							</view>
+							
+							<text class="text-price text-bold text-color-price text-xxl">{{goodsInfoPopupData.price}}</text>
+						</view>
+					</view>
+					
+					<!-- 商品种类列表 -->
+					<scroll-view 
+					:scroll-y="true"
+					v-if="goodsInfoPopupData.attrs.length"
+					class="flex-direction food-type-list"
+					>
+						
+						<view 
+						v-for="(item,index) in goodsInfoPopupData.attrs"
+						:key="index"
+						class="food-type-item flex-direction">
+						
+							<!-- 种类名称 -->
+							<text class="margin-bottom-sm">{{item.name}}</text>
+							
+							<!-- 口味列表 -->
+							<view 
+							class="food-taste-list flex-wrap">
+							
+								<!-- 
+								口味是否被选中机制
+								 1.如果当前商品存在购物车中那么直接读取购物车中的索引值判断与当前的索引值匹配
+								 2.如果商品不在购物车中则默认每个商品的第一种口味被选中
+								 -->
+								<view 
+								v-for="(ele,i) in item.values"
+								:key="i"
+								@tap="tasteChoose(index,i)"
+								class="food-taste-item padding-lr-xl padding-tb-xs border-color-3 bg-grey-f5 margin-lr-xs margin-bottom-sm"
+								:class="i==goodsTasteData[index] ? 'cur' : ''"
+								>
+									<text>{{ele}}</text>
+								</view>
+							</view>
+							
+						</view>
+						
+					</scroll-view>
+					
+					<!-- 确定按钮 -->
+					<button
+					 @click="confirmTaste(goodsInfoPopupData)"
+					class="confirm-taste-btn margin"
+					 :style="{backgroundColor: 'rgb(35, 149, 255)',color:'#fff'}"
+					type="default">选好了</button>
+					
+				</view>
 			</uni-popup>
-			
 			<!-- 商品口味选择 E -->
 			
 			<!-- 页面弹窗组件 E -->
@@ -1245,7 +1335,7 @@
 								>{{shopCart.foodsList[item.item_id].count}}</text>
 								
 								<text 
-								@tap="add2cart(item)"
+								@tap="item.attrs.length?showFoodTasteChoosePopup(item):add2cart(item)"
 								class="lg add-btn-blue text-xxl cuIcon-roundaddfill"
 								></text>
 							</view>
@@ -1376,9 +1466,20 @@
 				load: true, // 记录滑动动画是否执行完毕的参数
 				shopCart:{
 					foodsList:{}, // 购物车商品数据详情
+					/*
+					商品列表的数据格式如下
+					foodList: {
+						foodId:{
+							info:{商品的详细数据},
+							count:Number, // 该商品的数量
+							taste:[], // 该商品的口味，数组长度与info中attrs的长度，值为用户选择的口味的索引值
+						}
+					}
+					*/
 					redpackList:[], // 用户兑换的红包
 				}, // 店铺私有购物车数据，加入数据后会同步到总购物车中
 				goodsInfoPopupData:null, // 临时存储商品详情弹窗所需的数据
+				goodsTasteData:[], // 临时存储用户选择的商品口味
 			}
 		},
 		watch:{
@@ -1515,9 +1616,30 @@
 		,
 		methods: {
 			/**
+			 * 用户确定了当前商品的口味，将其加入购物车
+			 * @param {Object} goods 商品数据
+			 */
+			confirmTaste(goods){
+				this.$utils.log('confirmTaste','用户确定了当前商品的口味，将其加入购物车');
+				this.add2cart(goods);
+				this.closePopup('foodTasteChoosePopup');
+			}
+			,
+			/**
+			 * 记录当前用户选择的是哪种口味
+			 * @param {Number} index 当前要修改哪个类别的口味
+			 * @param {Number} value 口味的索引值
+			 */
+			tasteChoose(index,value){
+				this.$utils.log('tasteChoose','记录当前用户选择的是哪种口味');
+				this.$set(this.goodsTasteData,index,value);
+			}
+			,
+			/**
 			 * 跳转到价格说明页
 			 */
 			goToPriceDescription(){
+				this.$utils.log('goToPriceDescription','跳转到价格说明页');
 				uni.navigateTo({
 					url:'/pages/address/add_address',
 					fail(e) {
@@ -1527,10 +1649,23 @@
 			}
 			,
 			/**
+			 * 查看商品口味选择弹窗
+			 * @param {Object} goods 商品数据
+			 */
+			showFoodTasteChoosePopup(goods){
+				this.$utils.log('showFoodTasteChoosePopup','查看商品口味选择弹窗');
+				this.goodsInfoPopupData = goods;
+				this.goodsTasteData = Array(goods.attrs.length).fill(0);
+				
+				this.openPopup('foodTasteChoosePopup');
+			}
+			,
+			/**
 			 * 查看商品详情弹窗
 			 * @param {Object} goods 商品数据
 			 */
 			showGoodsInfoPopup(goods){
+				this.$utils.log('showGoodsInfoPopup','查看商品详情弹窗');
 				this.goodsInfoPopupData = goods;
 				
 				this.openPopup('goodsInfoPopup');
@@ -1671,10 +1806,22 @@
 			add2cart(food){
 				this.$utils.log('add2cart','添加到购物车');
 				
+				/*
+				商品列表的数据格式如下
+				foodList: {
+					foodId:{
+						info:{商品的详细数据},
+						count:Number, // 该商品的数量
+						taste:[], // 该商品的口味，数组长度与info中attrs的长度，值为用户选择的口味的索引值
+					}
+				}
+				*/
+			   
+				
 				// 该商品存在购物车中
 				if(this.shopCart.foodsList[food.item_id]){
 					
-					
+					// 该商品有活动限制
 					if(food.activity){
 						
 						if(
@@ -1691,13 +1838,26 @@
 					
 					this.$set(this.shopCart.foodsList[food.item_id],'count',this.shopCart.foodsList[food.item_id].count+1);
 					
+					
+					// 判断该商品是否需要进行口味设置
+					// TODO: 将不同种类的口味组合视为不同的商品
+					if(food.attrs.length){
+					   // 判断用户是否更改了口味
+					   if(JSON.stringify(this.goodsTasteData) != JSON.stringify(this.shopCart.foodsList[food.item_id].taste)){
+						   this.$set(this.shopCart.foodsList[food.item_id],'taste',this.goodsTasteData);
+						   this.goodsTasteData = [];
+					   }
+					}
+					
+					console.log(this.shopCart.foodsList);
 					return;
 				} // end if
 				
 				// 该商品不存在购物车中
 				this.$set(this.shopCart.foodsList,food.item_id,{
 					info:food,
-					count:food.min_purchase
+					count:food.min_purchase,
+					taste:this.goodsTasteData
 				});
 				
 				if(food.activity){
@@ -1713,6 +1873,7 @@
 					} // end if
 					
 				} // end if
+				console.log(this.shopCart.foodsList);
 			}
 			,
 			/**
@@ -2052,7 +2213,7 @@
 	}
 	.store-menu{
 		position: relative;
-		z-index: 99;
+		z-index: 9;
 		background-color: #fff;
 	}
 	// 垂直商铺菜单列表相关样式
@@ -2264,5 +2425,33 @@
 		position: absolute;
 		right: 20rpx;
 		top: 20rpx;
+	}
+	
+	// 商品口味弹窗
+	.food-taste-box{
+		position: relative;
+		width: 750rpx;
+		height: 1100rpx;
+	}
+	.food-type-list{
+		height: 730rpx;
+	}
+	.food-taste-close-btn{
+		position: absolute;
+		right: 20rpx;
+		top: 20rpx;
+	}
+	.food-cover-box{
+		width: 190rpx;
+	}
+	.food-taste-item.cur{
+		color: rgb(35, 149, 255);
+		background-color: rgba(35, 149, 255, 0.2);
+	}
+	.confirm-taste-btn{
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
 	}
 </style>

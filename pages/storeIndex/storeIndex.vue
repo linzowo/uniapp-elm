@@ -1204,7 +1204,7 @@
 									v-for="(item,index) in goodsInfoPopupData.attrs"
 									:key="index"
 									>
-									{{item.values[0]}}{{( (goodsInfoPopupData.attrs.length > 1) && ((goodsInfoPopupData.attrs.length - 1)>index) ) ? '/' : ''}}
+									{{item.values[goodsTasteData[index]]}}{{( (goodsInfoPopupData.attrs.length > 1) && ((goodsInfoPopupData.attrs.length - 1)>index) ) ? '/' : ''}}
 									</text>
 								</view>
 							</view>
@@ -1477,7 +1477,7 @@
 									index:[], // 该商品的口味，数组长度与info中attrs的长度一致，值为用户选择的口味的索引值
 									count:Number, // 当前口味的商品数量
 								}
-							}, // 用户选择的口味列表，不同口味视为不同商品
+							}, // 用户选择的口味列表，不同口味视为不同商品，当该商品无口味选项时此对象为空
 						}
 					}
 					*/
@@ -1493,7 +1493,10 @@
 			 * @param {Object} n
 			 * @param {Object} o
 			 */
-			pageState(n,o){}
+			pageState(n,o){},
+			shopCart(n){
+				console.log(n);
+			}
 		}
 		,
 		computed:{
@@ -1620,6 +1623,179 @@
 		}
 		,
 		methods: {
+			/**
+			 * 从购物车中删除
+			 */
+			cutFromCart(food){
+				this.$utils.log('cutFromCart','从购物车中删除');
+				let curInShopcartObj = this.shopCart.foodsList[food.item_id];
+				
+				// 该对象不存在
+				if(!curInShopcartObj) return false;
+				
+				// 该对象存在多种口味和规格，提示用户只能在购物车中删除
+				if(this._.keys(curInShopcartObj.taste).length >= 2) {
+					
+					uni.showToast({
+						title:this.$c_t.store_index.has_more_taste,
+						icon:'none'
+					})
+					
+					return false;
+				}
+				
+				// 该对象数量超过最低购买数量
+				if(curInShopcartObj.count > food.min_purchase){
+					// 商品数量-1
+					this.$set(curInShopcartObj,'count',curInShopcartObj.count-1);
+					// 存在口味参数，当前口味参数的数量-1
+					if(!this._.isEmpty(curInShopcartObj.taste)){
+						this.$set(
+							curInShopcartObj.taste[this._.keys(curInShopcartObj.taste)[0]],
+							'count',
+							curInShopcartObj.count
+						)
+					}
+					
+					// 检查其数量是否仍然超过最大优惠数量。超过了就给予提示
+					if(food.activity){
+						
+						if(
+							curInShopcartObj.count >
+							food.activity.applicable_quantity
+						){
+							uni.showToast({
+								title:food.activity.applicable_quantity_detail_text,
+								icon:'none'
+							});
+						} // end if
+						
+					} // end if
+					
+					// 检查该商品是否存在多种口味
+					
+					
+					return;
+				}
+				
+				// 将该对象从购物车中删除
+				this.$delete(this.shopCart.foodsList,food.item_id);
+			}
+			,
+			/**
+			 * 添加到购物车
+			 */
+			add2cart(food){
+				this.$utils.log('add2cart','添加到购物车');
+				
+				/*
+				商品列表的数据格式如下
+				foodList: {
+					foodId:{
+						info:{商品的详细数据},
+						count:Number, // 该商品的数量
+						taste:[], // 该商品的口味，数组长度与info中attrs的长度，值为用户选择的口味的索引值
+					}
+				}
+				*/
+			   
+				
+				// ==============该商品存在购物车中================
+				
+				if(this.shopCart.foodsList[food.item_id]){
+					
+					// 该商品有活动限制
+					if(food.activity){
+						
+						// 商品数量是否超过了活动中规定的限定优惠数量
+						if(
+							this.shopCart.foodsList[food.item_id].count >=
+							food.activity.applicable_quantity
+						){
+							// 提示用户已经超出活动限定
+							uni.showToast({
+								title:food.activity.applicable_quantity_detail_text,
+								icon:'none'
+							});
+						} // end if
+						
+					} // end if
+					
+					// 修改商品总数量
+					// 追加购物车中该商品数量
+					this.$set(
+						this.shopCart.foodsList[food.item_id],
+						'count',
+						this.shopCart.foodsList[food.item_id].count+1
+					);
+					
+					// 如果不存在口味选项则直接跳过后续的口味类型商品数量计算
+					if(!food.attrs.length) return;
+					
+					
+					// 判断口味是否为新的
+					let curTasteObj = this.shopCart.foodsList[food.item_id].taste[this.goodsTasteData.join('')];
+					
+					// 该口味存在其中,使其数量+1
+					if(curTasteObj){
+						this.$set(curTasteObj,'count',curTasteObj.count + 1);
+						
+					}else{
+						// 该口味不存在，新增一个口味
+						this.$set(
+							this.shopCart.foodsList[food.item_id].taste,
+							this.goodsTasteData.join(''),
+							{
+							index:this.goodsTasteData,
+							count:1
+							}
+						);
+					} // end if 当前口味是否存在购物车中
+					
+					
+					return;
+				} // end if
+				
+				
+				// ==============该商品不存在购物车中==============
+				
+				// 向购物车中新增商品
+				this.$set(this.shopCart.foodsList,food.item_id,{
+					info:food,
+					count:food.min_purchase,
+					taste:{}
+				});
+				
+				// 判断商品数量是否超出了优惠限制数量
+				if(food.activity){
+					
+					if(
+						this.shopCart.foodsList[food.item_id].count >
+						food.activity.applicable_quantity
+					){
+						uni.showToast({
+							title:food.activity.applicable_quantity_detail_text,
+							icon:'none'
+						});
+					} // end if
+				} // end if
+				
+				// 判断是否有口味选项
+				if(food.attrs.length) {
+					// 当前商品有口味选项，根据用户选择的口味设置口味属性
+					let tasteId = this.goodsTasteData.join('');
+					this.$set(
+						this.shopCart.foodsList[food.item_id].taste,
+						tasteId,
+						{
+							index:this.goodsTasteData,
+							count:food.min_purchase
+						}
+					);
+				} // end if 存在口味选项
+				
+			}
+			,
 			/**
 			 * 用户确定了当前商品的口味，将其加入购物车
 			 * @param {Object} goods 商品数据
@@ -1770,145 +1946,6 @@
 				res.normal = data.filter(ele => ele.type == 0);
 				
 				return res;
-			}
-			,
-			/**
-			 * 从购物车中删除
-			 */
-			cutFromCart(food){
-				this.$utils.log('cutFromCart','从购物车中删除');
-				// 该对象不存在
-				if(!this.shopCart.foodsList[food.item_id]) return false;
-				
-				// 该对象数量超过基础数量
-				if(this.shopCart.foodsList[food.item_id].count > food.min_purchase){
-					
-					this.$set(this.shopCart.foodsList[food.item_id],'count',this.shopCart.foodsList[food.item_id].count-1);
-					if(food.activity){
-						
-						if(
-							this.shopCart.foodsList[food.item_id].count >
-							food.activity.applicable_quantity
-						){
-							uni.showToast({
-								title:food.activity.applicable_quantity_detail_text,
-								icon:'none'
-							});
-						} // end if
-						
-					} // end if
-					
-					return;
-				}
-				
-				// 将该对象从购物车中删除
-				this.$delete(this.shopCart.foodsList,food.item_id);
-			}
-			,
-			/**
-			 * 添加到购物车
-			 */
-			add2cart(food){
-				this.$utils.log('add2cart','添加到购物车');
-				
-				/*
-				商品列表的数据格式如下
-				foodList: {
-					foodId:{
-						info:{商品的详细数据},
-						count:Number, // 该商品的数量
-						taste:[], // 该商品的口味，数组长度与info中attrs的长度，值为用户选择的口味的索引值
-					}
-				}
-				*/
-			   
-				
-				// 该商品存在购物车中
-				if(this.shopCart.foodsList[food.item_id]){
-					
-					// 该商品有活动限制
-					if(food.activity){
-						
-						// 商品数量是否超过了活动中规定的限定优惠数量
-						if(
-							this.shopCart.foodsList[food.item_id].count >=
-							food.activity.applicable_quantity
-						){
-							// 提示用户已经超出活动限定
-							uni.showToast({
-								title:food.activity.applicable_quantity_detail_text,
-								icon:'none'
-							});
-						} // end if
-						
-					} // end if
-					
-					
-					
-					// 判断口味是否为新的
-					let curTasteObj = this.shopCart.foodsList[food.item_id].taste[this.goodsTasteData.join('')];
-					
-					// 该口味存在其中,使其数量+1
-					if(curTasteObj){
-						this.$set(curTasteObj,'count',curTasteObj.count + 1);
-						
-					}else{
-						// 该口味不存在，新增一个口味
-						this.$set(
-							this.shopCart.foodsList[food.item_id].taste,
-							this.goodsTasteData.join(''),
-							{
-							index:this.goodsTasteData,
-							count:1
-							}
-						);
-					} // end if 当前口味是否存在购物车中
-					
-					// 修改商品总数量
-					// 追加购物车中该商品数量
-					this.$set(
-						this.shopCart.foodsList[food.item_id],
-						'count',
-						this.shopCart.foodsList[food.item_id].count+1
-					);
-					
-					console.log(this.shopCart.foodsList);
-					return;
-				} // end if
-				
-				
-				// 该商品不存在购物车中
-				
-				this.$set(this.shopCart.foodsList,food.item_id,{
-					info:food,
-					count:food.min_purchase,
-					taste:{}
-				});
-				
-				let tasteId = this.goodsTasteData.join('');
-				this.$set(
-					this.shopCart.foodsList[food.item_id].taste,
-					tasteId,
-					{
-						index:this.goodsTasteData,
-						count:food.min_purchase
-					}
-				);
-				
-				if(food.activity){
-					
-					if(
-						this.shopCart.foodsList[food.item_id].count >
-						food.activity.applicable_quantity
-					){
-						uni.showToast({
-							title:food.activity.applicable_quantity_detail_text,
-							icon:'none'
-						});
-					} // end if
-					
-				} // end if
-				console.log(this.shopCart.foodsList);
 			}
 			,
 			/**

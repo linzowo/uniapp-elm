@@ -1471,8 +1471,13 @@
 					foodList: {
 						foodId:{
 							info:{商品的详细数据},
-							count:Number, // 该商品的数量
-							taste:[], // 该商品的口味，数组长度与info中attrs的长度，值为用户选择的口味的索引值
+							count:Number, // 该商品id下商品的总数量
+							taste:{
+								goodsTasteData.join(''):{
+									index:[], // 该商品的口味，数组长度与info中attrs的长度一致，值为用户选择的口味的索引值
+									count:Number, // 当前口味的商品数量
+								}
+							}, // 用户选择的口味列表，不同口味视为不同商品
 						}
 					}
 					*/
@@ -1824,10 +1829,12 @@
 					// 该商品有活动限制
 					if(food.activity){
 						
+						// 商品数量是否超过了活动中规定的限定优惠数量
 						if(
 							this.shopCart.foodsList[food.item_id].count >=
 							food.activity.applicable_quantity
 						){
+							// 提示用户已经超出活动限定
 							uni.showToast({
 								title:food.activity.applicable_quantity_detail_text,
 								icon:'none'
@@ -1836,29 +1843,57 @@
 						
 					} // end if
 					
-					this.$set(this.shopCart.foodsList[food.item_id],'count',this.shopCart.foodsList[food.item_id].count+1);
 					
 					
-					// 判断该商品是否需要进行口味设置
-					// TODO: 将不同种类的口味组合视为不同的商品
-					if(food.attrs.length){
-					   // 判断用户是否更改了口味
-					   if(JSON.stringify(this.goodsTasteData) != JSON.stringify(this.shopCart.foodsList[food.item_id].taste)){
-						   this.$set(this.shopCart.foodsList[food.item_id],'taste',this.goodsTasteData);
-						   this.goodsTasteData = [];
-					   }
-					}
+					// 判断口味是否为新的
+					let curTasteObj = this.shopCart.foodsList[food.item_id].taste[this.goodsTasteData.join('')];
+					
+					// 该口味存在其中,使其数量+1
+					if(curTasteObj){
+						this.$set(curTasteObj,'count',curTasteObj.count + 1);
+						
+					}else{
+						// 该口味不存在，新增一个口味
+						this.$set(
+							this.shopCart.foodsList[food.item_id].taste,
+							this.goodsTasteData.join(''),
+							{
+							index:this.goodsTasteData,
+							count:1
+							}
+						);
+					} // end if 当前口味是否存在购物车中
+					
+					// 修改商品总数量
+					// 追加购物车中该商品数量
+					this.$set(
+						this.shopCart.foodsList[food.item_id],
+						'count',
+						this.shopCart.foodsList[food.item_id].count+1
+					);
 					
 					console.log(this.shopCart.foodsList);
 					return;
 				} // end if
 				
+				
 				// 该商品不存在购物车中
+				
 				this.$set(this.shopCart.foodsList,food.item_id,{
 					info:food,
 					count:food.min_purchase,
-					taste:this.goodsTasteData
+					taste:{}
 				});
+				
+				let tasteId = this.goodsTasteData.join('');
+				this.$set(
+					this.shopCart.foodsList[food.item_id].taste,
+					tasteId,
+					{
+						index:this.goodsTasteData,
+						count:food.min_purchase
+					}
+				);
 				
 				if(food.activity){
 					

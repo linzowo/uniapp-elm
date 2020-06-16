@@ -1291,7 +1291,9 @@
 					:style="{backgroundColor:'#eceff1'}"
 					>
 						<text class="text-lg">已选商品</text>
-						<view class="align-center">
+						<view 
+						@tap="clearShopcart"
+						class="align-center">
 							<text class="lg cuIcon-delete margin-right-xs"></text>
 							<text>清空</text>
 						</view>
@@ -1627,7 +1629,15 @@
 			 * @param {Object} n
 			 * @param {Object} o
 			 */
-			pageState(n,o){}
+			pageState(n,o){},
+			shopCart:{
+				handler(n,o){
+					if(this._.isEmpty(n.foodsList)){
+						this.showShopCartPopup();
+					}
+				},
+				deep:true
+			}
 		}
 		,
 		computed:{
@@ -2012,6 +2022,14 @@
 			}
 			,
 			/**
+			 * 清空购物车
+			 */
+			clearShopcart(){
+				this.$set(this.shopCart,'foodsList',{});
+				this.showShopCartPopup();
+			}
+			,
+			/**
 			 * 无口味选项的：输入商品的数据及其在购物车中的索引值计算该商品总价
 			 * @param {Object} goods 购物车中的商品对象
 			 */
@@ -2275,8 +2293,12 @@
 			 */
 			popupChange(e){
 				this.$utils.log('popupChange','弹窗状态改变==>' + (e.show?'开':'关'),e);
+				let popData = '';
 				if(e.show == false){
-					this.popupStack.pop();
+					popData = this.popupStack.pop();
+					if(popData == 'shopCartPopup'){
+						this.pageState.shopCartOpenState = false;
+					}
 				}
 			}
 			,

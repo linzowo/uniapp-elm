@@ -61,8 +61,92 @@ export const rpx2px = (rpx)=>{
 	return res;
 }
 
+/**
+ * 多数相加方法,支持浮点数相加，同时解决浮点数导致计算精度问题
+ * 目前只支持精确到小数点后两位的浮点数运算
+ * @param {Number} number 你可以传入任意数量的数字作为参数
+ * @return {Number}
+ */
+export const add = () => {
+	let res = 0;
+	for(let i in arguments){
+		if(typeof(arguments[i]) === 'number'){
+			res += (arguments[i].toFixed(2))*100;
+		}
+	}
+	
+	return res / 100;
+}
+
+/**
+ * 多数相减方法,支持浮点数相减，同时解决浮点数导致计算精度问题
+ * 目前只支持精确到小数点后两位的浮点数运算
+ * 按照参数传入顺序依次相减
+ * @param {Number} number 你可以传入任意数量的数字作为参数
+ * @return {Number}
+ */
+export const minus = () => {
+	let res = 0;
+	for(let i in arguments){
+		if(typeof(arguments[i]) === 'number'){
+			if(res == 0){
+				res = (arguments[i].toFixed(2))*100;
+			}else{
+				res -= (arguments[i].toFixed(2))*100;
+			}
+		}
+	}
+	
+	return res / 100;
+}
+
+/**
+ * 多数相乘方法,支持浮点数相乘，同时解决浮点数导致计算精度问题
+ * 目前只支持精确到小数点后两位的浮点数运算
+ * @param {Number} number 你可以传入任意数量的数字作为参数
+ * @return {Number}
+ */
+export const multiply = () => {
+	let res = 1;
+	for(let i in arguments){
+		if(typeof(arguments[i]) === 'number'){
+			res = (res * 100) * (arguments[i].toFixed(2))*100;
+			res /= 10000;
+		}
+	}
+	
+	return res.toFixed(2);
+}
+
+/**
+ * 多数相除方法,支持浮点数相除，同时解决浮点数导致计算精度问题
+ * 目前只支持精确到小数点后两位的浮点数运算
+ * 按照传入顺序依次相除
+ * @param {Number} number 你可以传入任意数量的数字作为参数
+ * @return {Number}
+ */
+export const divide = () => {
+	let res = 0;
+	for(let i in arguments){
+		if(typeof(arguments[i]) === 'number'){
+			if(res == 0){
+				res = arguments[i].toFixed(2);
+			}else{
+				res = (res * 100) / ((arguments[i].toFixed(2)) * 100);
+			}
+		}
+	}
+	
+	return res.toFixed(2);
+}
+
+
 export default {
 	getElementInfo,
 	log,
-	rpx2px
+	rpx2px,
+	add,
+	minus,
+	multiply,
+	divide
 }

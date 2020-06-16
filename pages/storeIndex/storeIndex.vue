@@ -191,7 +191,7 @@
 													
 													<text 
 													v-if="shopCart.foodsList[item.item_id]"
-													class="margin-lr-sm"
+													class="text-cut goods-number"
 													>{{shopCart.foodsList[item.item_id].count}}</text>
 													
 													<text 
@@ -343,7 +343,7 @@
 																	
 																	<text 
 																	v-if="shopCart.foodsList[ele.item_id]"
-																	class="margin-lr-sm"
+																	class="text-cut goods-number"
 																	>{{shopCart.foodsList[ele.item_id].count}}</text>
 																	
 																	<text 
@@ -371,6 +371,7 @@
 							
 							<!-- 底部购物车 S -->
 							<view 
+							@tap="shopCartLength?showShopCartPopup():''"
 							class="shopping-cart-box justify-between align-center"
 							:style="{zIndex:11}"
 							>
@@ -382,7 +383,7 @@
 								 
 								<!-- 节省金额提示 S -->
 								<view 
-								v-show="shopCartPriceCount.save_money"
+								v-show="shopCartPriceCount.save_money&&!pageState.shopCartOpenState"
 								class="save-money-tips flex-sub align-center justify-center text-xs text-color-3">
 									<text>已减{{shopCartPriceCount.save_money}}元</text>
 								</view>
@@ -428,6 +429,9 @@
 								
 								<!-- 结算按钮 -->
 								<view 
+								@tap.stop.prevent="
+									shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount ? 
+									gotoPayPage() : '' "
 								class="shopping-cart-pay-btn-box text-white align-center justify-center"
 								:style="{backgroundColor:shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount?'':'#535356'}"
 								>
@@ -1136,7 +1140,7 @@
 								
 								<text 
 								v-if="shopCart.foodsList[goodsInfoPopupData.item_id]"
-								class="margin-lr-sm"
+								class="text-cut goods-number"
 								>{{shopCart.foodsList[goodsInfoPopupData.item_id].count}}</text>
 								
 								<text 
@@ -1263,6 +1267,130 @@
 			</uni-popup>
 			<!-- 商品口味选择 E -->
 			
+			<!-- 底部购物车弹窗 S -->
+			<uni-popup
+			ref="shopCartPopup" 
+			:type="'bottom'"
+			@change="popupChange"
+			:animation="true"
+			:zIndex="10"
+			>
+				<view class="shopcart-popup-box bg-white flex-direction">
+					
+					<!-- 节省金额提示 S -->
+					<view 
+					v-show="shopCartPriceCount.save_money"
+					class="save-money-tips flex-sub align-center justify-center text-xs text-color-3">
+						<text>已减{{shopCartPriceCount.save_money}}元</text>
+					</view>
+					<!-- 节省金额提示 E -->
+					
+					<!-- 购物车标题及清空按钮 -->
+					<view 
+					class="padding align-center justify-between text-color-6"
+					:style="{backgroundColor:'#eceff1'}"
+					>
+						<text class="text-lg">已选商品</text>
+						<view class="align-center">
+							<text class="lg cuIcon-delete margin-right-xs"></text>
+							<text>清空</text>
+						</view>
+					</view>
+					
+					<!-- 商品列表滑动区域 -->
+					<scroll-view 
+					:scroll-y="true" 
+					class="shopcart-list padding-sm"
+					>
+						<!-- 商品列表 -->
+						<view
+						v-for="(item,key) in shopCart.foodsList"
+						:key="key"
+						class="shopcart-item flex-direction"
+						>
+							<!-- 有类别选项 -->
+							<view 
+							v-for="(ele,k,index) in item.taste"
+							:key="key + k"
+							class="justify-between border-bottom border-color-e padding-tb"
+							>
+								<view class="text-lg align-center">
+									
+									<view class="flex-direction">
+										<text class="text-cut margin-right-xs text-color-3"
+										:style="{width:'350rpx'}"
+										>{{item.info.name}}</text>
+										
+										<view class="text-xs text-color-9">
+											<text
+											v-for="(e,i) in ele.index"
+											:key="i"
+											>{{item.info.attrs[i].values[e]}}{{_.inRange(i,-1,ele.index.length-1)?'/':''}}
+											</text>
+										</view>
+									</view>
+									
+									<text class="delete-line text-xs text-price margin-right-xs">{{((item.info.origin_price * 100 )*item.count)/100}}</text>
+									<text class="text-price text-color-price text-bold">{{goodsTastePriceFilter(item,k,index)}}</text>
+								</view>
+								
+								<view class="add-remove-box align-center">
+									<text 
+									@tap="cutTasteGoodsFromCart(key,k)"
+									class="lg add-btn-blue text-xxl cuIcon-rounddown"></text>
+									
+									<text 
+									class="text-cut goods-number"
+									>{{ele.count}}</text>
+									
+									<text 
+									@tap="addTasteGoods2Cart(key,k)"
+									class="lg add-btn-blue text-xxl cuIcon-roundaddfill"
+									></text>
+								</view>
+							</view>
+							
+							<!-- 没有口味/类别选项 -->
+							<view 
+							v-if="_.isEmpty(item.taste)"
+							class="justify-between border-bottom border-color-e padding-tb"
+							>
+								
+								<view class="text-lg align-center">
+									<text 
+									class="text-cut margin-right-xs text-color-3"
+									:style="{width:'350rpx'}"
+									>
+										{{item.info.name}}
+									</text>
+									<text class="delete-line text-xs text-price margin-right-xs">{{((item.info.origin_price * 100 )*item.count)/100}}</text>
+									<text class="text-price text-color-price text-bold">{{goodsPriceFilter(item)}}</text>
+								</view>
+								
+								<view class="add-remove-box align-center">
+									<text 
+									@tap="cutFromCart(item.info)"
+									class="lg add-btn-blue text-xxl cuIcon-rounddown"></text>
+									
+									<text 
+									class="text-cut goods-number"
+									>{{item.count}}</text>
+									
+									<text 
+									@tap="add2cart(item.info)"
+									class="lg add-btn-blue text-xxl cuIcon-roundaddfill"
+									></text>
+								</view>
+								
+							</view>
+						
+						</view>
+					</scroll-view>
+					
+				</view>
+			</uni-popup>
+			<!-- 底部购物车弹窗 E -->
+			
 			<!-- 页面弹窗组件 E -->
 			
 		</view>
@@ -1331,7 +1459,7 @@
 								
 								<text 
 								v-if="shopCart.foodsList[item.item_id]"
-								class="margin-lr-sm"
+								class="text-cut goods-number"
 								>{{shopCart.foodsList[item.item_id].count}}</text>
 								
 								<text 
@@ -1354,7 +1482,9 @@
 			<!-- 加载提示 E -->
 			
 			<!-- 底部购物车 S -->
-			<view class="shopping-cart-box justify-between align-center">
+			<view 
+			@tap="shopCartLength?showShopCartPopup():''"
+			class="shopping-cart-box justify-between align-center">
 				<!-- 
 				 存在两种状态
 				 1.无商品状态
@@ -1363,7 +1493,7 @@
 				 
 				<!-- 节省金额提示 S -->
 				<view 
-				v-show="shopCartPriceCount.save_money"
+				v-show="shopCartPriceCount.save_money&&!pageState.shopCartOpenState"
 				class="save-money-tips flex-sub align-center justify-center text-xs text-color-3">
 					<text>已减{{shopCartPriceCount.save_money}}元</text>
 				</view>
@@ -1409,6 +1539,9 @@
 				
 				<!-- 结算按钮 -->
 				<view 
+				@tap.stop.prevent="
+									shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount ? 
+									gotoPayPage() : '' "
 				class="shopping-cart-pay-btn-box text-white align-center justify-center"
 				:style="{backgroundColor:shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount?'':'#535356'}"
 				>
@@ -1456,6 +1589,7 @@
 					showHasContentCommentOnly: true, // 是否只显示有内容的评论
 					foodsListScroll: false, // 当前商品列表是否可以滑动
 					showBannercontent: false, // 是否显示banner内容区域
+					shopCartOpenState: false, // 当前底部购物车是否处于打开状态
 				}, // 页面状态
 				popupStack:[], // 弹窗栈
 				commentHasNext:false, // 是否还有更多评论
@@ -1493,15 +1627,13 @@
 			 * @param {Object} n
 			 * @param {Object} o
 			 */
-			pageState(n,o){},
-			shopCart(n){
-				console.log(n);
-			}
+			pageState(n,o){}
 		}
 		,
 		computed:{
 			/**
 			 * 监听购物车中商品数量变化
+			 * @return {Number} 购物车商品总数量
 			 */
 			shopCartLength(){
 				let len = 0;
@@ -1512,6 +1644,10 @@
 				return len;
 			}
 			,
+			/**
+			 * 统计每个分类下有几件商品
+			 * @return {Object} {category_id:count}
+			 */
 			shopCartFoodCategoryLen(){
 				let res = {};
 				
@@ -1540,36 +1676,43 @@
 				
 				for (let key in this.shopCart.foodsList) {
 					
-					if(this.shopCart.foodsList[key].info.activity){
+					let curGoodsObj = this.shopCart.foodsList[key],
+					price = curGoodsObj.info.price * 100,
+					origin_price = curGoodsObj.info.origin_price * 100
+					;
 					
-						if(this.shopCart.foodsList[key].count > this.shopCart.foodsList[key].info.activity.applicable_quantity){
-							res.price += parseInt(
-								(
-									(
-										this.shopCart.foodsList[key].count - 
-										this.shopCart.foodsList[key].info.activity.applicable_quantity
-									) * this.shopCart.foodsList[key].info.origin_price + 
-									this.shopCart.foodsList[key].info.activity.applicable_quantity *
-									this.shopCart.foodsList[key].info.price
-								) * 100
-							);
+					// 有优惠活动
+					if(curGoodsObj.info.activity){
+					
+						// 当前商品数量超过了最大优惠数
+						if(curGoodsObj.count > curGoodsObj.info.activity.applicable_quantity){
+							// 当前价格计算 (总数量 - 活动上限数量) * 原始价格 + (活动上限数量 * 当前价格)
+							let overPrice = (
+										curGoodsObj.count - 
+										curGoodsObj.info.activity.applicable_quantity
+							) * origin_price;
+							
+							let salePrice = curGoodsObj.info.activity.applicable_quantity * price;
+							
+							res.price += (overPrice + salePrice);
 						} // end if
 						
 					} // end if
 					
-					if(!this.shopCart.foodsList[key].info.activity || 
-						(this.shopCart.foodsList[key].count <=
-						this.shopCart.foodsList[key].info.activity.applicable_quantity)
+					if(!curGoodsObj.info.activity || 
+						(curGoodsObj.count <=
+						curGoodsObj.info.activity.applicable_quantity)
 					){
-						res.price += parseInt((this.shopCart.foodsList[key].count  * this.shopCart.foodsList[key].info.price) * 100);
+						res.price += curGoodsObj.count * price;
 					} // end if
 					
-					res.origin_price += parseInt((this.shopCart.foodsList[key].count * this.shopCart.foodsList[key].info.origin_price)*100);
+					res.origin_price += curGoodsObj.count * origin_price;
 				} // end for
 				
+				res.save_money = res.origin_price - res.price;
 				res.price /= 100;
 				res.origin_price /= 100;
-				res.save_money = res.origin_price - res.price;
+				res.save_money /= 100;
 				return res;
 			}
 			,
@@ -1624,7 +1767,70 @@
 		,
 		methods: {
 			/**
+			 * 从购物车中删除某种口味类型的商品
+			 * @param {Object} foodId 该商品id
+			 * @param {Object} tasteId 该口味类型的键
+			 */
+			cutTasteGoodsFromCart(foodId,tasteId){
+				let curGoodsObj = this.shopCart.foodsList[foodId],
+				minPurchase = curGoodsObj.info.min_purchase,
+				tasteObj = this.shopCart.foodsList[foodId].taste
+				;
+				
+				// 只剩下一种口味
+				// 其数量小于等于最低起购量直接删除整个商品对象
+				// 其数量大于最低起购量则数量-1
+				
+				// 还有多种口味
+				// 该口味数量小于等于最低起购量直接删除这个口味对象
+				// 其数量大于最低起购量则数量-1
+				
+				// 当前口味删除后是否小于等于最低起购量
+				if(curGoodsObj.taste[tasteId].count <= minPurchase){
+					
+					// 多种口味
+					if(this._.keys(tasteObj).length > 1) {
+						this.$set(curGoodsObj,'count',curGoodsObj.count - curGoodsObj.taste[tasteId].count);
+						this.$delete(curGoodsObj.taste,tasteId);
+					}else{
+					// 只有一种口味
+						this.$delete(this.shopCart.foodsList,foodId);
+					} // end if 口味类型数量
+					
+					return;
+				} // end if 小于等于最低起购量
+				
+				// 不小于最低起购量
+				this.$set(curGoodsObj,'count',curGoodsObj.count-1);
+				this.$set(tasteObj[tasteId],'count',tasteObj[tasteId].count-1);
+			}
+			,
+			/**
+			 * 在购物车弹窗中向购物车中添加某种口味类型的商品
+			 * @param {Object} foodId 该商品id
+			 * @param {Object} tasteId 该口味类型的键
+			 */
+			addTasteGoods2Cart(foodId,tasteId){
+				let curGoodsObj = this.shopCart.foodsList[foodId];
+				
+				this.$set(curGoodsObj,'count',curGoodsObj.count + 1);
+				this.$set(curGoodsObj.taste[tasteId],'count',curGoodsObj.taste[tasteId].count + 1);
+				
+				// 该商品有优惠活动
+				if(curGoodsObj.info.activity){
+					if(curGoodsObj.count > curGoodsObj.info.activity.max_quantity){
+						// 提示用户已经超出活动限定
+						uni.showToast({
+							title:curGoodsObj.info.activity.applicable_quantity_detail_text,
+							icon:'none'
+						});
+					}// end if 商品数量超出活动上限
+				}; // end if 商品存在活动
+			}
+			,
+			/**
 			 * 从购物车中删除
+			 * @param {Object} food 商品对象
 			 */
 			cutFromCart(food){
 				this.$utils.log('cutFromCart','从购物车中删除');
@@ -1684,6 +1890,7 @@
 			,
 			/**
 			 * 添加到购物车
+			 * @param {Object} food 商品对象
 			 */
 			add2cart(food){
 				this.$utils.log('add2cart','添加到购物车');
@@ -1741,15 +1948,23 @@
 						this.$set(curTasteObj,'count',curTasteObj.count + 1);
 						
 					}else{
-						// 该口味不存在，新增一个口味
+						// 该口味不存在，新增一个口味，数量设置为最低起购数量
 						this.$set(
 							this.shopCart.foodsList[food.item_id].taste,
 							this.goodsTasteData.join(''),
 							{
 							index:this.goodsTasteData,
-							count:1
+							count:food.min_purchase
 							}
 						);
+						
+						// 重新设置商品总数量
+						this.$set(
+							this.shopCart.foodsList[food.item_id],
+							'count',
+							this.shopCart.foodsList[food.item_id].count-1+food.min_purchase
+						);
+						
 					} // end if 当前口味是否存在购物车中
 					
 					
@@ -1794,6 +2009,89 @@
 					);
 				} // end if 存在口味选项
 				
+			}
+			,
+			/**
+			 * 无口味选项的：输入商品的数据及其在购物车中的索引值计算该商品总价
+			 * @param {Object} goods 购物车中的商品对象
+			 */
+			goodsPriceFilter(goods){
+				let res = 0,
+				price = goods.info.price * 100,
+				origin_price = goods.info.origin_price * 100
+				;
+				
+				// 当前商品有优惠活动
+				if(goods.info.activity){
+					// 商品总量超过了优惠活动上限
+					if(goods.count > goods.info.activity.max_quantity){
+						res += price * goods.info.activity.max_quantity;
+						res += origin_price * (goods.count - goods.info.activity.max_quantity);
+						
+						return res/100;
+					} // end if 商品数量超出活动上限
+				} // end if 优惠活动
+				
+				
+				// 当前商品无优惠活动
+				res += price * goods.count;
+				
+				return res/100;
+			}
+			,
+			/**
+			 * 有口味选项的：输入商品的数据及其在购物车中的索引值计算该商品总价
+			 * @param {Object} goods 购物车中的商品对象
+			 * @param {String} key 该商品在口味列表中的键值
+			 * @param {Number} index 该商品在口味类型列表中的索引值
+			 */
+			goodsTastePriceFilter(goods,key,index){
+				let res = 0,
+				price = goods.info.price * 100,
+				origin_price = goods.info.origin_price * 100
+				;
+				
+				// 当前商品有优惠活动
+				if(goods.info.activity){
+					// 当前商品是口味类型中的第一种，并且商品总量超过了优惠活动上限
+					if(index == 0 && goods.count > goods.info.activity.max_quantity){
+						res += price * goods.info.activity.max_quantity;
+						res += origin_price * (goods.taste[key].count-goods.info.activity.max_quantity);
+						
+						return res/100;
+					} // end if 商品数量超出活动上限
+				} // end if 优惠活动
+				
+				
+				// 当前商品无优惠活动
+				res += price * goods.taste[key].count;
+				
+				return res/100;
+			}
+			,
+			/**
+			 * 前往支付页面
+			 */
+			gotoPayPage(){
+				uni.navigateTo({
+					url:'/pages/address/add_address',
+					fail(e) {
+						console.log('跳转失败',e);
+					}
+				})
+			}
+			,
+			/**
+			 * 显示购物车弹窗
+			 */
+			showShopCartPopup(){
+				if(this.pageState.shopCartOpenState){
+					this.closePopup('shopCartPopup');
+				}else{
+					this.openPopup('shopCartPopup');
+				}
+				
+				this.pageState.shopCartOpenState = !this.pageState.shopCartOpenState;
 			}
 			,
 			/**
@@ -2525,5 +2823,23 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
+	}
+	
+	// 购物车弹窗
+	.shopcart-popup-box{
+		padding-bottom: 100rpx;
+		width: 750rpx;
+	}
+	.shopcart-list{
+		height: 600rpx;
+	}
+	
+	.add-remove-box{
+		max-width: 140rpx;
+		justify-content: flex-end;
+	}
+	.goods-number{
+		width: 48rpx;
+		text-align: center;
 	}
 </style>

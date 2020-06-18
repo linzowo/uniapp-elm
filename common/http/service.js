@@ -46,6 +46,7 @@ import http from './interface'
 const _urlPath = {
 	storeIndexData:'test_data_store_index_data.json', // 店铺主页测试数据
 	storeCommentData:'test_data_store_comment.json', // 店铺评论测试数据
+	storeGoodCommentData:'test_data_good_comment.json', // 店铺评论测试数据
 }
 
 // get请求
@@ -55,6 +56,9 @@ export const get = {
 	},
 	storeCommentData: () => {
 		return http.get(_urlPath.storeCommentData,{});
+	},
+	storeGoodCommentData: ()=>{
+		return http.get(_urlPath.storeGoodCommentData,{});
 	}
 }
 

@@ -519,6 +519,7 @@
 							<view class="comment-tag-list padding-sm flex-wrap">
 								
 								<view 
+								@tap="switchComment(index)"
 								class="comment-tag-item padding-tb-xs padding-lr-sm comment-tag-bg border-radius-6 text-sm"
 								v-for="(item,index) in storeCommentData.tags"
 								:key="index"
@@ -547,7 +548,7 @@
 							<view class="comment-list flex-direction">
 								
 								<view 
-								v-for="(item,index) in storeCommentData.comments"
+								v-for="(item,index) in commentInfoList"
 								:key="index"
 								class="comment-item border-top border-color-e padding-sm flex-sub"
 								:class="foodsFilter(item.food_ratings)?'':'padding-bottom-xl'"
@@ -1582,7 +1583,8 @@
 		data() {
 			return {
 				storeData:{}, // 店铺数据
-				storeCommentData:{}, // 店铺评价数据
+				storeCommentData:{}, // 店铺总评论数据包含分类标签及各种评分
+				commentInfoList:[], // 评论列表数据只有单独的评论数据
 				lodingEnd: false,
 				TabCur: 0,
 				tabList:['点餐','评价','商家'],
@@ -1742,6 +1744,7 @@
 			// 请求店铺评论数据
 			this.$http.get.storeCommentData().then((res)=>{
 				this.storeCommentData = res;
+				this.commentInfoList = res.comments;
 			},(err)=>{console.log('请求失败：',err);});
 			
 			
@@ -1776,6 +1779,31 @@
 		}
 		,
 		methods: {
+			/**
+			 * 切换当前页面中的分类呈现数据，同时切换当前选中的索引标签
+			 * 当前选择的分类索引值
+			 */
+			switchComment(index){
+				this.pageState.commentTagCur = index;
+				// 根据索引值请求接口返回新的数据
+				console.log('请求当前索引的数据结果并替换当前渲染数据');
+
+				// 模拟替换过程
+				if(JSON.stringify(this.storeCommentData.comments) == JSON.stringify(this.commentInfoList)){
+					this.$http.get.storeGoodCommentData().then((res)=>{
+						// console.log(res);
+						this.commentInfoList = res;
+					},(e)=>{
+						console.log('请求失败',e);
+					})
+
+					return;
+				}
+
+				this.commentInfoList = this.storeCommentData.comments;
+				
+			}
+			,
 			/**
 			 * 从购物车中删除某种口味类型的商品
 			 * @param {Object} foodId 该商品id
@@ -2476,9 +2504,6 @@
 		top: 0;
 		z-index: 9;
 	}
-	.tab-content{
-		// height: 1000px;
-	}
 	.banner-img{
 		width: 686rpx;
 	}
@@ -2539,7 +2564,10 @@
 		color: #aaa;
 		background-color: #f5f5f5;
 	}
-	
+	.comment-tag-bg.bad.cur{
+		color: #fff;
+		background-color: #ccc;
+	}
 	.icon-color-76d572{
 		color: #76d572;
 	}

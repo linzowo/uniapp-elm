@@ -247,7 +247,7 @@
 									<!-- 右侧菜单内容滑动列表 S -->
 									<scroll-view 
 									class="VerticalMain" 
-									:scroll-y="pageState.foodsListScroll"
+									:scroll-y="true"
 									scroll-with-animation 
 									style="height:100vh"
 									:scroll-into-view="'main-'+mainCur" 
@@ -1595,7 +1595,6 @@
 				pageState:{
 					commentTagCur:0, // 当前用户选择的是第几个评论标签
 					showHasContentCommentOnly: true, // 是否只显示有内容的评论
-					foodsListScroll: false, // 当前商品列表是否可以滑动
 					showBannercontent: false, // 是否显示banner内容区域
 					shopCartOpenState: false, // 当前底部购物车是否处于打开状态
 				}, // 页面状态
@@ -1755,15 +1754,6 @@
 		},
 		onPageScroll(e) {
 			
-			// 当页面到达底部时将商品列表状态变为可滑动状态
-			if(this.$utils.getElementInfo('.store-index-container').bottom == this.$system_info.screenHeight && !this.pageState.foodsListScroll){
-				this.pageState.foodsListScroll = true;
-			}
-			
-			// 当页面离开底部时将商品列表状态变为不可滑动状态
-			if(this.$utils.getElementInfo('.store-index-container').bottom !== this.$system_info.screenHeight && this.pageState.foodsListScroll){
-				this.pageState.foodsListScroll = false;
-			}
 		}
 		,
 		filters:{
@@ -2398,15 +2388,6 @@
 			 */
 			foodsCategoryTabSelect(e) {
 				this.$utils.log('foodsCategoryTabSelect','商品列表侧边导航栏点击事件');
-				// 如果当前商品列表不能滑动就阻止分类点击事件
-				if(!this.pageState.foodsListScroll) {
-					uni.pageScrollTo({
-						duration:0,
-						scrollTop:this.$system_info.windowHeight
-					})
-					
-					return false;
-				}
 				
 				this.foodsCategoryTabCur = e.currentTarget.dataset.id;
 				this.mainCur = e.currentTarget.dataset.id;
@@ -2421,6 +2402,15 @@
 				// #ifdef MP-ALIPAY
 				   return false  //支付宝小程序暂时不支持双向联动 
 				// #endif
+
+				// console.log(this.$utils.getElementInfo('.store-index-container'));	
+				if(this.$utils.getElementInfo('.store-menu-box') != 0){
+					uni.pageScrollTo({
+						scrollTop: this.$utils.getElementInfo('.store-index-container').height,
+						duration: 0
+					});
+				}
+
 				let that = this;
 				let tabHeight = 0;
 				if (this.load) {

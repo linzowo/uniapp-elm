@@ -740,7 +740,9 @@
 								<text>{{storeData.rst.flavors[0].name}}</text>
 							</view>
 							
-							<view class="padding-tb border-bottom border-color-e justify-between">
+							<view 
+							@tap="makePhoneCall(storeData.rst.id)"
+							class="padding-tb border-bottom border-color-e justify-between">
 								<text class="text-bold text-color-3">商家电话</text>
 								<view class="text-color-blue-0 align-center">
 									<text class="lg cuIcon-phone margin-right-xs text-xl"></text>
@@ -766,7 +768,9 @@
 						</view>
 						
 						<!-- 营业资质 -->
-						<view class="margin-bottom bg-white padding flex-direction">
+						<view 
+						@tap="gotoCertificatesPage"
+						class="margin-bottom bg-white padding flex-direction">
 							<text class="text-bold text-color-0">营业资质</text>
 						</view>
 							
@@ -1779,9 +1783,45 @@
 		}
 		,
 		methods: {
+			gotoCertificatesPage(){
+				uni.navigateTo({
+					 url: '/pages/file/file',
+					 fail(e) {
+						 console.log('跳转失败',e);
+					 }
+				});
+			}
+			,
+			/**
+			 * 唤起拨号键盘准备打电话给商家
+			 * @param {String} storeId 商品id
+			 */
+			makePhoneCall(storeId){
+
+				// 根据商品id查询店铺的电话号码
+
+				// 模拟查询过程
+				setTimeout(()=>{
+					let phoneNumber = '123456';
+
+					uni.makePhoneCall({
+						phoneNumber,
+						fail(e) {
+							console.log('唤起失败',e);
+							uni.showToast({
+								title: '调用电话功能失败请手动呼叫商家',
+								icon:'none'
+							});
+						}
+					})
+				},200)
+
+				
+			}
+			,
 			/**
 			 * 切换当前页面中的分类呈现数据，同时切换当前选中的索引标签
-			 * 当前选择的分类索引值
+			 * @param {Number} index 当前选择的分类索引值
 			 */
 			switchComment(index){
 				this.pageState.commentTagCur = index;

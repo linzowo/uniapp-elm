@@ -12,6 +12,13 @@ export const COMMON_TEXT = {
 	},
 	store_index:{
 		has_more_taste:"当前商品存在多种口味/规格，只能在购物车中删除"
+	},
+	order:{
+		no_order:"近三个月无外卖订单记录",
+		show_more:"查看三个月前的外卖订单",
+		over_year:"仅显示近一年外卖订单",
+		is_arrive:"订单已送达",
+		deliverying:"订单配送中"
 	}
 }
 

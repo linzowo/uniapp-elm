@@ -783,8 +783,181 @@
 			<!-- 商家餐点、评价、详细信息 E -->
 			
 			
-			<!-- 页面弹窗组件 S -->
 			
+		</view>
+		<!-- 数据加载完成后显示 E -->
+		
+		<!-- banner弹窗 S -->
+		<view 
+		v-if="pageState.showBannercontent"
+		:style="{paddingBottom:'100rpx'}"
+		class="banner-content-box flex-direction">
+			
+			<!-- nav S -->
+			<view class="store-index-nav">
+				<view class="store-cover-bg-box">
+					<image 
+					class="store-cover-bg"
+					:src="storeData.rst.shop_sign.image_hash,'w_750'|imgUrlFilter"
+					mode="widthFix"></image>
+				</view>
+				<text 
+				@tap="controlBannerPage(false)"
+				class="nav-back-btn lg text-white cuIcon-back text-xxl padding-xs"></text>
+			</view>
+			<!-- nav E -->
+			
+			<view class="banner-list flex-wrap flex-sub padding-tb">
+				
+				<view 
+				v-for="(item,index) in storeData.recommend[0].items"
+				:key="index"
+				class="banner-item flex-direction border-radius-6 margin-left-sm margin-bottom-sm"
+				>
+					<image 
+					class="border-radius-6"
+					:src="item.image_path,'w_240'|imgUrlFilter" 
+					mode="widthFix"
+					></image>
+					<text 
+					class="recommend-foods-name text-cut"
+					>
+					{{item.name}}
+					</text>
+					<!-- 商品售卖情况 -->
+					<view class="text-xs text-grey margin-bottom-xs">
+						<text class="margin-right-xs">月售{{item.month_sales}}</text>
+						<text>好评率{{item.satisfy_rate_text?item.satisfy_rate_text:0}}%</text>
+					</view>
+					
+					<!-- 价格及添加购物车 -->
+					<view class="justify-between align-center">
+						<text 
+						class="text-price text-xl text-color-price"
+						>
+						{{item.price}}
+						</text>
+						<view class="align-center">
+							<text
+							class="text-sm text-color-6 margin-right-xs"
+							v-if="item.min_purchase>1&&!shopCart.foodsList[item.item_id]"
+							>{{item.min_purchase}}份起售</text>
+							<view class="add-remove-box align-center">
+								<text 
+								v-if="shopCart.foodsList[item.item_id]"
+								@tap="cutFromCart(item)"
+								class="lg add-btn-blue text-xxl cuIcon-rounddown"></text>
+								
+								<text 
+								v-if="shopCart.foodsList[item.item_id]"
+								class="text-cut goods-number"
+								>{{shopCart.foodsList[item.item_id].count}}</text>
+								
+								<text 
+								@tap="item.attrs.length?showFoodTasteChoosePopup(item):add2cart(item)"
+								class="lg add-btn-blue text-xxl cuIcon-roundaddfill"
+								></text>
+							</view>
+						</view>
+					</view>
+				</view>
+				
+				
+			</view>
+			
+			<!-- 加载提示 S -->
+			<view 
+			class="list-end align-center justify-center">
+				<view class="cu-load" :class="bannerDataHasNext?'loading':'over'"></view>
+			</view>
+			<!-- 加载提示 E -->
+			
+			<!-- 底部购物车 S -->
+			<view 
+			@tap="shopCartLength?showShopCartPopup():''"
+			class="shopping-cart-box justify-between align-center">
+				<!-- 
+				 存在两种状态
+				 1.无商品状态
+				 2.有商品状态
+				 -->
+				 
+				<!-- 节省金额提示 S -->
+				<view 
+				v-show="shopCartPriceCount.save_money&&!pageState.shopCartOpenState"
+				class="save-money-tips flex-sub align-center justify-center text-xs text-color-3">
+					<text>已减{{shopCartPriceCount.save_money}}元</text>
+				</view>
+				<!-- 节省金额提示 E -->
+				
+				<!-- 购物车图标 -->
+				<view 
+				class="shopping-cart-icon-box round border border-xl align-center justify-center"
+				:style="{backgroundColor:shopCartLength?'':'#363636'}"
+				>
+					<text 
+					class="lg text-xxl cuIcon-cartfill"
+					:class="shopCartLength?'text-white':'text-color-6'"
+					></text>
+					<view 
+					v-show="shopCartLength"
+					class="cu-tag badge">{{shopCartLength}}</view>
+				</view>
+				
+				<!-- 选购商品提示 -->
+				<view 
+				class="shopping-cart-tips-box flex-direction text-scale-9"
+				:class="'text-color-9'"
+				>
+				
+					<view 
+					v-if="shopCartLength"
+					class="align-center">
+						<text class="text-price text-bold text-white text-xl margin-right">{{shopCartPriceCount.price}}</text>
+						<text class="text-price delete-line text-color-9">{{shopCartPriceCount.origin_price}}</text>
+					</view>
+					
+					<text 
+					v-if="!shopCartLength"
+					class="text-lg"
+					>
+						未选购商品
+					</text>
+					
+					
+					<text class="text-xs">另需配送费{{parseInt(storeData.rst.float_delivery_fee)}}元</text>
+				</view>
+				
+				<!-- 结算按钮 -->
+				<view 
+				@tap.stop.prevent="
+									shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount ? 
+									gotoPayPage() : '' "
+				class="shopping-cart-pay-btn-box text-white align-center justify-center"
+				:style="{backgroundColor:shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount?'':'#535356'}"
+				>
+					<text 
+					v-show="shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount"
+					class="text-lg">去结算</text>
+					
+					<text 
+					v-show="shopCartPriceCount.price < storeData.rst.float_minimum_order_amount"
+					class="text-lg"
+					>{{shopCartPriceCount.price?'差':''}}¥{{parseInt(storeData.rst.float_minimum_order_amount - shopCartPriceCount.price)}}起送</text>
+				</view>
+				
+			</view>
+			<!-- 底部购物车 E -->
+			
+			
+		</view>
+		<!-- banner弹窗 E -->
+
+		
+		<!-- 页面弹窗组件 S -->
+		<view
+		v-if="lodingEnd"
+		>
 			<!-- 店铺信息弹窗 S -->
 			<uni-popup
 			ref="storeInfoPopup" 
@@ -1171,107 +1344,6 @@
 			</uni-popup>
 			<!-- 商品大图介绍 E -->
 			
-			<!-- 商品口味选择 S -->
-			<uni-popup
-			ref="foodTasteChoosePopup" 
-			:type="'bottom'"
-			@change="popupChange"
-			:animation="true"
-			>
-				<view 
-				v-if="goodsInfoPopupData"
-				class="food-taste-box flex-direction bg-white padding"
-				>
-				
-					<!-- 关闭弹窗按钮 -->
-					<text 
-					@tap="closePopup('foodTasteChoosePopup')"
-					class="food-taste-close-btn lg text-grey cuIcon-close text-xxl"></text>
-					
-					<!-- 商品基本情况 -->
-					<view class="margin-bottom">
-						<view class="food-cover-box margin-right-sm">
-							<image 
-							:src="goodsInfoPopupData.image_path,'w_95'|imgUrlFilter" 
-							mode="widthFix"></image>
-						</view>
-						
-						<view class="flex-direction justify-between">
-							<view class="flex-direction">
-								<!-- 商品名称 -->
-								<view class="margin-bottom-xs">
-									<text class="text-cut text-bold text-lg text-color-0"
-									:style="{width:'400rpx'}"
-									>{{goodsInfoPopupData.name}}</text>
-								</view>
-								<!-- 已选口味 -->
-								<view 
-								v-if="goodsInfoPopupData.attrs.length"
-								class="text-xs">
-									<text>已选：</text>
-									<text
-									v-for="(item,index) in goodsInfoPopupData.attrs"
-									:key="index"
-									>
-									{{item.values[goodsTasteData[index]]}}{{( (goodsInfoPopupData.attrs.length > 1) && ((goodsInfoPopupData.attrs.length - 1)>index) ) ? '/' : ''}}
-									</text>
-								</view>
-							</view>
-							
-							<text class="text-price text-bold text-color-price text-xxl">{{goodsInfoPopupData.price}}</text>
-						</view>
-					</view>
-					
-					<!-- 商品种类列表 -->
-					<scroll-view 
-					:scroll-y="true"
-					v-if="goodsInfoPopupData.attrs.length"
-					class="flex-direction food-type-list"
-					>
-						
-						<view 
-						v-for="(item,index) in goodsInfoPopupData.attrs"
-						:key="index"
-						class="food-type-item flex-direction">
-						
-							<!-- 种类名称 -->
-							<text class="margin-bottom-sm">{{item.name}}</text>
-							
-							<!-- 口味列表 -->
-							<view 
-							class="food-taste-list flex-wrap">
-							
-								<!-- 
-								口味是否被选中机制
-								 1.如果当前商品存在购物车中那么直接读取购物车中的索引值判断与当前的索引值匹配
-								 2.如果商品不在购物车中则默认每个商品的第一种口味被选中
-								 -->
-								<view 
-								v-for="(ele,i) in item.values"
-								:key="i"
-								@tap="tasteChoose(index,i)"
-								class="food-taste-item padding-lr-xl padding-tb-xs border-color-3 bg-grey-f5 margin-lr-xs margin-bottom-sm"
-								:class="i==goodsTasteData[index] ? 'cur' : ''"
-								>
-									<text>{{ele}}</text>
-								</view>
-							</view>
-							
-						</view>
-						
-					</scroll-view>
-					
-					<!-- 确定按钮 -->
-					<button
-					 @click="confirmTaste(goodsInfoPopupData)"
-					class="confirm-taste-btn margin"
-					 :style="{backgroundColor: 'rgb(35, 149, 255)',color:'#fff'}"
-					type="default">选好了</button>
-					
-				</view>
-			</uni-popup>
-			<!-- 商品口味选择 E -->
-			
 			<!-- 底部购物车弹窗 S -->
 			<uni-popup
 			ref="shopCartPopup" 
@@ -1398,176 +1470,108 @@
 			</uni-popup>
 			<!-- 底部购物车弹窗 E -->
 			
-			<!-- 页面弹窗组件 E -->
-			
-		</view>
-		<!-- 数据加载完成后显示 E -->
-		
-		<!-- banner弹窗 S -->
-		<view 
-		v-if="pageState.showBannercontent"
-		:style="{paddingBottom:'100rpx'}"
-		class="banner-content-box flex-direction">
-			
-			<!-- nav S -->
-			<view class="store-index-nav">
-				<view class="store-cover-bg-box">
-					<image 
-					class="store-cover-bg"
-					:src="storeData.rst.shop_sign.image_hash,'w_750'|imgUrlFilter"
-					mode="widthFix"></image>
-				</view>
-				<text 
-				@tap="controlBannerPage(false)"
-				class="nav-back-btn lg text-white cuIcon-back text-xxl padding-xs"></text>
-			</view>
-			<!-- nav E -->
-			
-			<view class="banner-list flex-wrap flex-sub padding-tb">
-				
+			<!-- 商品口味选择 S -->
+			<uni-popup
+			ref="foodTasteChoosePopup" 
+			:type="'bottom'"
+			@change="popupChange"
+			:animation="true"
+			>
 				<view 
-				v-for="(item,index) in storeData.recommend[0].items"
-				:key="index"
-				class="banner-item flex-direction border-radius-6 margin-left-sm margin-bottom-sm"
+				v-if="goodsInfoPopupData"
+				class="food-taste-box flex-direction bg-white padding"
 				>
-					<image 
-					class="border-radius-6"
-					:src="item.image_path,'w_240'|imgUrlFilter" 
-					mode="widthFix"
-					></image>
+				
+					<!-- 关闭弹窗按钮 -->
 					<text 
-					class="recommend-foods-name text-cut"
-					>
-					{{item.name}}
-					</text>
-					<!-- 商品售卖情况 -->
-					<view class="text-xs text-grey margin-bottom-xs">
-						<text class="margin-right-xs">月售{{item.month_sales}}</text>
-						<text>好评率{{item.satisfy_rate_text?item.satisfy_rate_text:0}}%</text>
-					</view>
+					@tap="closePopup('foodTasteChoosePopup')"
+					class="food-taste-close-btn lg text-grey cuIcon-close text-xxl"></text>
 					
-					<!-- 价格及添加购物车 -->
-					<view class="justify-between align-center">
-						<text 
-						class="text-price text-xl text-color-price"
-						>
-						{{item.price}}
-						</text>
-						<view class="align-center">
-							<text
-							class="text-sm text-color-6 margin-right-xs"
-							v-if="item.min_purchase>1&&!shopCart.foodsList[item.item_id]"
-							>{{item.min_purchase}}份起售</text>
-							<view class="add-remove-box align-center">
-								<text 
-								v-if="shopCart.foodsList[item.item_id]"
-								@tap="cutFromCart(item)"
-								class="lg add-btn-blue text-xxl cuIcon-rounddown"></text>
-								
-								<text 
-								v-if="shopCart.foodsList[item.item_id]"
-								class="text-cut goods-number"
-								>{{shopCart.foodsList[item.item_id].count}}</text>
-								
-								<text 
-								@tap="item.attrs.length?showFoodTasteChoosePopup(item):add2cart(item)"
-								class="lg add-btn-blue text-xxl cuIcon-roundaddfill"
-								></text>
+					<!-- 商品基本情况 -->
+					<view class="margin-bottom">
+						<view class="food-cover-box margin-right-sm">
+							<image 
+							:src="goodsInfoPopupData.image_path,'w_95'|imgUrlFilter" 
+							mode="widthFix"></image>
+						</view>
+						
+						<view class="flex-direction justify-between">
+							<view class="flex-direction">
+								<!-- 商品名称 -->
+								<view class="margin-bottom-xs">
+									<text class="text-cut text-bold text-lg text-color-0"
+									:style="{width:'400rpx'}"
+									>{{goodsInfoPopupData.name}}</text>
+								</view>
+								<!-- 已选口味 -->
+								<view 
+								v-if="goodsInfoPopupData.attrs.length"
+								class="text-xs">
+									<text>已选：</text>
+									<text
+									v-for="(item,index) in goodsInfoPopupData.attrs"
+									:key="index"
+									>
+									{{item.values[goodsTasteData[index]]}}{{( (goodsInfoPopupData.attrs.length > 1) && ((goodsInfoPopupData.attrs.length - 1)>index) ) ? '/' : ''}}
+									</text>
+								</view>
 							</view>
+							
+							<text class="text-price text-bold text-color-price text-xxl">{{goodsInfoPopupData.price}}</text>
 						</view>
 					</view>
-				</view>
-				
-				
-			</view>
-			
-			<!-- 加载提示 S -->
-			<view 
-			class="list-end align-center justify-center">
-				<view class="cu-load" :class="bannerDataHasNext?'loading':'over'"></view>
-			</view>
-			<!-- 加载提示 E -->
-			
-			<!-- 底部购物车 S -->
-			<view 
-			@tap="shopCartLength?showShopCartPopup():''"
-			class="shopping-cart-box justify-between align-center">
-				<!-- 
-				 存在两种状态
-				 1.无商品状态
-				 2.有商品状态
-				 -->
-				 
-				<!-- 节省金额提示 S -->
-				<view 
-				v-show="shopCartPriceCount.save_money&&!pageState.shopCartOpenState"
-				class="save-money-tips flex-sub align-center justify-center text-xs text-color-3">
-					<text>已减{{shopCartPriceCount.save_money}}元</text>
-				</view>
-				<!-- 节省金额提示 E -->
-				
-				<!-- 购物车图标 -->
-				<view 
-				class="shopping-cart-icon-box round border border-xl align-center justify-center"
-				:style="{backgroundColor:shopCartLength?'':'#363636'}"
-				>
-					<text 
-					class="lg text-xxl cuIcon-cartfill"
-					:class="shopCartLength?'text-white':'text-color-6'"
-					></text>
-					<view 
-					v-show="shopCartLength"
-					class="cu-tag badge">{{shopCartLength}}</view>
-				</view>
-				
-				<!-- 选购商品提示 -->
-				<view 
-				class="shopping-cart-tips-box flex-direction text-scale-9"
-				:class="'text-color-9'"
-				>
-				
-					<view 
-					v-if="shopCartLength"
-					class="align-center">
-						<text class="text-price text-bold text-white text-xl margin-right">{{shopCartPriceCount.price}}</text>
-						<text class="text-price delete-line text-color-9">{{shopCartPriceCount.origin_price}}</text>
-					</view>
 					
-					<text 
-					v-if="!shopCartLength"
-					class="text-lg"
+					<!-- 商品种类列表 -->
+					<scroll-view 
+					:scroll-y="true"
+					v-if="goodsInfoPopupData.attrs.length"
+					class="flex-direction food-type-list"
 					>
-						未选购商品
-					</text>
+						
+						<view 
+						v-for="(item,index) in goodsInfoPopupData.attrs"
+						:key="index"
+						class="food-type-item flex-direction">
+						
+							<!-- 种类名称 -->
+							<text class="margin-bottom-sm">{{item.name}}</text>
+							
+							<!-- 口味列表 -->
+							<view 
+							class="food-taste-list flex-wrap">
+							
+								<!-- 
+								口味是否被选中机制
+									1.如果当前商品存在购物车中那么直接读取购物车中的索引值判断与当前的索引值匹配
+									2.如果商品不在购物车中则默认每个商品的第一种口味被选中
+									-->
+								<view 
+								v-for="(ele,i) in item.values"
+								:key="i"
+								@tap="tasteChoose(index,i)"
+								class="food-taste-item padding-lr-xl padding-tb-xs border-color-3 bg-grey-f5 margin-lr-xs margin-bottom-sm"
+								:class="i==goodsTasteData[index] ? 'cur' : ''"
+								>
+									<text>{{ele}}</text>
+								</view>
+							</view>
+							
+						</view>
+						
+					</scroll-view>
 					
+					<!-- 确定按钮 -->
+					<button
+						@click="confirmTaste(goodsInfoPopupData)"
+					class="confirm-taste-btn margin"
+						:style="{backgroundColor: 'rgb(35, 149, 255)',color:'#fff'}"
+					type="default">选好了</button>
 					
-					<text class="text-xs">另需配送费{{parseInt(storeData.rst.float_delivery_fee)}}元</text>
 				</view>
-				
-				<!-- 结算按钮 -->
-				<view 
-				@tap.stop.prevent="
-									shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount ? 
-									gotoPayPage() : '' "
-				class="shopping-cart-pay-btn-box text-white align-center justify-center"
-				:style="{backgroundColor:shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount?'':'#535356'}"
-				>
-					<text 
-					v-show="shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount"
-					class="text-lg">去结算</text>
-					
-					<text 
-					v-show="shopCartPriceCount.price < storeData.rst.float_minimum_order_amount"
-					class="text-lg"
-					>{{shopCartPriceCount.price?'差':''}}¥{{parseInt(storeData.rst.float_minimum_order_amount - shopCartPriceCount.price)}}起送</text>
-				</view>
-				
-			</view>
-			<!-- 底部购物车 E -->
-			
-			
+			</uni-popup>
+			<!-- 商品口味选择 E -->
 		</view>
-		<!-- banner弹窗 E -->
+		<!-- 页面弹窗组件 E -->
 		
 	</view>
 </template>
@@ -1752,9 +1756,7 @@
 			
 			
 		},
-		onPageScroll(e) {
-			
-		}
+		onPageScroll(e) { }
 		,
 		filters:{
 			userAvatarUrlFilter(imgHash,size='w_30,h_30,m_fixed'){
@@ -1773,6 +1775,9 @@
 		}
 		,
 		methods: {
+			/**
+			 * 跳转至店铺资质页
+			 */
 			gotoCertificatesPage(){
 				uni.navigateTo({
 					 url: '/pages/file/file',
@@ -2399,11 +2404,8 @@
 			 * @param {Object} e
 			 */
 			VerticalMain(e) {
-				// #ifdef MP-ALIPAY
-				   return false  //支付宝小程序暂时不支持双向联动 
-				// #endif
 
-				// console.log(this.$utils.getElementInfo('.store-index-container'));	
+				// 如果此时页面没有滑动到顶部 自动滑动到顶部 
 				if(this.$utils.getElementInfo('.store-menu-box') != 0){
 					uni.pageScrollTo({
 						scrollTop: this.$utils.getElementInfo('.store-index-container').height,
@@ -2411,6 +2413,12 @@
 					});
 				}
 
+
+				// #ifdef MP-ALIPAY
+				   return false  //支付宝小程序暂时不支持双向联动 
+				// #endif
+
+				// 使商铺列表与tab区域选项卡联动
 				let that = this;
 				let tabHeight = 0;
 				if (this.load) {

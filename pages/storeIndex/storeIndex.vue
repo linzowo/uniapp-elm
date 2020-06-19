@@ -30,7 +30,9 @@
 					:src="storeData.rst.image_path|imgUrlFilter" 
 					mode="widthFix"></image>
 				</view>
-				<text class="nav-back-btn lg text-white cuIcon-back text-xxl padding-xs"></text>
+				<text 
+				@tap="goBack"
+				class="nav-back-btn lg text-white cuIcon-back text-xxl padding-xs"></text>
 			</view>
 			<!-- nav E -->
 			
@@ -1775,6 +1777,26 @@
 		}
 		,
 		methods: {
+			goBack(){
+				// 判断当前页面栈中是否还有上一级的页面没有的话就直接返回主页
+
+				if(getCurrentPages().length <= 1){
+					uni.switchTab({
+						 url: '/pages/index/index',
+						 fail(e) {
+							 console.log('跳转失败',e);
+						 }
+					});
+				}else{
+					uni.navigateBack({
+						 delta: 1,
+						 fail(e) {
+							 console.log('跳转失败',e);
+						 }
+					});
+				}
+			}
+			,
 			/**
 			 * 跳转至店铺资质页
 			 */

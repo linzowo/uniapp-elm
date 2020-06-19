@@ -531,7 +531,7 @@
 						</view>
 						
 						<!-- 按钮 S -->
-						<view class="flex-sub">
+						<view>
 							<text 
 							class="flex-sub bg-white padding solid shadow text-center"
 							:class="

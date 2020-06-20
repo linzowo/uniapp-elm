@@ -12,7 +12,9 @@
         <!-- 商品详情 S -->
         <view class="order-card margin-bottom-sm padding bg-white flex-direction">
             <!-- 店铺名称 -->
-            <view class="padding-bottom-sm border-bottom border-color-e border-lg justify-between align-center">
+            <view 
+            @tap="gotoStoreIndex(orderData.id)"
+            class="padding-bottom-sm border-bottom border-color-e border-lg justify-between align-center">
                 <view class="align-center">
                     <image 
                     class="store-cover margin-right-sm"
@@ -38,7 +40,9 @@
 
             <!-- 订单价格 -->
             <view class="padding-top justify-between align-center border-top border-color-e margin-top">
-                <view class="text-color-blue-0 align-center">
+                <view 
+                @tap="makePhoneCall(orderData.id)"
+                class="text-color-blue-0 align-center">
                     <text class="lg cuIcon-phone margin-right-xs text-xl"></text>
                     <text>联系商家</text>
                 </view>
@@ -104,6 +108,56 @@
                     // });
                 }
             });
+        },
+        onNavigationBarButtonTap(e){
+            console.log(e);
+            if(e.index == 0){
+                uni.navigateTo({
+                     url: this.$pages_path.service,
+                     fail(e) {
+                         console.log('跳转失败',e);
+                     }
+                });
+            }
+        }
+        ,
+        methods: {
+            /**
+             * 跳转至店铺主页
+             * @param {Number} storeId 店铺id
+             */
+            gotoStoreIndex(storeId){
+                uni.navigateTo({
+                     url: this.$pages_path.store_index,
+                     fail(e) {
+                         console.log('跳转失败',e);
+                     }
+                });
+            },
+            /**
+             * 拨打用户电话
+             * @param {Number} storeId 店铺id
+             */
+            makePhoneCall(storeId){
+                // 根据店铺id查询店铺电话
+
+                // 调用拨号器
+                uni.makePhoneCall({
+                    phoneNumber: '1234567',
+                    success: (result)=>{
+                        console.log('唤起成功');
+                    },
+                    fail: (e)=>{
+                        console.log('唤起失败',e);
+                        uni.showToast({
+                            title: '调用电话功能失败，请手动联系用户。',
+                            icon: 'none'
+                        });
+
+                    },
+                    complete: ()=>{}
+                });
+            }
         }
     }
 </script>

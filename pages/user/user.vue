@@ -165,7 +165,7 @@
 				
 				// 如果用户已登录 跳转至用户信息设置页
 				// 用户未登录跳转至登录注册页
-				let pagePath = this.login ? '/pages/userSetting/userSetting' : '/pages/login/login';
+				let pagePath = this.login ? this.$pages_path.user_setting : this.$pages_path.login;
 				uni.navigateTo({
 					url:pagePath,
 					fail(e) {

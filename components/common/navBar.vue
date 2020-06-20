@@ -39,13 +39,13 @@
 			searchTap(){
 				if(this.login){
 					uni.navigateTo({
-						 url:'/pages/search/search' 
+						 url:this.$pages_path.search
 					})
 					return;
 				}
 				
 				uni.navigateTo({
-					url:'/pages/login/login'
+					url:this.$pages_path.login
 				})
 			}
 		}

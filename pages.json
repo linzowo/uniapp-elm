@@ -18,6 +18,11 @@
 				"navigationStyle":"custom"
 			}
 		}, {
+			"path": "pages/order/orderInfo",
+			"style": {
+				"navigationBarTitleText": "订单详情"
+			}
+		},{
 			"path": "pages/user/user",
 			"style": {
 				"navigationBarTitleText": "我的",

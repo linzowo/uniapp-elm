@@ -199,7 +199,7 @@
 				// 跳转至商铺主页 并定位到该套餐
 				
 				uni.navigateTo({
-					url:'/pages/storeIndex/storeIndex?food_id='+id,
+					url:this.$pages_path.store_index+'?food_id='+id,
 					fail(e) {
 						console.log('跳转失败');
 					}
@@ -212,7 +212,7 @@
 			storeTap(){
 				// 跳转至商铺主页
 				uni.navigateTo({
-					url:'/pages/storeIndex/storeIndex',
+					url:this.$pages_path.store_index,
 					fail(e) {
 						console.log('跳转失败');
 					}

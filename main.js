@@ -39,6 +39,9 @@ Vue.prototype.$i_u = IMG_URL;
 // 测试数据
 import TEST_DATA from '@/config/test_data.js';
 Vue.prototype.$t_d = TEST_DATA;
+// 页面导航地址配置
+import {PAGES_PATH} from '@/config/pages_path.js';
+Vue.prototype.$pages_path = PAGES_PATH;
 
 // 将系统信息绑定到对象上方便后面使用
 uni.getSystemInfo({

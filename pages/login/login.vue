@@ -109,7 +109,7 @@
 				// todo:根据点击的不同区域传递不同参数
 				
 				uni.navigateTo({
-				    url: '/pages/file/file'
+				    url: this.$pages_path.file
 				});
 			},
 			/**

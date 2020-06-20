@@ -741,7 +741,7 @@
 				this.$utils.log('gotoStoreIndex','跳转到用户点击的店铺主页'+index);
 				
 				uni.navigateTo({
-					url:'/pages/storeIndex/storeIndex'
+					url:this.$pages_path.store_index
 				})
 			}
 			,

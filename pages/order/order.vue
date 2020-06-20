@@ -85,6 +85,9 @@
 				</view>
 
 			</view>
+			<view 
+			v-show="dataLoading"
+			class="cu-load bg-white loading"></view>
 			<!-- 订单展示区 E -->
 
 			<!-- 三月提示 S -->
@@ -134,6 +137,7 @@
 				showGetMoreBtn: true, // 是否显示获取更多订单数据的按钮
 				orderData:[], // 历史订单数据
 				showCodingTips: false, // 显示开发中提示
+				dataLoading: false, // 当前是否处于数据加载中
 			}
 		},
 		 components: {
@@ -165,9 +169,12 @@
 			get3mOrder(){
 				// 请求接口获取到数据后渲染至页面中
 				this.showGetMoreBtn = false;
+				this.dataLoading = true;
+
 				
 				this.$http.get.historyOrderData().then((res)=>{
 					this.orderData = res.orders;
+					this.dataLoading = false;
 				},(e)=>{
 					console.log('请求数据失败',e);
 				});
@@ -178,9 +185,12 @@
 			 */
 			gotoOrderInfo(orderObj){
 				// 跳转至订单详情页或者打开订单详情
-				// 但是由于现在我没有详情页的设计图无法查看具体样式
-				// 改为弹窗提示功能开发中
-				this.$refs.codingPopup.open();
+				uni.navigateTo({
+					 url: this.$pages_path.order_info,
+					 fail(e) {
+						 console.log('跳转失败',e);
+					 }
+				});
 				
 			}
 		}
@@ -220,5 +230,11 @@
 	}
 	.food-name{
 		width: 450rpx;
+	}
+	.cu-load{
+		display: block;
+	}
+	.cu-load::after{
+		content: "";
 	}
 </style>

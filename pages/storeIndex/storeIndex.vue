@@ -1802,7 +1802,7 @@
 			 */
 			gotoCertificatesPage(){
 				uni.navigateTo({
-					 url: '/pages/file/file',
+					 url: this.$pages_path.file,
 					 fail(e) {
 						 console.log('跳转失败',e);
 					 }
@@ -2177,7 +2177,7 @@
 			 */
 			gotoPayPage(){
 				uni.navigateTo({
-					url:'/pages/address/add_address',
+					url:this.$pages_path.add_address,
 					fail(e) {
 						console.log('跳转失败',e);
 					}
@@ -2223,7 +2223,7 @@
 			goToPriceDescription(){
 				this.$utils.log('goToPriceDescription','跳转到价格说明页');
 				uni.navigateTo({
-					url:'/pages/address/add_address',
+					url:this.$pages_path.add_address,
 					fail(e) {
 						console.log('跳转失败',e);
 					}
@@ -2268,7 +2268,7 @@
 			openSvip(){
 				this.$utils.log('openSvip','用户选择开通超级vip');
 				uni.navigateTo({
-					url:'/pages/member/member',
+					url:this.$pages_path.member,
 					fail(e) {
 						console.log('跳转失败:',e);
 					}

@@ -274,7 +274,7 @@
 					console.log('跳转至会员开通页面');
 				}else{
 					uni.navigateTo({
-						url:'/pages/login/login',
+						url:this.$pages_path.login,
 						fail(e) {
 							console.log('跳转登录页失败：',e);
 						}

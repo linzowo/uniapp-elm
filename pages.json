@@ -20,7 +20,19 @@
 		}, {
 			"path": "pages/order/orderInfo",
 			"style": {
-				"navigationBarTitleText": "订单详情"
+				"navigationBarTitleText": "订单详情",
+				"app-plus":{
+					"titleNView":{
+						"buttons":[
+							{
+								"text":"\ue6b7",
+								"fontSrc": "/static/icon/iconfont.ttf",
+								"fontSize":"15px",
+								"width":"20px"
+							}
+						]
+					}
+				}
 			}
 		},{
 			"path": "pages/user/user",

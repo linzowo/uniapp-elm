@@ -18,7 +18,8 @@ export const COMMON_TEXT = {
 		show_more:"查看三个月前的外卖订单",
 		over_year:"仅显示近一年外卖订单",
 		is_arrive:"订单已送达",
-		deliverying:"订单配送中"
+		deliverying:"订单配送中",
+		thank:"感谢你对不饿了的信任欢迎你再次光临"
 	}
 }
 

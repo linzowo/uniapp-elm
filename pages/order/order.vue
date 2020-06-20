@@ -184,6 +184,13 @@
 			 * @param {Object} orderObj 当前的订单对象
 			 */
 			gotoOrderInfo(orderObj){
+				// 将订单数据存到本地方便另外一个页面读取
+				try {
+					uni.setStorageSync('order_info', JSON.stringify(orderObj));
+				} catch (e) {
+					// error
+					console.log('存储数据失败',e);
+				}
 				// 跳转至订单详情页或者打开订单详情
 				uni.navigateTo({
 					 url: this.$pages_path.order_info,

@@ -2,16 +2,20 @@
  * 测试数据
  */
 
-// 主页顶部nav分类菜单数据
-export const NAV_LIST_DATA = [{
-		img: "https://cube.elemecdn.com/7/d8/a867c870b22bc74c87c348b75528djpeg.jpeg?x-oss-process=image/format,webp/resize,w_90,h_90,m_fixed",
-		title: "美食"
-	},
-	{
-		img: "https://cube.elemecdn.com/a/7b/b02bd836411c016935d258b300cfejpeg.jpeg?x-oss-process=image/format,webp/resize,w_90,h_90,m_fixed",
-		title: "大牌惠吃"
-	}
-];
+// 测试用的用户数据
+export const USER_DATA = [{
+	name: "linzowo",
+	phone: 13645678520,
+	avatar: 'https://shadow.elemecdn.com/faas/h5/static/sprite.3ffb5d8.png',
+	currentCity: "成都",
+	shipAddress: {},
+	balance: 0,
+	points: 0,
+	coupons: 0,
+	order: {},
+	history: {},
+	vip:false
+}]
 
 // 商品列表中用于排序的数据
 export const INDEX_SORT_DATA = {
@@ -2385,20 +2389,6 @@ export const CATEGORE_DATA = [{
 	}]
 }]
 
-// 测试用的用户数据
-export const USER_DATA = [{
-	name: "linzowo",
-	phone: 13645678520,
-	avatar: 'https://shadow.elemecdn.com/faas/h5/static/sprite.3ffb5d8.png',
-	currentCity: "成都",
-	shipAddress: {},
-	balance: 0,
-	points: 0,
-	coupons: 0,
-	order: {},
-	history: {},
-	vip:false
-}]
 
 // 商铺列表数据
 export const STORE_lIST_DATA_1 = {
@@ -15547,7 +15537,6 @@ export const MEMBER_SALE_GOODS = {
 
 // 默认导出对象
 export default {
-	NAV_LIST_DATA,
 	INDEX_SORT_DATA,
 	ADDRESS_DATA,
 	STORE_FILTER_DATA,

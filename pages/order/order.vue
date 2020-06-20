@@ -111,10 +111,6 @@
 		</view>
 		<!-- 已登录 E -->
 
-		<!-- 弹窗区 S -->
-		<codingPopup ref="codingPopup"></codingPopup>
-		<!-- 弹窗区 E -->
-
 	</view>
 </template>
 
@@ -125,8 +121,6 @@
 
 	// 引入数据
 	import {mapState} from 'vuex';
-
-	import codingPopup from '@/components/common/coding-popup.vue'
 	
 	export default {
 		name:'order',
@@ -140,10 +134,6 @@
 				dataLoading: false, // 当前是否处于数据加载中
 			}
 		},
-		 components: {
-			codingPopup,
-		}
-		,
 		computed:{
 			...mapState([
 				'login'

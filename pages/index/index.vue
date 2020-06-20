@@ -26,13 +26,13 @@
 							v-for="(item,index) in navList" 
 							:key="index">
 									<image 
-									:src="item.img" 
+									:src="item.image_hash,'w_90,h_90'|imgUrlFilter" 
 									mode="aspectFill"
 									class="nav-img"
 									></image>
 									<text 
 									class="nav-title font-20 color-black6"
-									>{{item.title}}</text>
+									>{{item.name}}</text>
 							</navigator>
 						</view>
 					</view>
@@ -209,10 +209,31 @@ export default {
 		
 		// 将收货定位信息绑定到元素上
 		// this.address = this.userInfo.shipAddress.position_name || null;
+		try {
+			this.navList = JSON.parse(uni.getStorageSync('index_enter_data'));
+		} catch (e) {
+			this.navList = [];
+		}
+
+		// 本地没有数据向网络请求数据
+		if(!this.navList || !this.navList.length){
+			this.$http.get.indexEnterData().then((res)=>{
+				this.navList = res;
+
+				uni.setStorage({
+					key: 'index_enter_data',
+					data: JSON.stringify(res),
+					success: function () {
+						console.log('存储index_enter_data成功');
+					}
+				});
+
+			},(e)=>{
+				console.log('请求失败');
+			});
+		}
+
 		
-		this.navList = Array(10);
-		this.navList.fill(this.$t_d.NAV_LIST_DATA[0],0,5);
-		this.navList.fill(this.$t_d.NAV_LIST_DATA[1],5,10);
 		
 		if(this.login){
 			this.storeListData = [...this.$t_d.STORE_lIST_DATA_1.items];

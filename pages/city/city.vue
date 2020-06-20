@@ -110,8 +110,8 @@
 				StatusBar: this.StatusBar,
 				CustomBar: this.CustomBar,
 				listCurID: '',
-				list: CITY_DATA,
-				listKey:Object.keys(CITY_DATA),
+				list: {},
+				listKey:[],
 				newList:{},
 				searchList:[], // 搜索列表
 				systemInfo:{},
@@ -124,11 +124,37 @@
 			this.oldScroll = e.scrollTop;
 		}
 		,
+		created() {
+			try {
+				this.list = JSON.parse(uni.getStorageSync('city_data'));
+				this.listKey = Object.keys(this.list);
+			} catch (e) {
+				this.list = {};
+			}
+
+			// 本地没有数据向网络请求数据
+			if(!this.list || this._.isEmpty(this.list)){
+				this.$http.get.cityData().then((res)=>{
+					this.list = res;
+					this.listKey = Object.keys(this.list);
+
+					uni.setStorage({
+						key: 'city_data',
+						data: JSON.stringify(res),
+						success: function () {
+							console.log('存储index_enter_data成功');
+						}
+					});
+
+				},(e)=>{
+					console.log('请求失败');
+				});
+			}
+		}
+		,
 		mounted() {
 			this.searchBoxInfo = this.$utils.getElementInfo('.search-box');
 			// console.log(this.searchBoxInfo);
-			
-			this.getList();
 			
 			uni.getSystemInfo({
 				success(e) {
@@ -136,6 +162,14 @@
 					this.systemInfo = e;
 				}
 			})
+		}
+		,
+		watch:{
+			list(n){
+				if(!this._.isEmpty(n)){
+					this.getList();
+				}
+			}
 		}
 		,
 		computed:{

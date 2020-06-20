@@ -48,6 +48,10 @@ const _urlPath = {
 	storeCommentData:'test_data_store_comment.json', // 店铺评论测试数据
 	storeGoodCommentData:'test_data_good_comment.json', // 店铺评论测试数据
 	historyOrderData:'test_data_history_order.json', // 历史订单数据
+	indexEnterData:'index_enter_data.json', // 主页顶部tab数据
+	discoverEnterData:'discover_enter_data.json', // 发现页顶部数据
+	discoverDuibaGifs:'discover_duiba_gifs.json', // 发现页兑换数据
+	cityData:'city_data.json', // 城市列表数据全国各级市县
 }
 
 // get请求
@@ -63,6 +67,18 @@ export const get = {
 	},
 	historyOrderData: ()=>{
 		return http.get(_urlPath.historyOrderData,{});
+	},
+	indexEnterData: ()=>{
+		return http.get(_urlPath.indexEnterData,{});
+	},
+	discoverEnterData: ()=>{
+		return http.get(_urlPath.discoverEnterData,{});
+	},
+	discoverDuibaGifs: ()=>{
+		return http.get(_urlPath.discoverDuibaGifs,{});
+	},
+	cityData: ()=>{
+		return http.get(_urlPath.cityData,{});
 	}
 }
 

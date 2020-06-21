@@ -693,8 +693,29 @@
 			// 请求一些渲染页面必须的数据
 			
 			// 模拟网络请求需要数据
-			
-			this.storeNavList = this.$t_d.STORE_FILTER_DATA;
+			try {
+				this.storeNavList = JSON.parse(uni.getStorageSync('store_filter_data'));
+			} catch (e) {
+				console.log('获取缓存失败');
+			}
+
+			if(!this.storeNavList || !this.storeNavList.length){
+
+				this.$http.get.store_filter_data().then((res)=>{
+					this.storeNavList = res;
+
+					uni.setStorage({
+						key: 'store_filter_data',
+						data: JSON.stringify(res),
+						success: function () {
+							console.log('存储store_filter_data成功');
+						}
+					});
+				},(e)=>{
+					console.log('请求失败',e);
+				})
+			}
+
 			
 		}
 		,

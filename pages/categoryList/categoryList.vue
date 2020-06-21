@@ -201,19 +201,54 @@
 			// 模拟网络请求需要数据
 			
 			// 顶部导航栏下拉菜单需要的数据
-			this.categoryData = this.$t_d.CATEGORE_DATA.filter(ele=>{
-				return ele.sub_categories.length !== 0;
-			});
 			
-			// 顶部导航栏默认navbar中的内容值
-			this.foodType = this.categoryData[0];
-			
-			this.storeNavList = this.$t_d.STORE_FILTER_DATA;
-			
+			try {
+				this.categoryData = JSON.parse(uni.getStorageSync('category_data'));
+			} catch (e) {
+				console.log('获取缓存失败');
+			}
+
+			if(!this.categoryData || !this.categoryData.length){
+
+				this.$http.get.categore_data().then((res)=>{
+					this.categoryData = res;
+					
+					uni.setStorage({
+						key: 'category_data',
+						data: JSON.stringify(res),
+						success: function () {
+							console.log('存储category_data成功');
+						}
+					});
+
+					this.categoryData = this.categoryData.filter(ele=>{
+						return ele.sub_categories.length !== 0;
+					});
+
+					// 顶部导航栏默认navbar中的内容值
+					this.foodType = this.categoryData[0];
+					
+				},(e)=>{
+					console.log('请求失败',e);
+				})
+			}else{
+				this.categoryData = this.categoryData.filter(ele=>{
+					return ele.sub_categories.length !== 0;
+				});
+				
+				// 顶部导航栏默认navbar中的内容值
+				this.foodType = this.categoryData[0];
+			}
+
 			// 获取默认商铺列表数据
 			if(this.login){
-				this.storeListData = [...this.$t_d.STORE_lIST_DATA_1.items];
-				this.hasNext = this.$t_d.STORE_lIST_DATA_1.has_next;
+
+				this.$http.get.store_list_data_1().then((res)=>{
+					this.storeListData = res.items;
+					this.hasNext = res.has_next;
+				},e=>{
+					console.log(e);
+				});
 			}
 			
 		}
@@ -231,22 +266,31 @@
 				
 				// 模拟请求过程
 				if(this.hasNext){
-					setTimeout(()=>{
-						if(this.storeListData.length>8){
+
+					if(this.storeListData.length>8){
+						this.$http.get.store_list_data_3().then(res=>{
 							this.storeListData = [
-									...this.storeListData,
-									...this.$t_d.STORE_lIST_DATA_3.items
-								];
-							this.hasNext = this.$t_d.STORE_lIST_DATA_3.has_next;
-							return;
-						}
-						
-						this.storeListData = [
 								...this.storeListData,
-								...this.$t_d.STORE_lIST_DATA_2.items
+								...res.items
 							];
-						this.hasNext = this.$t_d.STORE_lIST_DATA_2.has_next;
-					},500);
+							this.hasNext = res.has_next;
+						},e=>{
+							console.log(e);
+							this.hasNext = false;
+						});
+						return;
+					}
+
+					this.$http.get.store_list_data_2().then(res=>{
+						this.storeListData = [
+							...this.storeListData,
+							...res.items
+						];
+						this.hasNext = res.has_next;
+					},e=>{
+						console.log(e);
+						this.hasNext = false;
+					});
 				}
 				
 			}

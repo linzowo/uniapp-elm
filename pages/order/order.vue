@@ -162,7 +162,7 @@
 				this.dataLoading = true;
 
 				
-				this.$http.get.historyOrderData().then((res)=>{
+				this.$http.get.history_order().then((res)=>{
 					this.orderData = res.orders;
 					this.dataLoading = false;
 				},(e)=>{

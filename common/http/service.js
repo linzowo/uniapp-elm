@@ -44,41 +44,101 @@ import http from './interface'
 // }
 
 const _urlPath = {
-	storeIndexData:'test_data_store_index_data.json', // 店铺主页测试数据
-	storeCommentData:'test_data_store_comment.json', // 店铺评论测试数据
-	storeGoodCommentData:'test_data_good_comment.json', // 店铺评论测试数据
-	historyOrderData:'test_data_history_order.json', // 历史订单数据
-	indexEnterData:'index_enter_data.json', // 主页顶部tab数据
-	discoverEnterData:'discover_enter_data.json', // 发现页顶部数据
-	discoverDuibaGifs:'discover_duiba_gifs.json', // 发现页兑换数据
-	cityData:'city_data.json', // 城市列表数据全国各级市县
+	store_index_data:'test_data_store_index_data.json', // 店铺主页测试数据
+	store_comment:'test_data_store_comment.json', // 店铺评论测试数据
+	store_good_comment:'test_data_good_comment.json', // 店铺评论测试数据
+	history_order:'test_data_history_order.json', // 历史订单数据
+	index_enter_data:'index_enter_data.json', // 主页顶部tab数据
+	discover_enter_data:'discover_enter_data.json', // 发现页顶部数据
+	discover_duiba_gifs:'discover_duiba_gifs.json', // 发现页兑换数据
+	city_data:'city_data.json', // 城市列表数据全国各级市县
+	address_data:'address_data.json', // 测试用-用户地址数据
+	categore_data:'categore_data.json', // 商品总分类数据
+	combo_data:'combo_data.json', // 套餐页数据
+	hot_search:'hot_search.json', // 热搜数据
+	member_sale_goods:'member_sale_goods.json', // 会员折扣商品数据
+	reward_red_packets:'reward_red_packets.json', // 奖励红包数据
+	store_red_packets:'store_red_packets.json', // 店铺红包数据
+	search_cue:'search_cue.json', // 搜索提示
+	search_res_1:'search_res_1.json', // 搜索结果1
+	search_res_2:'search_res_2.json', // 搜索结果2
+	store_filter_data:'store_filter_data.json', // 商铺列表navtab的筛选标签数据
+	store_list_data_1:'store_list_data_1.json', // 商铺列表商品数据1
+	store_list_data_2:'store_list_data_2.json', // 商铺列表商品数据2
+	store_list_data_3:'store_list_data_3.json', // 商铺列表商品数据3
+	store_sort_data:'store_sort_data.json', // 商铺列表navtab排序标签数据
 }
 
 // get请求
 export const get = {
-	storeIndexData: () => {
-		return http.get(_urlPath.storeIndexData,{});
+	store_index_data: () => {
+		return http.get(_urlPath.store_index_data,{});
 	},
-	storeCommentData: () => {
-		return http.get(_urlPath.storeCommentData,{});
+	store_comment: () => {
+		return http.get(_urlPath.store_comment,{});
 	},
-	storeGoodCommentData: ()=>{
-		return http.get(_urlPath.storeGoodCommentData,{});
+	store_good_comment: ()=>{
+		return http.get(_urlPath.store_good_comment,{});
 	},
-	historyOrderData: ()=>{
-		return http.get(_urlPath.historyOrderData,{});
+	history_order: ()=>{
+		return http.get(_urlPath.history_order,{});
 	},
-	indexEnterData: ()=>{
-		return http.get(_urlPath.indexEnterData,{});
+	index_enter_data: ()=>{
+		return http.get(_urlPath.index_enter_data,{});
 	},
-	discoverEnterData: ()=>{
-		return http.get(_urlPath.discoverEnterData,{});
+	discover_enter_data: ()=>{
+		return http.get(_urlPath.discover_enter_data,{});
 	},
-	discoverDuibaGifs: ()=>{
-		return http.get(_urlPath.discoverDuibaGifs,{});
+	discover_duiba_gifs: ()=>{
+		return http.get(_urlPath.discover_duiba_gifs,{});
 	},
-	cityData: ()=>{
-		return http.get(_urlPath.cityData,{});
+	city_data: ()=>{
+		return http.get(_urlPath.city_data,{});
+	},
+	address_data: ()=>{
+		return http.get(_urlPath.address_data,{});
+	},
+	categore_data: ()=>{
+		return http.get(_urlPath.categore_data,{});
+	},
+	combo_data: ()=>{
+		return http.get(_urlPath.combo_data,{});
+	},
+	hot_search: ()=>{
+		return http.get(_urlPath.hot_search,{});
+	},
+	member_sale_goods: ()=>{
+		return http.get(_urlPath.member_sale_goods,{});
+	},
+	reward_red_packets: ()=>{
+		return http.get(_urlPath.reward_red_packets,{});
+	},
+	store_red_packets: ()=>{
+		return http.get(_urlPath.store_red_packets,{});
+	},
+	search_cue: ()=>{
+		return http.get(_urlPath.search_cue,{});
+	},
+	search_res_1: ()=>{
+		return http.get(_urlPath.search_res_1,{});
+	},
+	search_res_2: ()=>{
+		return http.get(_urlPath.search_res_2,{});
+	},
+	store_filter_data: ()=>{
+		return http.get(_urlPath.store_filter_data,{});
+	},
+	store_list_data_1: ()=>{
+		return http.get(_urlPath.store_list_data_1,{});
+	},
+	store_list_data_2: ()=>{
+		return http.get(_urlPath.store_list_data_2,{});
+	},
+	store_list_data_3: ()=>{
+		return http.get(_urlPath.store_list_data_3,{});
+	},
+	store_sort_data: ()=>{
+		return http.get(_urlPath.store_sort_data,{});
 	}
 }
 

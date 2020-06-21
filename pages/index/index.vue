@@ -217,7 +217,7 @@ export default {
 
 		// 本地没有数据向网络请求数据
 		if(!this.navList || !this.navList.length){
-			this.$http.get.indexEnterData().then((res)=>{
+			this.$http.get.index_enter_data().then((res)=>{
 				this.navList = res;
 
 				uni.setStorage({
@@ -236,8 +236,12 @@ export default {
 		
 		
 		if(this.login){
-			this.storeListData = [...this.$t_d.STORE_lIST_DATA_1.items];
-			this.hasNext = this.$t_d.STORE_lIST_DATA_1.has_next;
+			this.$http.get.store_list_data_1().then((res)=>{
+				this.storeListData = res.items;
+				this.hasNext = res.has_next;
+			},e=>{
+				console.log(e);
+			});
 		}
 		
 	}
@@ -271,25 +275,32 @@ export default {
 			// console.log('滑到底部了');
 			// 发起请求获取新的数据
 			
-			
-			// 模拟请求过程
 			if(this.hasNext){
-				setTimeout(()=>{
-					if(this.storeListData.length>8){
+
+				if(this.storeListData.length>8){
+					this.$http.get.store_list_data_3().then(res=>{
 						this.storeListData = [
-								...this.storeListData,
-								...this.$t_d.STORE_lIST_DATA_3.items
-							];
-						this.hasNext = this.$t_d.STORE_lIST_DATA_3.has_next;
-						return;
-					}
-					
-					this.storeListData = [
 							...this.storeListData,
-							...this.$t_d.STORE_lIST_DATA_2.items
+							...res.items
 						];
-					this.hasNext = this.$t_d.STORE_lIST_DATA_2.has_next;
-				},500);
+						this.hasNext = res.has_next;
+					},e=>{
+						console.log(e);
+						this.hasNext = false;
+					});
+					return;
+				}
+
+				this.$http.get.store_list_data_2().then(res=>{
+					this.storeListData = [
+						...this.storeListData,
+						...res.items
+					];
+					this.hasNext = res.has_next;
+				},e=>{
+					console.log(e);
+					this.hasNext = false;
+				});
 			}
 			
 		}
@@ -350,8 +361,7 @@ export default {
 		}
 		,
 		...mapActions([
-			'getUserInfo',
-			'saveAddress'
+			'getUserInfo'
 		])
 		,
 		// 使主页面回到顶部

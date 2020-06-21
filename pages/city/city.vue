@@ -101,7 +101,6 @@
 	 */
 	
 	import {pinyin} from '@/common/py.js';
-	import {CITY_DATA} from "@/config/city_data.js";
 	import {mapMutations,mapState} from "vuex";
 	export default {
 		data() {
@@ -134,7 +133,7 @@
 
 			// 本地没有数据向网络请求数据
 			if(!this.list || this._.isEmpty(this.list)){
-				this.$http.get.cityData().then((res)=>{
+				this.$http.get.city_data().then((res)=>{
 					this.list = res;
 					this.listKey = Object.keys(this.list);
 

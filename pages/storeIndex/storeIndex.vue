@@ -1745,13 +1745,13 @@
 		,
 		created() {
 			// 请求店铺主要数据
-			this.$http.get.storeIndexData().then((res)=>{
+			this.$http.get.store_index_data().then((res)=>{
 					this.lodingEnd = true;
 					this.storeData = res;
 			},(err)=>{console.log('请求失败：',err);});
 			
 			// 请求店铺评论数据
-			this.$http.get.storeCommentData().then((res)=>{
+			this.$http.get.store_comment().then((res)=>{
 				this.storeCommentData = res;
 				this.commentInfoList = res.comments;
 			},(err)=>{console.log('请求失败：',err);});
@@ -1847,7 +1847,7 @@
 
 				// 模拟替换过程
 				if(JSON.stringify(this.storeCommentData.comments) == JSON.stringify(this.commentInfoList)){
-					this.$http.get.storeGoodCommentData().then((res)=>{
+					this.$http.get.store_good_comment().then((res)=>{
 						// console.log(res);
 						this.commentInfoList = res;
 					},(e)=>{

@@ -93,7 +93,7 @@
 			<view 
 			class="current-address-content padding-tb-xs padding-lr flex-sub justify-between bg-white border-color-e align-center"
 			:class="[i==1?'':'border-top']"
-			v-for="(item,i) in searchAddress()"
+			v-for="(item,i) in searchRes"
 			:key="i"
 			>
 				<view class="text-sm margin-bottom-xs flex-direction">
@@ -120,6 +120,7 @@
 			return {
 				inputText:"", // 存储输入框内容
 				myAddress:[], // 用户的地址信息 在组件创建后获取
+				searchRes:[], // 存储搜索结果
 			}
 		},
 		onShow() {},
@@ -131,7 +132,28 @@
 			
 			// 获取我的地址数据
 			// 模拟网络环境下请求我的地址数据
-			this.myAddress = this.$t_d.ADDRESS_DATA.my_address;
+
+			try{
+				this.myAddress = JSON.parse(uni.getStorageSync('my_address'));	
+			}catch(e){
+				console.log('获取缓存失败');
+			}
+
+			if(!this.myAddress || !this.myAddress.length){
+				this.$http.get.address_data().then((res)=>{
+					this.myAddress = res.my_address;
+
+					uni.setStorage({
+						key: 'my_address',
+						data: JSON.stringify(res.my_address),
+						success: function () {
+							console.log('存储my_address成功');
+						}
+					});
+				},(e)=>{
+					console.log('请求失败',e);
+				})
+			}
 		}
 		,
 		onNavigationBarButtonTap(e) {
@@ -180,6 +202,7 @@
 			 */
 			InputEnter(e){
 				this.inputText = e.detail.value;
+				this.searchAddress();
 			},
 			/**
 			 * 清空搜索栏
@@ -192,12 +215,12 @@
 			 */
 			searchAddress(){
 				// 发起网络请求查询搜索结果
-				
-				// 将结果清洗为需要的结构
-				
-				// 返回结果数组
-				
-				return this.$t_d.ADDRESS_DATA.search_res;
+				this.$http.get.address_data().then((res)=>{
+					this.searchRes = res.search_res;
+				},e=>{
+					console.log('请求失败',e);
+					this.searchRes=[];
+				});
 			},
 			/**
 			 * 获取当前地址

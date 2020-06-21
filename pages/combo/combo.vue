@@ -180,8 +180,37 @@
 		created() {
 			
 			// 模拟获取数据过程
-			this.navData = this.$t_d.COMBO_DATA.tabs;
-			this.storeList = this.$t_d.COMBO_DATA.query_list;
+			let comboData;
+			uni.showLoading({
+				title: ''
+			});
+			try {
+				comboData = JSON.parse(uni.getStorageSync('combo_data'));
+				this.navData = comboData.tabs;
+				this.storeList = comboData.query_list
+				uni.hideLoading();
+			} catch (e) {
+				console.log('获取缓存失败');
+			}
+
+			if(!comboData || this._.isEmpty(comboData)){
+
+				this.$http.get.combo_data().then((res)=>{
+					this.navData = res.tabs;
+					this.storeList = res.query_list
+					uni.hideLoading();
+
+					uni.setStorage({
+						key: 'combo_data',
+						data: JSON.stringify(res),
+						success: function () {
+							console.log('存储combo_data成功');
+						}
+					});
+				},(e)=>{
+					console.log('请求失败',e);
+				})
+			}
 			
 		}
 		,

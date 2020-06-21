@@ -136,12 +136,24 @@
 					searchShow:false
 				},
 				aroundAddList:null, // 周边可用的默认地址
+				my_address: [], // 我的地址
 			}
 		},
 		created() {
 			// 获取周边默认地址
 			// 模拟网络请求
-			this.aroundAddList = this.$t_d.ADDRESS_DATA.search_res;
+			this.$http.get.address_data().then((res)=>{
+				this.aroundAddList = res.search_res;
+			},(e)=>{
+				console.log('请求失败',e);
+			})
+
+			try{
+				this.my_address = JSON.parse(uni.getStorageSync('my_address'));	
+			}catch(e){
+				console.log('获取缓存失败');
+			}
+			
 		}
 		,
 		methods:{
@@ -231,15 +243,23 @@
 				// 更新本地数据有两种模式，一是修改已经缓存到本地的数据
 				// 二是发起地址数据请求再次获取最新数据
 				console.log('存储数据’');
-				// 模拟发起网络请求存储数据的过程
-				this.$t_d.ADDRESS_DATA.my_address.push({
+
+				this.my_address.push({
 						name:this.formData.name,
 						gender:this.formData.gender,
 						phone:this.formData.phone,
 						address:this.formData.address.position_address + this.formData.addressInfo,
 						position_name:this.formData.address.position_name,
 						tag:this.formData.tag
-				})
+				});
+				
+				uni.setStorage({
+					key: 'my_address',
+					data: JSON.stringify(this.my_address),
+					success: function () {
+						console.log('success');
+					}
+				});
 				
 				// 返回收货地址选择页
 				 uni.redirectTo({

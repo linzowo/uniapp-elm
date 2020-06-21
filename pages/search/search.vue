@@ -276,18 +276,15 @@
 			}
 			
 			// 热门搜索
-			this.hotData = this.$t_d.HOT_SEARCH;
-			
+			this.$http.get.hot_search().then((res)=>{
+				this.hotData = res;
+			},e=>{
+				console.log(e);
+			})
 			
 		}
 		,
-		onReachBottom() {
-			// if(this.searchRes.length && !this.recommendData.length){
-			// 	setTimeout(()=>{
-			// 		this.recommendData = [...this.$t_d.SEARCH_RES_1.inside[1].restaurant_with_foods];
-			// 	},500);
-			// }
-		}
+		onReachBottom() {}
 		,
 		methods:{
 			/**
@@ -344,23 +341,28 @@
 				this.searchCueData.word_with_meta = true;
 				uni.showLoading({
 					title:''
-				})
-				setTimeout(()=>{
-					
-					if(this.inputText == '没有结果'){
-						// 模拟搜索没有结果的情况
-						this.searchRes = []
-						this.recommendData = [...this.$t_d.SEARCH_RES_1.inside[1].restaurant_with_foods];
-						
-					}else{
-						// 模拟搜索有结果的情况
-						this.searchRes = [...this.$t_d.SEARCH_RES_1.inside[0].restaurant_with_foods];
-						this.recommendData = [...this.$t_d.SEARCH_RES_1.inside[1].restaurant_with_foods];
-					}
-					
-					uni.hideLoading();
-				},1000);
+				});
 				
+				if(this.inputText == '没有结果'){
+					// 模拟搜索没有结果的情况
+					this.searchRes = []
+					this.$http.get.search_res_1().then((res)=>{
+						this.recommendData = res.inside[1].restaurant_with_foods;
+						uni.hideLoading();
+					},e=>{
+						console.log(e);
+					});
+					
+				}else{
+					// 模拟搜索有结果的情况
+					this.$http.get.search_res_1().then((res)=>{
+						this.searchRes = res.inside[0].restaurant_with_foods;
+						this.recommendData = res.inside[1].restaurant_with_foods;
+						uni.hideLoading();
+					},e=>{
+						console.log(e);
+					});
+				}
 				
 			}
 			,
@@ -373,10 +375,11 @@
 				// 清空旧数据
 				this.searchCueData = {};
 				
-				// 模拟网络请求获取搜索提示数据
-				setTimeout(()=>{
-					this.searchCueData = this.$t_d.SEARCH_CUE;
-				},1000);
+				this.$http.get.search_cue().then((res)=>{
+					this.searchCueData = res;
+				},e=>{
+					console.log(e);
+				})
 			}
 			,
 			/**

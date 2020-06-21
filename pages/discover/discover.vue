@@ -4,7 +4,9 @@
 		<view 
 		v-if="navData.length"
 		class="nav-box bg-white margin-bottom">
-			<view class="gold-shop-box padding-left padding-right align-end border-right border-color-e">
+			<view 
+			@tap="openCodingPopup"
+			class="gold-shop-box padding-left padding-right align-end border-right border-color-e">
 				<view class="flex-direction gold-text-box padding-top-lg">
 					<text class="text-lg text-orange margin-bottom-xs">{{navData[0].title}}</text>
 					<text class="text-xs text-color-9">{{navData[0].subtitle}}</text>
@@ -17,7 +19,9 @@
 				</view>
 			</view>
 			<view class="flex-direction flex-sub">
-				<view class="border-bottom border-color-e padding align-center justify-between">
+				<view 
+				@tap="openCodingPopup"
+				class="border-bottom border-color-e padding align-center justify-between">
 					<view class="flex-direction">
 						<text class="text-lg margin-bottom-xs text-blue">{{navData[1].title}}</text>
 						<text class="text-xs text-color-9">{{navData[1].subtitle}}</text>
@@ -27,7 +31,9 @@
 					:src="navData[1].main_pic_hash|imgUrlFilter" 
 					mode="widthFix" />
 				</view>
-				<view class="padding align-center justify-between">
+				<view 
+				@tap="openCodingPopup"
+				class="padding align-center justify-between">
 					<view class="flex-direction">
 						<text class="text-lg margin-bottom-xs text-red">{{navData[2].title}}</text>
 						<text class="text-xs text-color-9">{{navData[2].subtitle}}</text>
@@ -57,6 +63,7 @@
 				
 				<view 
 				v-for="(item, index) in exchangeData" :key="index"
+				@tap="openCodingPopup"
 				class="redpack-item flex-direction">
 					<view class="redpack-img-box margin-bottom-xs">
 						<image 
@@ -74,23 +81,38 @@
 			</view>
 
 			<!-- 查看更多 -->
-			<view class="align-center margin-top-xl justify-center text-color-9">
+			<view 
+			@tap="openCodingPopup"
+			class="align-center margin-top-xl justify-center text-color-9">
 				<text>查看更多</text>
 				<text class="lg cuIcon-right"></text>
 			</view>
 
 		</view>
+
+		<!-- 功能开发中提示 -->
+		<codingPopup ref="codingPopup"></codingPopup>
+		<!-- 功能开发中提示 -->
 	</view>
 </template>
 
 <script>
+	/**
+	 * @module 发现页
+	 */
+
+	import codingPopup from '@/components/common/coding-popup.vue';
+
 	export default {
+		name:'discover',
 		data() {
 			return {
 				navData:[], // 顶部导航区域的数据
 				exchangeData:[], // 兑换红包数据
 			}
 		},
+		components: {codingPopup}
+		,
 		created() {
 			try{
 				this.navData = JSON.parse(uni.getStorageSync('discover_enter_data'));
@@ -135,6 +157,15 @@
 				},e=>{
 					console.log(e);
 				})
+			}
+		}
+		,
+		methods: {
+			/**
+			 * 打开功能开发中的弹窗
+			 */
+			openCodingPopup(){
+				this.$refs.codingPopup.open();
 			}
 		}
 	}

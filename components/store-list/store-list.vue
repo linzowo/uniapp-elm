@@ -31,10 +31,17 @@
 		
 		
 		<!-- content S -->
+
+		<!-- loading S -->
+		<view 
+		v-if="loading"
+		:style="{display:'block'}"
+		class="cu-load bg-white loading"></view>
+		<!-- loading E -->
 		
 		<!-- 没有结果 S -->
 		<view 
-		v-if="!storeListData.length"
+		v-if="!storeListData.length && !loading"
 		class="search-no-result padding-lg justify-center align-center">
 			<image :src="$i_u.search_no_result" mode="widthFix" class="search-no-result-img"></image>
 			<view class="search-no-result-text flex-direction">
@@ -45,6 +52,7 @@
 		<!-- 没有结果 E -->
 		
 		<view 
+		v-if="!loading"
 		class="content-box flex-sub">
 			
 			<!-- 未登录 S -->
@@ -668,6 +676,12 @@
 				type: String,
 				default: 'normal'
 			}
+			,
+			// 数据加载中
+			loading:{
+				type: Boolean,
+				default: true
+			},
 		},
 		computed:{
 			...mapState([

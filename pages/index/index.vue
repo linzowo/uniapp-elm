@@ -84,6 +84,7 @@
 					:navTapFn="scrollToStoreList"
 					:storeListData="storeListData"
 					:hasNext="hasNext"
+					:loading="storeListDataLoading"
 					class="store-list"
 					></store-list>
 					
@@ -174,6 +175,7 @@ const data = function() {
 		controlPageScroll: true, // 控制主页面是否可以滑动的
 		navBarHeight:60, // 顶部自定义navbar的默认高度用来设置其他元素的高度使用的
 		storeListData: [], // 商铺列表数据
+		storeListDataLoading: true, // 商铺数据加载中
 		hasNext: false, // 是否还存在下一组数据
 	};
 };
@@ -239,8 +241,10 @@ export default {
 			this.$http.get.store_list_data_1().then((res)=>{
 				this.storeListData = res.items;
 				this.hasNext = res.has_next;
+				this.storeListDataLoading = false;
 			},e=>{
 				console.log(e);
+				this.storeListDataLoading = false;
 			});
 		}
 		

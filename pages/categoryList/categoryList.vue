@@ -49,6 +49,7 @@
 		:storeListData="storeListData"
 		:hasNext="hasNext"
 		:pageScroll="pageScroll"
+		:loading="storeListDataLoading"
 		></store-list>
 		<!-- content E -->
 		
@@ -156,6 +157,7 @@
 				style:{}, // 元素的style样式
 				pageScroll:0, // 页面滚动距离
 				storeListData: [], // 商铺列表数据
+				storeListDataLoading: true, // 商铺数据加载中
 				hasNext: false, // 是否还存在下一组数据
 			}
 		},
@@ -246,8 +248,10 @@
 				this.$http.get.store_list_data_1().then((res)=>{
 					this.storeListData = res.items;
 					this.hasNext = res.has_next;
+					this.storeListDataLoading = false;
 				},e=>{
 					console.log(e);
+					this.storeListDataLoading = false;
 				});
 			}
 			

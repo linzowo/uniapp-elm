@@ -193,6 +193,7 @@
 				:nativeNav="false"
 				:nativeTabbar="false"
 				:storeListData="searchRes"
+				:loading="searchResLoading"
 				:recommendData="recommendData"
 				:hasNext="hasNext"
 				:mode="'search'"
@@ -219,6 +220,7 @@
 				searchCueData: {}, // 搜索提示数据
 				searchHistory: [], // 搜索历史数据
 				searchRes: [], // 搜索结果数据
+				searchResLoading: true, // 搜索结果加载中
 				hasNext: false, // 是否还存在下一组数据
 				recommendData:[], // 更多推荐数据
 			}
@@ -278,8 +280,10 @@
 			// 热门搜索
 			this.$http.get.hot_search().then((res)=>{
 				this.hotData = res;
+				this.searchResLoading = false;
 			},e=>{
 				console.log(e);
+				this.searchResLoading = false;
 			})
 			
 		}

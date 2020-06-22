@@ -373,7 +373,7 @@
 							
 							<!-- 底部购物车 S -->
 							<view 
-							@tap="shopCartLength?showShopCartPopup():''"
+							@tap="shopCart.count?showShopCartPopup():''"
 							class="shopping-cart-box justify-between align-center"
 							:style="{zIndex:11}"
 							>
@@ -394,15 +394,15 @@
 								<!-- 购物车图标 -->
 								<view 
 								class="shopping-cart-icon-box round border border-xl align-center justify-center"
-								:style="{backgroundColor:shopCartLength?'':'#363636'}"
+								:style="{backgroundColor:shopCart.count?'':'#363636'}"
 								>
 									<text 
 									class="lg text-xxl cuIcon-cartfill"
-									:class="shopCartLength?'text-white':'text-color-6'"
+									:class="shopCart.count?'text-white':'text-color-6'"
 									></text>
 									<view 
-									v-show="shopCartLength"
-									class="cu-tag badge">{{shopCartLength}}</view>
+									v-show="shopCart.count"
+									class="cu-tag badge">{{shopCart.count}}</view>
 								</view>
 								
 								<!-- 选购商品提示 -->
@@ -412,14 +412,14 @@
 								>
 								
 									<view 
-									v-if="shopCartLength"
+									v-if="shopCart.count"
 									class="align-center">
 										<text class="text-price text-bold text-white text-xl margin-right">{{shopCartPriceCount.price}}</text>
 										<text class="text-price delete-line text-color-9">{{shopCartPriceCount.origin_price}}</text>
 									</view>
 									
 									<text 
-									v-if="!shopCartLength"
+									v-if="!shopCart.count"
 									class="text-lg"
 									>
 										未选购商品
@@ -876,7 +876,7 @@
 			
 			<!-- 底部购物车 S -->
 			<view 
-			@tap="shopCartLength?showShopCartPopup():''"
+			@tap="shopCart.count?showShopCartPopup():''"
 			class="shopping-cart-box justify-between align-center">
 				<!-- 
 				 存在两种状态
@@ -895,15 +895,15 @@
 				<!-- 购物车图标 -->
 				<view 
 				class="shopping-cart-icon-box round border border-xl align-center justify-center"
-				:style="{backgroundColor:shopCartLength?'':'#363636'}"
+				:style="{backgroundColor:shopCart.count?'':'#363636'}"
 				>
 					<text 
 					class="lg text-xxl cuIcon-cartfill"
-					:class="shopCartLength?'text-white':'text-color-6'"
+					:class="shopCart.count?'text-white':'text-color-6'"
 					></text>
 					<view 
-					v-show="shopCartLength"
-					class="cu-tag badge">{{shopCartLength}}</view>
+					v-show="shopCart.count"
+					class="cu-tag badge">{{shopCart.count}}</view>
 				</view>
 				
 				<!-- 选购商品提示 -->
@@ -913,14 +913,14 @@
 				>
 				
 					<view 
-					v-if="shopCartLength"
+					v-if="shopCart.count"
 					class="align-center">
 						<text class="text-price text-bold text-white text-xl margin-right">{{shopCartPriceCount.price}}</text>
 						<text class="text-price delete-line text-color-9">{{shopCartPriceCount.origin_price}}</text>
 					</view>
 					
 					<text 
-					v-if="!shopCartLength"
+					v-if="!shopCart.count"
 					class="text-lg"
 					>
 						未选购商品
@@ -1629,6 +1629,7 @@
 					}
 					*/
 					redpackList:[], // 用户兑换的红包
+					count:null, // 当前购物车的商品总数量
 				}, // 店铺私有购物车数据，加入数据后会同步到总购物车中
 				goodsInfoPopupData:null, // 临时存储商品详情弹窗所需的数据
 				goodsTasteData:[], // 临时存储用户选择的商品口味
@@ -1646,25 +1647,19 @@
 					if(this._.isEmpty(n.foodsList)){
 						this.showShopCartPopup();
 					}
+
+					let len = 0;
+					
+					for (let key in this.shopCart.foodsList) {
+						len += this.shopCart.foodsList[key].count;
+					}
+					this.shopCart.count = len;
 				},
 				deep:true
 			}
 		}
 		,
 		computed:{
-			/**
-			 * 监听购物车中商品数量变化
-			 * @return {Number} 购物车商品总数量
-			 */
-			shopCartLength(){
-				let len = 0;
-				
-				for (let key in this.shopCart.foodsList) {
-					len += this.shopCart.foodsList[key].count;
-				}
-				return len;
-			}
-			,
 			/**
 			 * 统计每个分类下有几件商品
 			 * @return {Object} {category_id:count}

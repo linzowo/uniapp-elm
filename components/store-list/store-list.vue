@@ -78,10 +78,15 @@
 					<!-- 遮罩层 E -->
 					
 					<!-- 店铺封面 S -->
-					<image 
-					class="store-cover margin-right-xs" 
-					:src="item.restaurant.image_path|imgUrlFilter" 
-					mode="widthFix"></image>
+					<view class="store-cover-box margin-right-xs">
+						<image 
+						class="store-cover" 
+						:src="item.restaurant.image_path|imgUrlFilter" 
+						mode="widthFix"></image>
+						<view 
+						v-if="cartList[item.restaurant.id]"
+						class="cu-tag badge">{{cartList[item.restaurant.id].count}}</view>
+					</view>
 					<!-- 店铺封面 E -->
 					
 					<!-- 店铺详情 S -->
@@ -666,7 +671,8 @@
 		},
 		computed:{
 			...mapState([
-				'login'
+				'login',
+				'cartList'
 			])
 		}
 		,
@@ -1044,9 +1050,10 @@
 		height: 100rpx;
 		line-height: 100rpx;
 	}
-	.store-cover{
+	.store-cover-box{
 		width: 128rpx;
 		height: 128rpx;
+		position: relative;
 	}
 	
 	.store-title-text{

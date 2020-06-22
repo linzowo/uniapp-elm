@@ -1587,7 +1587,7 @@
 	// 引入官方组件
 	import uniPopup from '@/components/uni-popup/uni-popup.vue';
 	
-	import {mapState} from 'vuex';
+	import {mapState,mapMutations} from 'vuex';
 	
 	export default {
 		data() {
@@ -1739,7 +1739,8 @@
 			,
 			...mapState([
 				'login',
-				'userInfo'
+				'userInfo',
+				'cartList'
 			])
 		}
 		,
@@ -1748,6 +1749,12 @@
 			this.$http.get.store_index_data().then((res)=>{
 					this.lodingEnd = true;
 					this.storeData = res;
+
+					// 判断当前店铺是否有购物车数据在vuex中
+					if(this.cartList[res.rst.id]){
+						this.shopCart = this.cartList[res.rst.id];
+					}
+
 			},(err)=>{console.log('请求失败：',err);});
 			
 			// 请求店铺评论数据
@@ -1755,11 +1762,26 @@
 				this.storeCommentData = res;
 				this.commentInfoList = res.comments;
 			},(err)=>{console.log('请求失败：',err);});
-			
-			
 		},
-		onPageScroll(e) { }
-		,
+		beforeDestroy() {
+			// 页面销毁前检查是否存在购物车数据 存在将其存入公共购物车
+
+			// 购物车无商品 且 无红包数据 直接返回
+			if(this._.isEmpty(this.shopCart.foodsList) && !this.shopCart.redpackList.length) {
+				if(this.cartList[this.storeData.rst.id]){
+					this.REMOVE_CART(this.storeData.rst.id);
+				}
+
+				return;
+			};
+
+			// 将商品数据存入公共购物车
+			let shopId = this.storeData.rst.id;
+			this.ADD_CART({
+				shopId,
+				cartInfo:this.shopCart
+			});
+		},
 		filters:{
 			userAvatarUrlFilter(imgHash,size='w_30,h_30,m_fixed'){
 				
@@ -1777,6 +1799,11 @@
 		}
 		,
 		methods: {
+			...mapMutations([
+				'ADD_CART',
+				'REMOVE_CART'
+			])
+			,
 			goBack(){
 				// 判断当前页面栈中是否还有上一级的页面没有的话就直接返回主页
 

@@ -12,6 +12,7 @@ Vue.use(Vuex);
 const state = {
 	userInfo:null, // 用户信息
 	login: true, // 登录状态
+	cartList:{}, // 购物车列表
 }
 
 // 实例化store

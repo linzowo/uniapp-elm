@@ -85,6 +85,11 @@ view {
 }
 
 /* 背景颜色 */
+.fengniao{
+    background-image: linear-gradient(90deg,#0af,#0085ff);
+    color: #fff;
+    border-radius: 1px;
+}
 .bg-grey-fa{
 	background-color: #fafafa;
 }

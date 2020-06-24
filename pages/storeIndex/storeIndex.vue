@@ -1650,10 +1650,26 @@
 
 					let len = 0;
 					
-					for (let key in this.shopCart.foodsList) {
-						len += this.shopCart.foodsList[key].count;
+					for (let key in n.foodsList) {
+						len += n.foodsList[key].count;
 					}
 					this.shopCart.count = len;
+					
+					// 购物车无商品 且 无红包数据 直接返回
+					if(this._.isEmpty(n.foodsList) && !n.redpackList.length) {
+						if(this.cartList[this.storeData.rst.id]){
+							this.REMOVE_CART(this.storeData.rst.id);
+						}
+						return;
+					};
+
+					// 将商品数据存入公共购物车
+					let shopId = this.storeData.rst.id;
+					this.ADD_CART({
+						shopId,
+						cartInfo:this.shopCart
+					});
+
 				},
 				deep:true
 			}
@@ -1757,24 +1773,6 @@
 				this.storeCommentData = res;
 				this.commentInfoList = res.comments;
 			},(err)=>{console.log('请求失败：',err);});
-		},
-		beforeDestroy() {
-			// 页面销毁前检查是否存在购物车数据 存在将其存入公共购物车
-
-			// 购物车无商品 且 无红包数据 直接返回
-			if(this._.isEmpty(this.shopCart.foodsList) && !this.shopCart.redpackList.length) {
-				if(this.cartList[this.storeData.rst.id]){
-					this.REMOVE_CART(this.storeData.rst.id);
-				}
-				return;
-			};
-
-			// 将商品数据存入公共购物车
-			let shopId = this.storeData.rst.id;
-			this.ADD_CART({
-				shopId,
-				cartInfo:this.shopCart
-			});
 		},
 		filters:{
 			userAvatarUrlFilter(imgHash,size='w_30,h_30,m_fixed'){

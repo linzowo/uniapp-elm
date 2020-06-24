@@ -1766,11 +1766,11 @@
 					this.lodingEnd = true;
 					this.storeData = res;
 					this.storeId?this.storeData.rst.id = this.storeId:'';
-					console.log(this.storeData.rst.id);
+
 					// 判断当前店铺是否有购物车数据存储在公共区域
 					let cartList = mapState.cartList || this.cartList;
-					if(cartList[res.rst.id]){
-						this.shopCart = cartList[res.rst.id];
+					if(cartList[this.storeData.rst.id]){
+						this.shopCart = cartList[this.storeData.rst.id];
 					}
 
 			},(err)=>{console.log('请求失败：',err);});

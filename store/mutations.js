@@ -3,10 +3,12 @@ import {
 	SAVE_USERINFO,
 	SAVE_CITY,
 	ADD_CART,
-	REMOVE_CART
+	REMOVE_CART,
+	INIT_CART
 } from './mutations-type.js';
 
 import _ from 'lodash';
+import Vue from 'vue';
 
 
 export default {
@@ -28,9 +30,7 @@ export default {
 		cartInfo
 	}){
 		let cart = state.cartList;
-
-		cart[shopId] = cartInfo;
-		
+		Vue.set(cart,shopId,cartInfo);
 		uni.setStorage({
 			key: 'cart_map',
 			data: JSON.stringify(cart),
@@ -52,5 +52,14 @@ export default {
 				console.log('将购物车数据存储到本地');
 			}
 		});
+	},
+	// 初始化购物车数据：如果本地存储有购物车相关数据就读取其数据存储至vuex
+	[INIT_CART](state){
+		try{
+			state.cartList = JSON.parse(uni.getStorageSync('cart_map'));
+		}catch(e){
+			//TODO handle the exception
+			console.log('本地无购物车数据');
+		}
 	}
 }

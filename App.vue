@@ -19,12 +19,7 @@ export default {
 		// 获取用户当前的位置信息
 		this.saveAddress();
 		// 检查本地缓存中是否有购物车数据
-		uni.getStorage({
-			key: 'cart_map',
-			success: function (res) {
-				mapState.cartList = JSON.parse(res.data);
-			}
-		});
+		this.INIT_CART();
 	}
 	,
 	mounted() {
@@ -38,6 +33,10 @@ export default {
 		...mapActions([
 			'getUserInfo',
 			'saveAddress'
+		])
+		,
+		...mapMutations([
+			'INIT_CART'
 		])
 	}
 };

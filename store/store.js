@@ -15,13 +15,9 @@ const state = {
 	cartList:{}, // 购物车列表
 }
 
-// 实例化store
-const store = new Vuex.Store({
+export default new Vuex.Store({
 	state,
 	mutations,
 	getters,
 	actions
-})
-
-
-export default store;
+});

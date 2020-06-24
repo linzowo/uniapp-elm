@@ -2202,8 +2202,13 @@
 			 * 前往支付页面
 			 */
 			gotoPayPage(){
+				this.$utils.log('gotoPayPage','前往支付页面');
+				
+				// 向后台发送购物车数据生成对应的订单
+
+				// 跳转到订单确定页
 				uni.navigateTo({
-					url:this.$pages_path.add_address,
+					url:this.$pages_path.order_confirm,
 					fail(e) {
 						console.log('跳转失败',e);
 					}

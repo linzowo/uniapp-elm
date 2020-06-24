@@ -35,6 +35,11 @@
 					}
 				}
 			}
+		}, {
+			"path": "pages/orderConfirm/orderConfirm",
+			"style": {
+				"navigationBarTitleText": "确认订单"
+			}
 		},{
 			"path": "pages/user/user",
 			"style": {

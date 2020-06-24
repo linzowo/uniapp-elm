@@ -8,6 +8,7 @@
     discover: "/pages/discover/discover",
     order: "/pages/order/order",
     order_info: "/pages/order/orderInfo",
+    order_confirm: "/pages/orderConfirm/orderConfirm",
     user: "/pages/user/user",
     address: "/pages/address/address",
     add_address: "/pages/address/add_address",

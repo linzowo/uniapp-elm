@@ -72,7 +72,7 @@
 				<view 
 				v-for="(item,index) in storeListData"
 				:key="item.restaurant.authentic_id + index"
-				@tap="gotoStoreIndex(index)"
+				@tap="gotoStoreIndex(item.restaurant.id)"
 				class="store-list-item padding-tb padding-lr-sm border-bottom border-color-e align-start flex-sub">
 					<!-- 遮罩层 S -->
 					<view 
@@ -322,7 +322,7 @@
 					<view 
 					v-for="(item,index) in recommendData"
 					:key="item.restaurant.authentic_id"
-					@tap="gotoStoreIndex(index)"
+					@tap="gotoStoreIndex(item.restaurant.id)"
 					class="store-list-item padding-tb padding-lr-sm border-bottom border-color-e align-start flex-sub">
 						
 						<!-- 店铺封面 S -->
@@ -746,11 +746,6 @@
 			
 		}
 		,
-		mounted() {
-			// 获取
-			// console.log(this.$utils.getElementInfo('.content-list-tab-box'));
-		}
-		,
 		filters:{
 			distaceFilter(o){
 				return o > 1000 ? (o / 1000).toFixed(2) + 'km' : o + 'm';
@@ -783,13 +778,13 @@
 			,
 			/**
 			 * 跳转到用户点击的店铺主页
-			 * @param {Object} index
+			 * @param {String} storeId 店铺id
 			 */
-			gotoStoreIndex(index){
-				this.$utils.log('gotoStoreIndex','跳转到用户点击的店铺主页'+index);
+			gotoStoreIndex(storeId){
+				this.$utils.log('gotoStoreIndex','跳转到用户点击的店铺主页'+storeId);
 				
 				uni.navigateTo({
-					url:this.$pages_path.store_index
+					url:this.$pages_path.store_index + '?store_id=' + storeId
 				})
 			}
 			,

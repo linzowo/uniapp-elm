@@ -1592,6 +1592,7 @@
 	export default {
 		data() {
 			return {
+				storeId: null, // 测试用店铺id因为没有多的店铺数据，所以通过修改店铺id来模拟多家的店铺
 				storeData:{}, // 店铺数据
 				storeCommentData:{}, // 店铺总评论数据包含分类标签及各种评分
 				commentInfoList:[], // 评论列表数据只有单独的评论数据
@@ -1755,11 +1756,17 @@
 			])
 		}
 		,
+		onLoad(e){
+			this.storeId = e.store_id;
+		}
+		,
 		created() {
 			// 请求店铺主要数据
 			this.$http.get.store_index_data().then((res)=>{
 					this.lodingEnd = true;
 					this.storeData = res;
+					this.storeId?this.storeData.rst.id = this.storeId:'';
+					console.log(this.storeData.rst.id);
 					// 判断当前店铺是否有购物车数据存储在公共区域
 					let cartList = mapState.cartList || this.cartList;
 					if(cartList[res.rst.id]){

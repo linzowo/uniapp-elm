@@ -1744,10 +1744,10 @@
 			this.$http.get.store_index_data().then((res)=>{
 					this.lodingEnd = true;
 					this.storeData = res;
-
-					// 判断当前店铺是否有购物车数据在vuex中
-					if(this.cartList[res.rst.id]){
-						this.shopCart = this.cartList[res.rst.id];
+					// 判断当前店铺是否有购物车数据存储在公共区域
+					let cartList = mapState.cartList || this.cartList;
+					if(cartList[res.rst.id]){
+						this.shopCart = cartList[res.rst.id];
 					}
 
 			},(err)=>{console.log('请求失败：',err);});
@@ -1766,7 +1766,6 @@
 				if(this.cartList[this.storeData.rst.id]){
 					this.REMOVE_CART(this.storeData.rst.id);
 				}
-
 				return;
 			};
 

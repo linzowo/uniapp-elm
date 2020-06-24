@@ -613,6 +613,7 @@
 				gotopShow: false, // 控制回到顶部按钮的显示与隐藏
 				zIndexControl: false, // 控制导航栏的层级
 				showTextModeGoods:[], // 索引值在这个列表中的即为显示状态不在的即为隐藏状态
+				cartList:{}, // 存储购物车数据
 			}
 		},
 		components:{noLogin,gotop},
@@ -685,8 +686,7 @@
 		},
 		computed:{
 			...mapState([
-				'login',
-				'cartList'
+				'login'
 			])
 		}
 		,
@@ -735,6 +735,13 @@
 					console.log('请求失败',e);
 				})
 			}
+
+			uni.getStorage({
+				key: 'cart_map',
+				success: (res)=>{
+					this.cartList = JSON.parse(res.data);
+				}
+			});
 
 			
 		}

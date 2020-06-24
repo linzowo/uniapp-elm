@@ -30,14 +30,27 @@ export default {
 		let cart = state.cartList;
 
 		cart[shopId] = cartInfo;
-		// this.$set(cart,shopId,cartInfo);
-
+		
+		uni.setStorage({
+			key: 'cart_map',
+			data: JSON.stringify(cart),
+			success: function () {
+				console.log('将购物车数据存储到本地');
+			}
+		});
 	},
 	// 将店铺购物车信息移除公共购物车
 	[REMOVE_CART](state,shopId){
 		let cart = state.cartList;
 
 		delete cart[shopId];
-		// this.$delete(cart,shopId);
+
+		uni.setStorage({
+			key: 'cart_map',
+			data: JSON.stringify(cart),
+			success: function () {
+				console.log('将购物车数据存储到本地');
+			}
+		});
 	}
 }

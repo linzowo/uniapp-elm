@@ -1,11 +1,13 @@
 <template>
     <view class="order-confirm-container flex-direction">
-        <!-- 数据加载中 S -->
-        <codingPopup ref="codingPopup"></codingPopup>
+        <!-- 数据加载中(包括加载失败的情况) S -->
+        <loading :loading="pageState.loading" :success="!(_.isEmpty(orderData))"></loading>
         <!-- 数据加载中 E -->
 
         <!-- 数据加载成功状态 S -->
-        <view class="flex-direction padding-lr-sm">
+        <view 
+        v-if="!pageState.loading"
+        class="flex-direction padding-lr-sm">
             <!-- 收货地址 S -->
             <view 
             @tap="openPopup"
@@ -164,11 +166,6 @@
             <!-- 底部固定区域 E -->
         </view>
         <!-- 数据加载成功状态 E -->
-
-        <!-- 数据加载失败 S -->
-
-        <!-- 数据加载失败 E -->
-
     </view>
 </template>
 

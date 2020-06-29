@@ -52,9 +52,15 @@ uni.getSystemInfo({
 });
 
 // 全局组件绑定
+// 功能开发中提示组件
 import codingPopup from '@/components/common/coding-popup.vue';
-
 Vue.component('codingPopup',codingPopup);
+// 未登录提示组件
+import noLogin from '@/components/noLogin/noLogin.vue';
+Vue.component('noLogin',noLogin);
+// 数据加载中组件
+import loading from '@/components/common/loading.vue';
+Vue.component('loading',loading);
 
 // 创建全局过滤器
 

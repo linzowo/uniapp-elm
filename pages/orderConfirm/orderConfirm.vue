@@ -9,9 +9,7 @@
         v-if="!pageState.loading"
         class="flex-direction padding-lr-sm">
             <!-- 收货地址 S -->
-            <view 
-            @tap="openPopup"
-            class="margin-bottom-xs flex-direction padding-sm ">
+            <view class="margin-bottom-xs flex-direction padding-sm ">
                 <view class="text-color-e margin-bottom-xs">
                     <text>订单配送至</text>
                 </view>
@@ -54,28 +52,32 @@
             <!-- 订单详情 S -->
             <view class="bg-white margin-bottom-sm flex-direction padding-lr">
                 <view class="padding-tb-sm border-bottom border-color-e">
-                    <text class="store-name"></text>
+                    <text class="store-name">{{storeData.name}}</text>
                     <text class="store-name-sub"></text>
                 </view>
 
                 <!-- 商品列表 -->
                 <view class="flex-direction goods-list">
                     
-                    <view class="goods-item justify-between border-bottom border-color-e">
-                        <view class="flex-direction">
+                    <view 
+                    v-for="(item, index) in goodsList" :key="index"
+                    class="goods-item justify-between border-bottom border-color-e">
+                        <view class="">
 
                             <view class="goods-img-box">
                                 <image 
-                                src="" 
+                                :src="item.image_hash,'w_72,h_72'|imgUrlFilter" 
                                 mode="widthFix" />
                             </view>
 
-                            <view class="flex-direction">
-                                <text>商品名</text>
-                                <view class="">
-                                    <text>介绍</text>
-                                    <text>数量</text>
+                            <view class="align-center">
+                                <view class="flex-direction">
+                                    <text class="text-cut goods-name">{{item.name}}</text>
+                                    <text
+                                    v-for="(e, i) in item.specs" :key="i"
+                                    >{{e}}</text>
                                 </view>
+                                <text class="text-xs">x {{item.quantity}}</text>
                             </view>
 
                         </view>
@@ -179,6 +181,9 @@
         data(){
             return{
                 orderData:{}, // 订单数据
+                cart:{}, // 购物车数据
+                storeData:{}, // 店铺数据
+                goodsList:[], // 商品列表
                 pageState:{
                     loading: true, // true-页面数据加载中 false-页面数据加载完成
                 }
@@ -187,6 +192,10 @@
         created() {
             this.$http.get.order_data().then((res)=>{
                 this.orderData = res;
+                this.cart = res.cart;
+                this.goodsList = res.cart.group[0];
+                this.storeData = res.cart.restaurant;
+
                 this.pageState.loading = false;
             },e=>{
                 console.log('请求失败',e);
@@ -195,9 +204,6 @@
         }
         ,
         methods:{
-            openPopup(){
-                this.$refs.codingPopup.open();
-            }
         }
     }
 </script>
@@ -217,5 +223,11 @@
     .pay-btn{
         background-color: #00e067;
         color:#fff;
+    }
+    .goods-img-box{
+        width: 72rpx;
+    }
+    .goods-name{
+        width: 300rpx;
     }
 </style>

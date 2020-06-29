@@ -67,6 +67,8 @@ const _urlPath = {
 	store_list_data_2:'store_list_data_2.json', // 商铺列表商品数据2
 	store_list_data_3:'store_list_data_3.json', // 商铺列表商品数据3
 	store_sort_data:'store_sort_data.json', // 商铺列表navtab排序标签数据
+	order_data:'order_data.json', // 订单数据1
+	order_data_2:'order_data_2.json', // 订单数据2
 }
 
 // get请求
@@ -139,8 +141,15 @@ export const get = {
 	},
 	store_sort_data: ()=>{
 		return http.get(_urlPath.store_sort_data,{});
+	},
+	order_data: ()=>{
+		return http.get(_urlPath.order_data,{});
+	},
+	order_data_2: ()=>{
+		return http.get(_urlPath.order_data_2,{});
 	}
 }
+
 
 // post请求
 export const post = {}

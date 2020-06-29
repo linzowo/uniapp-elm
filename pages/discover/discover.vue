@@ -100,9 +100,6 @@
 	/**
 	 * @module 发现页
 	 */
-
-	import codingPopup from '@/components/common/coding-popup.vue';
-
 	export default {
 		name:'discover',
 		data() {
@@ -110,8 +107,7 @@
 				navData:[], // 顶部导航区域的数据
 				exchangeData:[], // 兑换红包数据
 			}
-		},
-		components: {codingPopup}
+		}
 		,
 		created() {
 			try{

@@ -51,6 +51,11 @@ uni.getSystemInfo({
 	}
 });
 
+// 全局组件绑定
+import codingPopup from '@/components/common/coding-popup.vue';
+
+Vue.component('codingPopup',codingPopup);
+
 // 创建全局过滤器
 
 // 图片hash转url

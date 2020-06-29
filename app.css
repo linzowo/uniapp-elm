@@ -232,6 +232,9 @@ view {
 	transform: scale(.8);
 	
 }
+.activity-tag{
+	padding: 0 6rpx;
+}
 .bg-tag-color-yellow{
 	background-image: linear-gradient(-139deg,#fff100,#ffe339);
 	color: #6f3f15;

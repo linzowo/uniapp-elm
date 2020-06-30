@@ -27,7 +27,7 @@
             <!-- 收货地址 E -->
 
             <!-- 送达、支付 S -->
-            <view class="bg-white margin-bottom-xs padding-lr flex-direction">
+            <view class="bg-white margin-bottom-sm padding-lr flex-direction">
                 <view class="padding-tb border-bottom border-color-e justify-between text-lg">
                     <view class="flex-direction">
                         <text class="text-color-3 margin-bottom-xs">送达时间</text>
@@ -51,9 +51,9 @@
 
             <!-- 订单详情 S -->
             <view class="bg-white margin-bottom-sm flex-direction padding-lr">
-                <view class="padding-tb-sm border-bottom border-color-e">
-                    <text class="store-name">{{storeData.name}}</text>
-                    <text class="store-name-sub"></text>
+                <view class="padding-tb border-bottom border-color-e">
+                    <text class="store-name text-bold text-lg text-color-3 margin-right-sm">{{storeData.name.split('(')[0]}}</text>
+                    <text class="store-name-sub text-color-3">{{'(' + storeData.name.split('(')[1]}}</text>
                 </view>
 
                 <!-- 商品列表 -->
@@ -61,20 +61,21 @@
                     
                     <view 
                     v-for="(item, index) in goodsList" :key="index"
-                    class="goods-item justify-between border-bottom border-color-e">
+                    class="goods-item align-center padding-tb-sm justify-between border-bottom border-color-e">
                         <view class="">
 
-                            <view class="goods-img-box">
+                            <view class="goods-img-box margin-right-xs">
                                 <image 
                                 :src="item.image_hash,'w_72,h_72'|imgUrlFilter" 
                                 mode="widthFix" />
                             </view>
 
                             <view class="align-center">
-                                <view class="flex-direction">
-                                    <text class="text-cut goods-name">{{item.name}}</text>
+                                <view class="flex-direction margin-right-xs">
+                                    <text class="text-cut goods-name text-color-3 margin-bottom-xs">{{item.name}}</text>
                                     <text
                                     v-for="(e, i) in item.specs" :key="i"
+                                    class="text-xs text-color-6"
                                     >{{e}}</text>
                                 </view>
                                 <text class="text-xs">x {{item.quantity}}</text>
@@ -82,8 +83,14 @@
 
                         </view>
                         
-                        <view class="">
-                            <text class="text-price">41</text>
+                        <view class="text-lg">
+                            <text 
+                            v-if="item.total_discount_amount != 0"
+                            class="text-price delete-line margin-right-xs text-color-c">{{item.total_price}}</text>
+                            <text 
+                            class="text-price"
+                            :class="item.total_discount_amount != 0?'text-color-price':'text-color-3'"
+                            >{{item.total_price + item.total_discount_amount}}</text>
                         </view>
 
                     </view>
@@ -91,22 +98,28 @@
                 </view>
 
                 <!-- 配送费 -->
-                <view class="justify-between border-bottom border-color-e">
+                <view class="justify-between padding-tb text-color-3 border-bottom border-color-e">
                     <view class="">
                         <text>配送费</text>
                     </view>
 
-                    <view class="">
-                        <text class="text-price delete-line"></text>
-                        <text class="text-price"></text>
+                    <view class="text-lg align-center">
+                        <text 
+                        v-if="cart.extra.agent_fee.original_price > cart.extra.agent_fee.price"
+                        class="delete-line text-color-c margin-right"
+                        >￥{{cart.extra.agent_fee.original_price}}</text>
+                        <text 
+                        class="text-price text-color-3"
+                        >{{cart.extra.agent_fee.price}}</text>
                     </view>
                 </view>
 
                 <!-- 优惠 -->
-                <view class="justify-between border-bottom border-color-e">
+                <view 
+                v-if="cart.abandoned_extra.length"
+                class="justify-between border-bottom border-color-e padding-tb-sm">
                     <view class="">
-                        <text class="activity-tag">满减</text>
-                        <text>店铺优惠</text>
+                        <text class="activity-tag">折扣商品不与满减津贴等优惠同享</text>
                     </view>
 
                     <view class="">
@@ -115,34 +128,58 @@
                     </view>
                 </view>
 
+                <!-- 店铺活动优惠列表 -->
+                <view 
+                class="activity-list flex-direction"
+                v-if="cart.extra.others.length"
+                >
+                    <view 
+                    v-for="(item, index) in cart.extra.others" :key="index"
+                    class="activity-item padding-tb justify-between border-bottom border-color-e">
+                        <view class="">
+                            <view class="text-xs activity-tag margin-right-sm text-white" :style="{backgroundColor:'#'+item.icon.color}">
+                                <text>{{item.icon.name}}</text>
+                            </view>
+                            <text>{{item.name}}</text>
+                        </view>
+
+                        <view class="text-color-price">
+                            <text class="margin-right-xs">-</text>
+                            <text class="text-price text-lg">{{-item.price}}</text>
+                        </view>
+                    </view>
+
+                </view>
+
                 <!-- 红包 -->
-                <view class="justify-between border-bottom border-color-e">
-                    <view class="">
-                        <text>红包/抵用券</text>
+                <view class="justify-between border-bottom border-color-e padding-tb">
+                    <view class="text-color-3">
+                        <text>{{redpackData.title}}</text>
                     </view>
 
                     <view class="">
-                        <!-- 未选择地址状态 -->
-                        <view class="">
-                            
-                        </view>
-                        <!-- 已选择地址状态 -->
-                        <view class="">
-                            
+                        <view 
+                        class="align-center text-white padding-lr-xs text-xs"
+                        :style="{backgroundImage:'linear-gradient(106deg,#ff7417,#ff3c15)'}"
+                        >
+                            <text 
+                            class="lg cuIcon-redpacket_fill margin-right-xs"
+                            ></text>
+                            <text class="">{{redpackData.status_text}}</text>
                         </view>
                     </view>
                 </view>
 
                 <!-- 总价 -->
-                <view class="justify-between border-bottom border-color-e">
-                    <view class="">
+                <view class="justify-between border-bottom border-color-e padding-tb">
+                    <view class="text-color-c align-center">
                         <text>优惠说明</text>
-                        <text class=""></text>
+                        <text class="lg cuIcon-question"></text>
                     </view>
 
-                    <view class="">
-                        <text class="">小计</text>
-                        <text class="text-price">75</text>
+                    <view class="text-color-3 align-center">
+                        <text class="margin-right-xs">小计</text>
+                        <text class="text-price text-xxl">{{cart.total}}</text>
                     </view>
                 </view>
 
@@ -184,6 +221,7 @@
                 cart:{}, // 购物车数据
                 storeData:{}, // 店铺数据
                 goodsList:[], // 商品列表
+                redpackData:{}, // 红包相关数据
                 pageState:{
                     loading: true, // true-页面数据加载中 false-页面数据加载完成
                 }
@@ -195,7 +233,7 @@
                 this.cart = res.cart;
                 this.goodsList = res.cart.group[0];
                 this.storeData = res.cart.restaurant;
-
+                this.redpackData = res.hongpon_info;
                 this.pageState.loading = false;
             },e=>{
                 console.log('请求失败',e);
@@ -211,6 +249,9 @@
 <style lang="scss" scoped>
     page{
         background-image: linear-gradient(0deg,#f5f5f5,#f5f5f5 65%,hsla(0,0%,96%,.3) 75%,hsla(0,0%,96%,0)),linear-gradient(90deg,#0af,#0085ff);
+    }
+    .order-confirm-container{
+        padding-bottom: 100rpx;
     }
     .footer-box{
         position: fixed;

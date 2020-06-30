@@ -77,7 +77,12 @@
 			"style": {
 				"navigationBarTitleText": "选择地址"
 			}
-		},  {
+		}, {
+			"path": "pages/address/edit_address",
+			"style": {
+				"navigationBarTitleText": "地址编辑"
+			}
+		}, {
 			"path": "pages/search/search",
 			"style": {
 				"navigationBarTitleText": "搜索页",

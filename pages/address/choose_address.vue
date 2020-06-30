@@ -4,28 +4,41 @@
         <!-- 配送范围内店铺 S -->
         <view class="flex-direction address-list">
             
-            <view class="address-item padding bg-white justify-between align-center">
-                <view class="align-center">
-                    <view class="choose-tag-box margin-right-xs text-xxl">
-                        <text class="lg text-green cuIcon-roundcheckfill"></text>
+            <view 
+            v-for="(item, index) in myAddress" :key="index"
+            class="address-item padding bg-white justify-between align-center">
+                <view 
+                @tap="SAVE_SHIP_ADDRESS(item)"
+                class="align-center">
+                    <view 
+                    class="choose-tag-box margin-right-xs text-xxl">
+                        <text 
+                        v-show="JSON.stringify(item) == JSON.stringify(userInfo.shipAddress)"
+                        class="lg text-green cuIcon-roundcheckfill"></text>
                     </view>
 
                     <view class="user-box flex-direction">
                         <view class="align-center text-xl">
-                            <text class="text-bold text-color-3">林除夕</text>
-                            <text class="margin-right-xs">先生</text>
-                            <text class="">1546864549</text>
+                            <text class="text-bold text-color-3 margin-right-xs">{{item.name}}</text>
+                            <text v-if="item.gender !== null" class="margin-right-xs">{{item.gender?'先生':'女士'}}</text>
+                            <text class="">{{item.phone}}</text>
                         </view>
                         <view class="align-center">
-                            <view class="cu-tag line-blue type-tag margin-right-xs">公司</view>
-                            <text class="">凯信家居装饰城成都市温江区来凤路288号凯信·双子国际1-4层5-1005</text>
+                            <view 
+                            v-if="item.tag"
+                            class="cu-tag line-blue type-tag margin-right-xs">{{item.tag}}</view>
+                            <text class="">{{item.address}}</text>
                         </view>
                     </view>
                 </view>
 
                 <view class="text-xxl">
-                    <text class="lg text-gray cuIcon-post margin-right-sm"></text>
-                    <text class="lg text-gray cuIcon-close"></text>
+                    <text 
+                    @tap="editAddress(index)"
+                    class="lg text-gray cuIcon-post margin-right-sm"></text>
+                    <text 
+                    @tap="deleteAddress(index)"
+                    class="lg text-gray cuIcon-close"></text>
                 </view>
 
             </view>
@@ -40,24 +53,33 @@
                 <text>以下地址超出配送范围</text>
             </view>
             
-            <view class="address-item padding bg-white justify-between align-center">
+            <view 
+            v-for="(item, index) in myAddress" :key="index"
+            class="address-item padding bg-white justify-between align-center">
                 <view class="align-center">
                     <view class="flex-direction over-distance-box">
                         <view class="align-center text-lg">
-                            <text class="text-bold text-color-3">林除夕</text>
-                            <text class="margin-right-xs">先生</text>
-                            <text class="">1546864549</text>
+                            <text class="text-bold text-color-3 margin-right-xs">{{item.name}}</text>
+                            <text v-if="item.gender !== null" class="margin-right-xs">{{item.gender?'先生':'女士'}}</text>
+                            <text class="">{{item.phone}}</text>
                         </view>
                         <view class="align-center">
-                            <view class="cu-tag line-blue type-tag margin-right-xs">公司</view>
-                            <text class="">凯信家居装饰城成都市温江区来凤路288号凯信·双子国际1-4层5-1005</text>
+                            <view 
+                            v-if="item.tag"
+                            class="cu-tag line-blue type-tag margin-right-xs">{{item.tag}}</view>
+                            <text class="">{{item.address}}</text>
                         </view>
                     </view>
                 </view>
 
+                
                 <view class="text-xxl">
-                    <text class="lg text-gray cuIcon-post margin-right-sm"></text>
-                    <text class="lg text-gray cuIcon-close"></text>
+                    <text 
+                    @tap="editAddress(index)"
+                    class="lg text-gray cuIcon-post margin-right-sm"></text>
+                    <text 
+                    @tap="deleteAddress(index)"
+                    class="lg text-gray cuIcon-close"></text>
                 </view>
 
             </view>
@@ -71,6 +93,20 @@
             <text class="text-color-blue text-lg">新增收货地址</text>
         </view>
         <!-- 底部新增地址按钮 E -->
+
+        <!-- 弹窗组件 -->
+        <uni-popup ref="deletePopup" type="dialog">
+            <uni-popup-dialog 
+            message="成功消息" 
+            :duration="2000" 
+            :before-close="true" 
+            :style="{display:'block'}"
+            :title="'删除地址'"
+            :content="'确定要删除地址'"
+            @close="close" 
+            @confirm="confirm"></uni-popup-dialog>
+        </uni-popup>
+        <!-- 弹窗组件 -->
     </view>
 </template>
 
@@ -80,21 +116,113 @@
      * @description 选择收货地址地址
      */
 
+    import {mapState,mapMutations} from 'vuex';
+
     export default {
         name:'choose_address',
         data() {
             return {
-
+                myAddress:[], // 用户的地址信息 在组件创建后获取
+                deleteIndex: null, // 要删除的地址的索引值
             }
         }
         ,
+        computed:{
+            ...mapState([
+                'userInfo'
+            ])
+        }
+        ,
         created() {
+            
+			// 获取我的地址数据
+			// 模拟网络环境下请求我的地址数据
 
+			try{
+                this.myAddress = JSON.parse(uni.getStorageSync('my_address'));
+			}catch(e){
+				console.log('获取缓存失败');
+			}
+
+			if(!this.myAddress || !this.myAddress.length){
+				this.$http.get.address_data().then((res)=>{
+					this.myAddress = res.my_address;
+
+					uni.setStorage({
+						key: 'my_address',
+						data: JSON.stringify(res.my_address),
+						success: function () {
+							console.log('存储my_address成功');
+						}
+					});
+				},(e)=>{
+					console.log('请求失败',e);
+				})
+			}
+
+        }
+        ,
+        methods:{
+            ...mapMutations([
+                'SAVE_SHIP_ADDRESS'
+            ]),
+            /**
+             * 编辑地址
+             * @param {Number} index 当前地址在地址列表中的序号
+             */
+            editAddress(index){
+                console.log('编辑地址',index);
+                uni.navigateTo({
+                     url: this.$pages_path.edit_address,
+                     fail(e) {
+                         console.log(e);
+                     }
+                });
+            }
+            ,
+            /**
+             * 删除地址
+             * @param {Number} index 当前地址在地址列表中的序号
+             */
+            deleteAddress(index){
+                console.log('删除地址',index);
+                this.$refs.deletePopup.open();
+                this.deleteIndex = index;
+            }
+            ,
+            /**
+             * 点击取消按钮触发
+             * @param {Object} done
+             */
+            close(done){
+                console.log('取消');
+                // 将删除索引值重置为null
+                this.deleteIndex = null;
+                done()
+            },
+            /**
+             * 点击确认按钮触发
+             * @param {Object} done
+             */
+            confirm(done){
+                console.log('确定');
+
+                // 执行删除过程
+                this.myAddress.splice(this.deleteIndex,1);
+                this.deleteIndex = null;
+
+                // TODO 更新本地存储
+
+                done()
+            }
         }
     }
 </script>
 
 <style lang="scss" scoped>
+    .choose-address-container{
+        padding-bottom: 120rpx;
+    }
     .add-address-btn-box{
         position: fixed;
         bottom: 0;

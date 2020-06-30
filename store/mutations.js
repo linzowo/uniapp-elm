@@ -18,7 +18,7 @@ export default {
 	},
 	// 存储收货地址
 	[SAVE_SHIP_ADDRESS](state,newAdd){
-		Object.assign(state.userInfo.shipAddress,newAdd);
+		state.userInfo.shipAddress = newAdd;
 	},
 	// 存储用户选择的城市
 	[SAVE_CITY](state,newCity){

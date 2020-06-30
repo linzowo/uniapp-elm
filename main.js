@@ -62,6 +62,17 @@ Vue.component('noLogin',noLogin);
 import loading from '@/components/common/loading.vue';
 Vue.component('loading',loading);
 
+// 弹窗组件
+import uniPopup from '@/components/uni-popup/uni-popup.vue';
+import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog.vue';
+import UniPopupMessage from '@/components/uni-popup/uni-popup-message.vue';
+import UniPopupShare from '@/components/uni-popup/uni-popup-share.vue';
+Vue.component('uniPopup',uniPopup);
+Vue.component('uniPopupDialog',uniPopupDialog);
+Vue.component('UniPopupMessage',UniPopupMessage);
+Vue.component('UniPopupShare',UniPopupShare);
+
+
 // 创建全局过滤器
 
 // 图片hash转url

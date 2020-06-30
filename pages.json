@@ -73,6 +73,11 @@
 				"navigationBarTitleText": "地址管理"
 			}
 		}, {
+			"path": "pages/address/choose_address",
+			"style": {
+				"navigationBarTitleText": "选择地址"
+			}
+		},  {
 			"path": "pages/search/search",
 			"style": {
 				"navigationBarTitleText": "搜索页",

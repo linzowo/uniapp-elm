@@ -9,7 +9,9 @@
         v-if="!pageState.loading"
         class="flex-direction padding-lr-sm">
             <!-- 收货地址 S -->
-            <view class="margin-bottom-xs flex-direction padding-sm ">
+            <view 
+            @tap="chooseAddress"
+            class="margin-bottom-xs flex-direction padding-sm ">
                 <view class="text-color-e margin-bottom-xs">
                     <text>订单配送至</text>
                 </view>
@@ -290,6 +292,19 @@
         }
         ,
         methods:{
+            /**
+             * 选择收货地址
+             */
+            chooseAddress(){
+
+                // 跳转到地址选择页面
+                uni.navigateTo({
+                     url: this.$pages_path.choose_address,
+                     fail(e) {
+                         console.log(e);
+                     }
+                });
+           }
         }
     }
 </script>

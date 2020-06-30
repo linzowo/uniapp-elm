@@ -28,6 +28,7 @@
     service: "/pages/service/service",
     ruler_center: "/pages/rulerCenter/rulerCenter",
     redpacket: "/pages/redPacket/redPacket",
+    choose_address: "/pages/address/choose_address",
  }
 
  export default {

@@ -50,7 +50,7 @@
             <!-- 送达、支付 E -->
 
             <!-- 订单详情 S -->
-            <view class="bg-white margin-bottom-sm flex-direction padding-lr">
+            <view class="bg-white margin-bottom flex-direction padding-lr">
                 <view class="padding-tb border-bottom border-color-e">
                     <text class="store-name text-bold text-lg text-color-3 margin-right-sm">{{storeData.name.split('(')[0]}}</text>
                     <text class="store-name-sub text-color-3">{{'(' + storeData.name.split('(')[1]}}</text>
@@ -187,8 +187,56 @@
             <!-- 订单详情 E -->
 
             <!-- 备注信息 S -->
-            <view class="bg-white margin-bottom-xs flex-direction">
+            <view class="bg-white margin-bottom-sm flex-direction padding-lr">
                 
+                <!-- 餐具 -->
+                <view class="padding-tb align-center border-bottom border-color-e justify-between">
+                    <view class="text-color-3">
+                        <text>餐具份数</text>
+                    </view>
+                    <view class="align-center">
+                        <view class="flex-direction align-end margin-right-xs">
+                            <text class="text-color-c margin-bottom-xs">未选择</text>
+                            <view class="">
+                                <image class="margin-right-xs" :src="$i_u.green_leaf" mode="widthFix" :style="{width:'32rpx'}" />
+                                <text class="text-xs" :style="{color:'#0bb473'}">选无需餐具，马上助力环保</text>
+                            </view>
+                        </view>
+                        <text class="lg text-color-c cuIcon-right"></text>
+                    </view>
+                </view>
+
+                <!-- 备注 -->
+                <view class="padding-tb border-bottom border-color-e justify-between">
+                    <view class="text-color-3">
+                        <text>订单备注</text>
+                    </view>
+                    <view class="align-center">
+                        <text class="text-color-c">口味、偏好</text>
+                        <text class="lg text-color-c cuIcon-right margin-left-xs"></text>
+                    </view>
+                </view>
+                
+                <!-- 发票 -->
+                <view class="padding-tb border-bottom border-color-e justify-between">
+                    <view class="text-color-3">
+                        <text>发票信息</text>
+                    </view>
+                    <view class="align-center">
+                        <text class="text-color-c"> 不需要开发票</text>
+                        <text class="lg text-color-c cuIcon-right margin-left-xs"></text>
+                    </view>
+                </view>
+                
+                <!-- 电话保护 -->
+                <view class="padding-tb flex-direction">
+                    <view class="margin-bottom-xs align-center">
+                        <text class="text-color-3 margin-right-xs">号码保护</text>
+                        <text class="lg text-color-c cuIcon-question"></text>
+                    </view>
+                    <text class="text-xs text-color-c">号码保护中，将对商家、骑士隐藏您的真实手机号</text>
+                </view>
+
             </view>
             <!-- 备注信息 E -->
 

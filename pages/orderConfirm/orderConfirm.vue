@@ -31,7 +31,9 @@
             <!-- 收货地址 E -->
 
             <!-- 送达、支付 S -->
-            <view class="bg-white margin-bottom-sm padding-lr flex-direction">
+            <view 
+            @tap="openPopup('arriveTimePopup')"
+            class="bg-white margin-bottom-sm padding-lr flex-direction">
                 <view class="padding-tb border-bottom border-color-e justify-between text-lg">
                     <view class="flex-direction">
                         <text class="text-color-3 margin-bottom-xs">送达时间</text>
@@ -40,7 +42,7 @@
                         </view>
                     </view>
                     <view class="align-center">
-                        <text class="text-color-blue">尽快送达</text>
+                        <text class="text-color-blue">{{!deliverTimesCur[0]&&!deliverTimesCur[1]?'尽快送达':deliverTimes[deliverTimesCur[0]].tab + deliverTimes[deliverTimesCur[0]].time_points[deliverTimesCur[1]].time}}</text>
                         <text class="lg text-color-c cuIcon-right"></text>
                     </view>
                 </view>
@@ -257,6 +259,66 @@
             <!-- 底部固定区域 E -->
         </view>
         <!-- 数据加载成功状态 E -->
+
+        <!-- 弹窗区域 S -->
+        <view 
+        v-if="!pageState.loading"
+        class="">
+            <!-- 送达时间弹窗 S -->
+            <uni-popup 
+            ref="arriveTimePopup" 
+            @change="popupChange" 
+            type="bottom">
+                <view class="arrive-time-box bg-e flex-direction">
+                    
+                    <view class="arrive-time-title-box justify-center text-lg padding-top padding-bottom-xs">
+                        <text>选择送达时间</text>
+                    </view>
+
+                    <view class="arrive-time-body-box text-sm">
+                        <scroll-view 
+                        :scroll-y="true" 
+                        class="arrive-time-nav-head nav-head-list"
+                        >
+                            <view 
+                            v-for="(item, index) in deliverTimes" :key="index"
+                            @tap="switchDelicerTab(index)"
+                            class="nav-head-item bg-white text-color-3 justify-center padding border-bottom border-color-e">
+                                <text>{{item.tab}}</text>
+                            </view>
+
+                        </scroll-view>
+
+                        <scroll-view 
+                        :scroll-y="true" 
+                        class="arrive-time-nav-body nav-body-list"
+                        >
+                            <view 
+                            v-for="(item, index) in deliverTimes[deliverTimesCur[0]].time_points" :key="index"
+                            @tap="chooseDeliverTimes(index)"
+                            class="nav-body-item bg-white text-color-3 padding-lr">
+                                <view class="border-bottom border-color-e padding-tb flex-sub align-center justify-between">
+                                    <view class="align-center">
+                                        <text class="text-df">{{!deliverTimesCur[0]&&!index?'尽快送达 | ':''}}{{item.time}}</text>
+                                        <text class="text-color-9 text-xs">（{{item.delivery_fee_description}}）</text>
+                                    </view>
+                                    <view class="text-xxl">
+                                        <text 
+                                        v-show="deliverTimesTabIndex == deliverTimesCur[0] && index == deliverTimesCur[1]"
+                                        class="lg text-green cuIcon-roundcheckfill"></text>
+                                    </view>
+                                </view>
+                            </view>
+
+                        </scroll-view>
+                    </view>
+                </view>
+            </uni-popup>
+            <!-- 送达时间弹窗 E -->
+
+
+        </view>
+        <!-- 弹窗区域 E -->
     </view>
 </template>
 
@@ -275,9 +337,13 @@
                 storeData:{}, // 店铺数据
                 goodsList:[], // 商品列表
                 redpackData:{}, // 红包相关数据
+                deliverTimes:[], // 送达时间相关数据
+                deliverTimesCur:[0,0], // 第一项为 tab的curIndex 第二项为 list的 curIndex
+                deliverTimesTabIndex:0, // 当前查看的是哪个送达时间区间
                 pageState:{
                     loading: true, // true-页面数据加载中 false-页面数据加载完成
-                }
+                },
+		        popupStack:[], // 弹窗栈用于帮助用户关闭多个弹窗
             }
         },
         computed:{
@@ -293,6 +359,7 @@
                 this.goodsList = res.cart.group[0];
                 this.storeData = res.cart.restaurant;
                 this.redpackData = res.hongpon_info;
+                this.deliverTimes = res.deliver_times;
                 this.pageState.loading = false;
             },e=>{
                 console.log('请求失败',e);
@@ -300,7 +367,34 @@
             });
         }
         ,
+        onBackPress(e) {
+            
+            // 当存在打开的弹窗时通过返回键可以关闭弹窗
+            if(this.popupStack.length > 0){
+                this.closePopup(this.popupStack[this.popupStack.length-1]);
+                return true;
+            }
+            
+        }
+        ,
         methods:{
+            /**
+             * 切换送达时间的大区间-预约第二天等
+             * @param {Number} index 当前选择的时间区间的索引值
+             */
+            switchDelicerTab(index){
+                this.deliverTimesTabIndex = index;
+            }
+            ,
+            /**
+             * 选择送达时间
+             * @param {Number} index 当前选择的送达时间的索引值
+             */
+            chooseDeliverTimes(index){
+                this.$set(this.deliverTimesCur,0,this.deliverTimesTabIndex);
+                this.$set(this.deliverTimesCur,1,index);
+            }
+            ,
             /**
              * 选择收货地址
              */
@@ -314,6 +408,38 @@
                      }
                 });
            }
+		    ,
+            /**
+             * 弹窗状态变化完成时触发的方法
+             * @param {Object} e 事件参数对象
+             */
+            popupChange(e){
+                this.$utils.log('popupChange','弹窗状态改变==>' + (e.show?'开':'关'),e);
+                if(e.show == false){
+                    this.popupStack.pop();
+                }
+            }
+            ,
+            /**
+             * 打开弹窗
+             * @param {String} ref 弹窗的ref值
+             */
+            openPopup(ref){
+                this.$utils.log('openPopup','打开弹窗'+ref);
+                if(this.popupStack.includes(ref)) return;
+                
+                this.popupStack.push(ref);
+                this.$refs[ref].open();
+            }
+            ,
+            /**
+             * 关闭弹窗
+             * @param {String} ref 弹窗的ref值
+             */
+            closePopup(ref){
+                this.$utils.log('closePopup','关闭弹窗'+ref);
+                this.$refs[ref].close();
+            }
         }
     }
 </script>
@@ -342,5 +468,18 @@
     }
     .goods-name{
         width: 300rpx;
+    }
+
+    .arrive-time-box{
+        width: 750rpx;
+    }
+    .arrive-time-box,.nav-head-list,.nav-body-list{
+        height: 600rpx;
+    }
+    .nav-head-list{
+        flex:3;
+    }
+    .nav-body-list{
+        flex: 7;
     }
 </style>

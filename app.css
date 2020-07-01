@@ -107,6 +107,9 @@ view {
 	background-color: #0097ff;
 	color: #fff;
 }
+.bg-e{
+	background-color: #eee;
+}
 .mbg-gradual-blue{
 	background-image: linear-gradient(90deg, #0af, #0085ff);
 	color: #fff;

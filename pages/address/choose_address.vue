@@ -249,7 +249,7 @@
                     this.SAVE_SHIP_ADDRESS(this.myAddress[0]);
                 }
 
-                // TODO 更新本地存储
+                // 更新本地存储
                 uni.setStorage({
                     key: 'my_address',
                     data: JSON.stringify(this.myAddress),

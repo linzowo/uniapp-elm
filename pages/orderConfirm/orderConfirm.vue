@@ -15,14 +15,16 @@
                 <view class="text-color-e margin-bottom-xs">
                     <text>订单配送至</text>
                 </view>
-                <view class="flex-direction">
-                    <view class="text-xl text-white align-center margin-bottom-xs">
-                        <text>选择收货地址</text>
+                <view class="text-white flex-direction">
+                    <view class="text-xl align-center margin-bottom-xs">
+                        <text class="text-cut">{{userInfo.shipAddress?userInfo.shipAddress.address:'选择收货地址'}}</text>
                         <text class="lg cuIcon-right"></text>
                     </view>
-                    <view class="align-center">
-                        <text>林除夕（先生）</text>
-                        <text class="">18542456345</text>
+                    <view 
+                    v-if="userInfo.shipAddress"
+                    class="align-center">
+                        <text>{{userInfo.shipAddress.name}}{{userInfo.shipAddress.gender===null?'':userInfo.shipAddress.gender?'（先生）':'（女士）'}}</text>
+                        <text class="">{{userInfo.shipAddress.phone}}</text>
                     </view>
                 </view>
             </view>
@@ -262,6 +264,7 @@
     /**
      * @module 订单确认模块
      */
+    import {mapState} from 'vuex';
 
     export default {
         name:"orderConfirm",
@@ -277,6 +280,12 @@
                 }
             }
         },
+        computed:{
+            ...mapState([
+                'userInfo'
+            ])
+        }
+        ,
         created() {
             this.$http.get.order_data().then((res)=>{
                 this.orderData = res;

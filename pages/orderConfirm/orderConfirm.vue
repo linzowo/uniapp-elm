@@ -32,9 +32,10 @@
 
             <!-- 送达、支付 S -->
             <view 
-            @tap="openPopup('arriveTimePopup')"
             class="bg-white margin-bottom-sm padding-lr flex-direction">
-                <view class="padding-tb border-bottom border-color-e justify-between text-lg">
+                <view 
+                @tap="openPopup('arriveTimePopup')"
+                class="padding-tb border-bottom border-color-e justify-between text-lg">
                     <view class="flex-direction">
                         <text class="text-color-3 margin-bottom-xs">送达时间</text>
                         <view>
@@ -158,7 +159,9 @@
                 </view>
 
                 <!-- 红包 -->
-                <view class="justify-between border-bottom border-color-e padding-tb">
+                <view 
+                @tap="openPopup('codingPopup')"
+                class="justify-between border-bottom border-color-e padding-tb">
                     <view class="text-color-3">
                         <text>{{redpackData.title}}</text>
                     </view>
@@ -178,7 +181,9 @@
 
                 <!-- 总价 -->
                 <view class="justify-between border-bottom border-color-e padding-tb">
-                    <view class="text-color-c align-center">
+                    <view 
+                    @tap="openPopup('codingPopup')"
+                    class="text-color-c align-center">
                         <text>优惠说明</text>
                         <text class="lg cuIcon-question"></text>
                     </view>
@@ -316,6 +321,9 @@
             </uni-popup>
             <!-- 送达时间弹窗 E -->
 
+            <!-- 功能开发中弹窗 S -->
+            <codingPopup ref="codingPopup" :change="popupChange"></codingPopup>
+            <!-- 功能开发中弹窗 E -->
 
         </view>
         <!-- 弹窗区域 E -->

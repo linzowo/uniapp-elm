@@ -3,6 +3,7 @@
 		<uni-popup
 		ref="codingTipsPopup"
 		type="center"
+        @change="change"
 		>
 			<view class="content-box bg-white border-radius-10 align-center flex-direction padding-xl">
 				<text>{{tipsText}}</text>
@@ -24,7 +25,17 @@
             return {
                 tipsText:'功能开发中...'
             }
-        },
+        }
+        ,
+        props:{
+            change: {
+                type: Function,
+                default(){
+                    return null;
+                }
+            }
+        }
+        ,
 		 components: {
 			uniPopup,
 		}

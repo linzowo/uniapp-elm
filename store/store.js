@@ -14,6 +14,7 @@ const state = {
 	login: true, // 登录状态
 	cartList:{}, // 购物车列表
 	note:null, // 订单备注
+	invoice:null, // 发票数据
 }
 
 export default new Vuex.Store({

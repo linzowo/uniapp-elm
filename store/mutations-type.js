@@ -5,6 +5,7 @@ export const ADD_CART = "ADD_CART";
 export const REMOVE_CART = "REMOVE_CART";
 export const INIT_CART = "INIT_CART";
 export const CONFIRM_NOTE = "CONFIRM_NOTE";
+export const CONFIRM_INVOICE = "CONFIRM_INVOICE";
 
 export default {
 	SAVE_SHIP_ADDRESS,
@@ -13,5 +14,6 @@ export default {
 	ADD_CART,
 	REMOVE_CART,
 	INIT_CART,
-	CONFIRM_NOTE
+	CONFIRM_NOTE,
+	CONFIRM_INVOICE
 }

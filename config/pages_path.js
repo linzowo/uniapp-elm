@@ -31,6 +31,9 @@
     choose_address: "/pages/address/choose_address",
     edit_address: "/pages/address/edit_address",
     order_note: "/pages/orderConfirm/children/order_note",
+    choose_invoice: "/pages/invoice/choose_invoice",
+    add_invoice: "/pages/invoice/add_invoice",
+    edit_invoice: "/pages/invoice/edit_invoice",
  }
 
  export default {

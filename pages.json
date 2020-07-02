@@ -45,6 +45,21 @@
 			"style": {
 				"navigationBarTitleText": "订单备注"
 			}
+		}, {
+			"path": "pages/invoice/choose_invoice",
+			"style": {
+				"navigationBarTitleText": "选择发票信息"
+			}
+		}, {
+			"path": "pages/invoice/add_invoice",
+			"style": {
+				"navigationBarTitleText": "新增发票信息"
+			}
+		}, {
+			"path": "pages/invoice/edit_invoice",
+			"style": {
+				"navigationBarTitleText": "修改发票信息"
+			}
 		},{
 			"path": "pages/user/user",
 			"style": {

@@ -247,7 +247,7 @@
                 class="padding-tb border-bottom border-color-e justify-between">
                     <view 
                     class="text-color-3">
-                        <text class="text-cut" :style="{width:'600rpx'}">{{note?note:'订单备注'}}</text>
+                        <text class="text-cut" :style="{maxWidth:'600rpx'}">{{note?note:'订单备注'}}</text>
                     </view>
                     <view class="align-center">
                         <text 
@@ -258,13 +258,17 @@
                 </view>
                 
                 <!-- 发票 -->
-                <view class="padding-tb border-bottom border-color-e justify-between">
+                <view 
+                @tap="orderData.invoice.is_available?invoiceTap():''"
+                class="padding-tb border-bottom border-color-e justify-between">
                     <view class="text-color-3">
                         <text>发票信息</text>
                     </view>
                     <view class="align-center">
-                        <text class="text-color-c"> 不需要开发票</text>
-                        <text class="lg text-color-c cuIcon-right margin-left-xs"></text>
+                        <text class="text-color-c"> {{invoice?invoice.name:orderData.invoice.status_text}}</text>
+                        <text 
+                        v-if="orderData.invoice.is_available"
+                        class="lg text-color-c cuIcon-right margin-left-xs"></text>
                     </view>
                 </view>
                 
@@ -404,7 +408,8 @@
         computed:{
             ...mapState([
                 'userInfo',
-                'note'
+                'note',
+                'invoice'
             ])
         }
         ,
@@ -460,6 +465,19 @@
             }
         },
         methods:{
+            /**
+             * 点击发票选项
+             */
+            invoiceTap(){
+                console.log('开发票');
+                uni.navigateTo({
+                     url: this.$pages_path.choose_invoice,
+                     fail(e) {
+                         console.log(e);
+                     }
+                });
+            }
+            ,
             /**
              * 点击订单备注
              */

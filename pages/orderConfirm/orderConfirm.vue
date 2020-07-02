@@ -201,19 +201,43 @@
             <view class="bg-white margin-bottom-sm flex-direction padding-lr">
                 
                 <!-- 餐具 -->
-                <view class="padding-tb align-center border-bottom border-color-e justify-between">
+                <view 
+                @tap="showSinglePicker"
+                class="padding-tb align-center border-bottom border-color-e justify-between">
                     <view class="text-color-3">
                         <text>餐具份数</text>
                     </view>
                     <view class="align-center">
-                        <view class="flex-direction align-end margin-right-xs">
+
+                        <!-- 未选择状态 -->
+                        <view 
+                        v-if="dinnerwareCount==null"
+                        class="flex-direction align-end">
                             <text class="text-color-c margin-bottom-xs">未选择</text>
                             <view class="">
                                 <image class="margin-right-xs" :src="$i_u.green_leaf" mode="widthFix" :style="{width:'32rpx'}" />
                                 <text class="text-xs" :style="{color:'#0bb473'}">选无需餐具，马上助力环保</text>
                             </view>
                         </view>
-                        <text class="lg text-color-c cuIcon-right"></text>
+
+                        <!-- 已选择状态 -->
+                        <view 
+                        v-else
+                        class="">
+                            <view 
+                            v-if="dinnerwareCount==0"
+                            class="">
+                                <image class="margin-right-xs" :src="$i_u.green_leaf" mode="widthFix" :style="{width:'32rpx'}" />
+                                <text class="text-xs">{{pickerValueArray[dinnerwareCount].label}}</text>
+                            </view>
+
+                            <view 
+                            v-else
+                            class="">
+                                <text>{{pickerValueArray[dinnerwareCount].label}}餐具</text>
+                            </view>
+                        </view>
+                        <text class="lg text-color-c cuIcon-right margin-left-xs"></text>
                     </view>
                 </view>
 
@@ -321,6 +345,18 @@
             </uni-popup>
             <!-- 送达时间弹窗 E -->
 
+            <!-- 餐具选择弹窗 S -->
+            <mpvue-picker
+                :themeColor="'#007AFF'"
+                ref="dinnerwarePopup"
+                :mode="'selector'"
+                :deepLength="1"
+                @onConfirm="onConfirm"
+                @onCancel="onCancel"
+                :pickerValueArray="pickerValueArray"
+            ></mpvue-picker>
+            <!-- 餐具选择弹窗 E -->
+
             <!-- 功能开发中弹窗 S -->
             <codingPopup ref="codingPopup" :change="popupChange"></codingPopup>
             <!-- 功能开发中弹窗 E -->
@@ -336,8 +372,12 @@
      */
     import {mapState} from 'vuex';
 
+    import mpvuePicker from '@/components/mpvue-picker/mpvuePicker.vue';
+
     export default {
         name:"orderConfirm",
+        components: {mpvuePicker}
+        ,
         data(){
             return{
                 orderData:{}, // 订单数据
@@ -348,6 +388,8 @@
                 deliverTimes:[], // 送达时间相关数据
                 deliverTimesCur:[0,0], // 第一项为 tab的curIndex 第二项为 list的 curIndex
                 deliverTimesTabIndex:0, // 当前查看的是哪个送达时间区间
+                dinnerwareCount:null, // 存储餐具数量
+                pickerValueArray: [], // 餐具数量数组
                 pageState:{
                     loading: true, // true-页面数据加载中 false-页面数据加载完成
                 },
@@ -373,9 +415,30 @@
                 console.log('请求失败',e);
                 this.pageState.loading = false;
             });
+
+            for (let i = 0; i < 12 ; i++){
+                let content = '';
+                content = i + '份';
+                if(i==0){
+                    content = '无需餐具';
+                }
+                if(i == 11){
+                    content = '10份以上'
+                }
+
+                this.pickerValueArray.push({
+                    label:content,
+                    value:i
+                })
+            }
         }
         ,
         onBackPress(e) {
+            
+            if (this.$refs.dinnerwarePopup.showPicker) {
+                this.$refs.dinnerwarePopup.pickerCancel();
+                return true;
+            }
             
             // 当存在打开的弹窗时通过返回键可以关闭弹窗
             if(this.popupStack.length > 0){
@@ -385,7 +448,33 @@
             
         }
         ,
+        onUnload() {
+            if (this.$refs.mpvuePicker.showPicker) {
+                this.$refs.mpvuePicker.pickerCancel();
+            }
+        },
         methods:{
+            /**
+             * 显示餐具选择弹窗
+             */
+            showSinglePicker() {
+                this.$refs.dinnerwarePopup.show();
+            },
+            /**
+             * 取消餐具选择
+             */
+            onCancel(e) {
+                // console.log(e);
+
+            },
+            /**
+             * 确定餐具选择
+             */
+            onConfirm(e) {
+                console.log(e.value[0]);
+                this.dinnerwareCount = e.value[0];
+                // this.setStyle(0, e.label);
+            },
             /**
              * 切换送达时间的大区间-预约第二天等
              * @param {Number} index 当前选择的时间区间的索引值
@@ -480,14 +569,59 @@
 
     .arrive-time-box{
         width: 750rpx;
-    }
-    .arrive-time-box,.nav-head-list,.nav-body-list{
         height: 600rpx;
+    }
+    .nav-head-list,.nav-body-list{
+        height: 550rpx;
     }
     .nav-head-list{
         flex:3;
     }
     .nav-body-list{
         flex: 7;
+    }
+
+    .dinnerware-box{
+        height: 550rpx;
+        width: 750rpx;
+    }
+    .dinnerware-type-list,.dinnerware-body{
+        height: 440rpx;
+    }
+    .dinnerware-body{
+        position: relative;
+        overflow: hidden;
+    }
+    .scroll-picker-layer{
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+    }
+    .scroll-picker-layer .middle{
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        height: 88rpx;
+        border-top: .133333vw solid #979797;
+        border-bottom: .133333vw solid #979797;
+        transform: translateY(-50%);
+    }
+    .scroll-picker-layer .middle::before,.scroll-picker-layer .middle::after{
+        content: "";
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 176rpx;
+    }
+    .scroll-picker-layer .middle::before{
+        top: -240rpx;
+        background: linear-gradient(180deg,#fff 10%,hsla(0,0%,100%,.7));
+    }
+    .scroll-picker-layer .middle::after{
+        top:160rpx;
+        background: linear-gradient(0deg,#fff 10%,hsla(0,0%,100%,.7));
     }
 </style>

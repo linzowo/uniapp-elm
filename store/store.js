@@ -13,6 +13,7 @@ const state = {
 	userInfo:null, // 用户信息
 	login: true, // 登录状态
 	cartList:{}, // 购物车列表
+	note:null, // 订单备注
 }
 
 export default new Vuex.Store({

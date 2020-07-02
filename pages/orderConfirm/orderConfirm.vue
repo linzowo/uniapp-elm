@@ -242,12 +242,17 @@
                 </view>
 
                 <!-- 备注 -->
-                <view class="padding-tb border-bottom border-color-e justify-between">
-                    <view class="text-color-3">
-                        <text>订单备注</text>
+                <view 
+                @tap="noteTap"
+                class="padding-tb border-bottom border-color-e justify-between">
+                    <view 
+                    class="text-color-3">
+                        <text class="text-cut" :style="{width:'600rpx'}">{{note?note:'订单备注'}}</text>
                     </view>
                     <view class="align-center">
-                        <text class="text-color-c">口味、偏好</text>
+                        <text 
+                        v-if="!note"
+                        class="text-color-c">口味、偏好</text>
                         <text class="lg text-color-c cuIcon-right margin-left-xs"></text>
                     </view>
                 </view>
@@ -398,7 +403,8 @@
         },
         computed:{
             ...mapState([
-                'userInfo'
+                'userInfo',
+                'note'
             ])
         }
         ,
@@ -454,6 +460,18 @@
             }
         },
         methods:{
+            /**
+             * 点击订单备注
+             */
+            noteTap(){
+                uni.navigateTo({
+                     url: this.$pages_path.order_note,
+                     fail(e) {
+                         console.log(e);
+                     }
+                });
+            }
+            ,
             /**
              * 显示餐具选择弹窗
              */
@@ -543,7 +561,7 @@
 
 <style lang="scss" scoped>
     page{
-        background-image: linear-gradient(0deg,#f5f5f5,#f5f5f5 65%,hsla(0,0%,96%,.3) 75%,hsla(0,0%,96%,0)),linear-gradient(90deg,#0af,#0085ff);
+        background-image: linear-gradient(0deg,#f5f5f5,#f5f5f5 65%,hsla(0,0%,96%,.3) 75%,hsla(0,0%,96%,0)),linear-gradient(270deg,#0085ff,#0af);
     }
     .order-confirm-container{
         padding-bottom: 100rpx;

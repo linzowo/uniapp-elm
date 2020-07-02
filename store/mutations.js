@@ -4,7 +4,8 @@ import {
 	SAVE_CITY,
 	ADD_CART,
 	REMOVE_CART,
-	INIT_CART
+	INIT_CART,
+	CONFIRM_NOTE
 } from './mutations-type.js';
 
 import _ from 'lodash';
@@ -12,6 +13,11 @@ import Vue from 'vue';
 
 
 export default {
+	// 存储订单备注信息
+	[CONFIRM_NOTE](state,newNote){
+		state.note = newNote;
+	}
+	,
 	// 存储用户信息
 	[SAVE_USERINFO](state,newUserInfo){
 		state.userInfo = newUserInfo;

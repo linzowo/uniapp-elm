@@ -40,6 +40,11 @@
 			"style": {
 				"navigationBarTitleText": "确认订单"
 			}
+		}, {
+			"path": "pages/orderConfirm/children/order_note",
+			"style": {
+				"navigationBarTitleText": "订单备注"
+			}
 		},{
 			"path": "pages/user/user",
 			"style": {

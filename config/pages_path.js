@@ -30,6 +30,7 @@
     redpacket: "/pages/redPacket/redPacket",
     choose_address: "/pages/address/choose_address",
     edit_address: "/pages/address/edit_address",
+    order_note: "/pages/orderConfirm/children/order_note",
  }
 
  export default {

@@ -3,19 +3,23 @@
         <view class="padding bg-white align-center">
             <view class="confirm-tag-box text-xxl margin-right-xs">
                 <text 
-                v-show="true"
+                v-show="!invoiceList.length"
                 class="lg text-green cuIcon-roundcheckfill"></text>
             </view>
             <text class="text-bold text-lg text-color-3">不需要发票</text>
         </view>
 
-        <view class="invoice-list flex-direction">
+        <view 
+        v-if="invoiceList.length"
+        class="invoice-list flex-direction">
             
             <view class="padding-lr padding-top padding-bottom-xs text-color-6">
                 <text>发票信息</text>
             </view>
 
-            <view class="invoice-item bg-white padding justify-between">
+            <view 
+            v-for="(item, index) in invoiceList" :key="index"
+            class="invoice-item bg-white padding justify-between">
 
                 <view class="align-center">
                     <view class="confirm-tag-box text-xxl margin-right-xs">
@@ -26,32 +30,32 @@
 
                     <!-- 单位 -->
                     <view 
-                    v-if="false"
+                    v-if="item.type == '单位'"
                     class="invoice-company flex-direction">
                         <view class="align-center margin-bottom-xs">
                             <view class="cu-tag line-blue sm margin-right-xs">
                                 <text>单位</text>
                             </view>
-                            <text class="text-color-3 text-bold">公司名称</text>
+                            <text class="text-color-3 text-bold">{{item.name}}</text>
                         </view>
-                        <text class="text-color-9">562154654651</text>
+                        <text class="text-color-9">{{item.tax_id}}</text>
                     </view>
 
                     <!-- 个人 -->
                     <view 
-                    v-if="true"
+                    v-if="item.type == '个人'"
                     class="invoice-person align-center">
                         <view class="cu-tag line-green sm margin-right-xs">
                             <text>个人</text>
                         </view>
-                        <text class="text-color-3 text-bold">林除夕</text>
+                        <text class="text-color-3 text-bold">{{item.name}}</text>
                     </view>
                 </view>
 
                 
                 <view class="text-xxl">
                     <text 
-                    @tap="editAddress(index)"
+                    @tap="editInvoice(index)"
                     class="lg text-gray cuIcon-post margin-right-sm"></text>
                 </view>
 
@@ -59,7 +63,9 @@
 
         </view>
 
-        <view class="add-invoice-box justify-center bg-white align-center text-xl text-blue">
+        <view 
+        @tap="addInvoice"
+        class="add-invoice-box justify-center bg-white align-center text-xl text-blue">
             <text class="lg cuIcon-roundadd margin-right-xs"></text>
             <text class="">新增发票信息</text>
         </view>
@@ -67,8 +73,58 @@
 </template>
 
 <script>
+    /**
+     * @module choose_invoice
+     * @description 选择发票模块
+     */
     export default {
-        
+        name:'choose_invoice',
+        data() {
+            return {
+                invoiceList:[], // 发票数据列表
+            }
+        },
+        created() {
+
+            try{
+				this.invoiceList = JSON.parse(uni.getStorageSync('invoice_list'));	
+			}catch(e){
+                console.log('获取缓存失败');
+                uni.setStorage({
+                    key: 'invoice_list',
+                    data: '[]',
+                    success: function () {
+                        console.log('success');
+                    }
+                });
+            }
+        },
+        methods: {
+            /**
+             * 编辑当前发票信息
+             * @param {Number} index 发票的索引值
+             */
+            editInvoice(index){
+                uni.navigateTo({
+                     url: this.$pages_path.edit_invoice + '?index=' + index,
+                     fail(e) {
+                         console.log(e);
+                     }
+                });
+            }
+            ,
+            /**
+             * 新增发票信息
+             */
+            addInvoice(){
+                uni.navigateTo({
+                     url: this.$pages_path.add_invoice,
+                     fail(e) {
+                         console.log(e);
+                     }
+                });
+            }
+        }
     }
 </script>
 

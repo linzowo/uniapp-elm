@@ -14,7 +14,9 @@
                     </view>
                     <radio-group 
                     class="flex" 
-                    @change="radioChange">
+                    @change="radioChange"
+                    name="type"
+                    >
                         <view 
                         class="border border-color-c margin-lr-xs padding-tb-xs padding-lr border-radius-10"
                         :class="[index==curType?'border-color-blue text-blue':'']" 
@@ -47,8 +49,10 @@
                         <view class="flex-sub margin-right-xs">
                             <input 
                             class="flex flex-sub" 
-                            placeholder="请填写准确的抬头名称" 
+                            placeholder="请填写准确的抬头名称"
+                            maxlength="20" 
                             v-model="nameInput" 
+                            name="name"
                             />
                         </view>
                     
@@ -78,13 +82,14 @@
                                 class="flex flex-sub" 
                                 placeholder="请填写「税号」或「社会信用代码」" 
                                 v-model="taxidInput" 
+                                name="tax_id"
                                 />
                             </view>
                         
                         </view>
                         
                         <text 
-                        v-show="nameInput"
+                        v-show="taxidInput"
                         @tap="clearInput('taxidInput')"
                         class="lg text-gray cuIcon-roundclosefill text-xl"></text>
 
@@ -120,13 +125,64 @@
              * 新增发票数据
              */
             addInvoice(e){
-                console.log(e);
+                
+                // 检查输入信息是否合法
+                let invoice = e.detail.value;
+
+                // 抬头超过限度
+                if(invoice.name.length > 20 || !invoice.name.length){
+                    uni.showToast({
+                        title: '抬头不符合规范请填写正确抬头',
+                        duration: 2000,
+                        icon: 'none'
+                    });
+
+                    return;
+                }
+
+                // 税号不符合规范
+                if(!/^[0-9a-zA-Z]*$/.test(invoice.tax_id) || invoice.tax_id==''){
+                    uni.showToast({
+                        title: '税号不符合规范请重新填写',
+                        duration: 2000,
+                        icon:'none'
+                    });
+                    return;
+                }
+
+                invoice.type = this.radioItems[invoice.type];
+                invoice.id = this._.uniqueId();
+
+                let invoice_list = [];
+
+                try {
+                    invoice_list = JSON.parse(uni.getStorageSync('invoice_list'));
+                } catch (e) {
+                    console.log(e);
+                }
+
+                invoice_list = [].concat(invoice_list,invoice);
+
+                try {
+                    uni.setStorageSync('invoice_list', JSON.stringify(invoice_list))
+                    uni.navigateTo({
+                         url: this.$pages_path.choose_invoice,
+                         fail(e) {
+                             console.log(e);
+                         }
+                    });
+                } catch (e) {
+                    uni.showToast({
+                        title: '保存失败，请重试',
+                        duration: 2000,
+                        icon:'none'
+                    });
+                }
+
             }
             ,
 			radioChange(e) {
 				this.curType = e.detail.value
-				console.log(this.curType)
-				console.log(e.detail)
             }
             ,
             /**

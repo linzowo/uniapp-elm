@@ -60,6 +60,16 @@
 			"style": {
 				"navigationBarTitleText": "修改发票信息"
 			}
+		}, {
+			"path": "pages/pay/pay",
+			"style": {
+				"navigationBarTitleText": "在线支付",
+				"app-plus":{
+					"titleNView":{
+						"autoBackButton":false
+					}
+				}
+			}
 		},{
 			"path": "pages/user/user",
 			"style": {

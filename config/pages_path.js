@@ -34,6 +34,7 @@
     choose_invoice: "/pages/invoice/choose_invoice",
     add_invoice: "/pages/invoice/add_invoice",
     edit_invoice: "/pages/invoice/edit_invoice",
+    pay: "/pages/pay/pay",
  }
 
  export default {

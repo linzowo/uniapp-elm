@@ -292,7 +292,9 @@
                     <text class="text-price text-white text-xl text-bold">25</text>
                     <text class="text-color-9 text-xs padding-lr-xs border-left border-color-9 margin-left-xs">已优惠￥14</text>
                 </view>
-                <view class="pay-btn text-xl padding-lr-xl justify-center align-center">
+                <view 
+                @tap="pay"
+                class="pay-btn text-xl padding-lr-xl justify-center align-center">
                     <text>去支付</text>
                 </view>
             </view>
@@ -467,6 +469,18 @@
             }
         },
         methods:{
+            /**
+             * 前往支付页支付
+             */
+            pay(){
+                uni.navigateTo({
+                     url: this.$pages_path.pay,
+                     fail(e) {
+                         console.log(e);
+                     }
+                });
+            }
+            ,
             /**
              * 点击发票选项
              */

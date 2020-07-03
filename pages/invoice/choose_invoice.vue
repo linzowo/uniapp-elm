@@ -1,9 +1,11 @@
 <template>
     <view class="flex-direction padding-tb">
-        <view class="padding bg-white align-center">
+        <view 
+        @tap="chooseInvoice(null)"
+        class="padding bg-white align-center">
             <view class="confirm-tag-box text-xxl margin-right-xs">
                 <text 
-                v-show="!invoiceList.length"
+                v-show="invoice === null"
                 class="lg text-green cuIcon-roundcheckfill"></text>
             </view>
             <text class="text-bold text-lg text-color-3">不需要发票</text>
@@ -21,10 +23,12 @@
             v-for="(item, index) in invoiceList" :key="index"
             class="invoice-item bg-white padding justify-between">
 
-                <view class="align-center">
+                <view 
+                @tap="chooseInvoice(index)"
+                class="align-center flex-sub">
                     <view class="confirm-tag-box text-xxl margin-right-xs">
                         <text 
-                        v-show="true"
+                        v-show="JSON.stringify(invoice) == JSON.stringify(item)"
                         class="lg text-green cuIcon-roundcheckfill"></text>
                     </view>
 
@@ -77,6 +81,8 @@
      * @module choose_invoice
      * @description 选择发票模块
      */
+    import {mapState,mapMutations} from 'vuex';
+
     export default {
         name:'choose_invoice',
         data() {
@@ -84,6 +90,12 @@
                 invoiceList:[], // 发票数据列表
             }
         },
+        computed:{
+            ...mapState([
+                'invoice'
+            ])
+        }
+        ,
         created() {
 
             try{
@@ -100,6 +112,25 @@
             }
         },
         methods: {
+            ...mapMutations([
+                'CONFIRM_INVOICE'
+            ])
+            ,
+            /**
+             * 选择发票信息
+             * @param {Number || null} index 发票的索引值或者null
+             */
+            chooseInvoice(index){
+
+                if(index === null){
+                    this.CONFIRM_INVOICE(null);
+                    return;
+                }
+                
+                this.CONFIRM_INVOICE(this.invoiceList[index]);
+
+            }
+            ,
             /**
              * 编辑当前发票信息
              * @param {Number} index 发票的索引值

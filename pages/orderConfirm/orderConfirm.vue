@@ -274,7 +274,9 @@
                 
                 <!-- 电话保护 -->
                 <view class="padding-tb flex-direction">
-                    <view class="margin-bottom-xs align-center">
+                    <view 
+                    @tap="openPopup('codingPopup')"
+                    class="margin-bottom-xs align-center">
                         <text class="text-color-3 margin-right-xs">号码保护</text>
                         <text class="lg text-color-c cuIcon-question"></text>
                     </view>

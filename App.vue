@@ -23,9 +23,9 @@ export default {
 	}
 	,
 	mounted() {
-		// 云函数
+		// 字体图标
 		let ele = document.createElement('script');
-		ele.src = '//at.alicdn.com/t/font_1704517_k40zo27cx3b.js';
+		ele.src = '//at.alicdn.com/t/font_1704517_jw90lxnndyq.js';
 		document.head.appendChild(ele);
 	}
 	,

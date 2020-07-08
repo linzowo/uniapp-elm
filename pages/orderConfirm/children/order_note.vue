@@ -114,7 +114,5 @@
 </script>
 
 <style lang="scss" scoped>
-    .cur{
-
-    }
+    
 </style>

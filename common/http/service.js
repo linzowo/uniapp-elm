@@ -70,6 +70,7 @@ const _urlPath = {
 	order_data:'order_data.json', // 订单数据1
 	order_data_2:'order_data_2.json', // 订单数据2
 	remark_data:'remark_data.json', // 可选备注选项数据
+	order_pay_data:'order_pay_data.json', // 订单支付页数据
 }
 
 // get请求
@@ -151,6 +152,9 @@ export const get = {
 	},
 	remark_data: ()=>{
 		return http.get(_urlPath.remark_data,{});
+	},
+	order_pay_data: ()=>{
+		return http.get(_urlPath.order_pay_data,{});
 	}
 }
 

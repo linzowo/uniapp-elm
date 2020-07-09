@@ -18,8 +18,8 @@
                     v-if="!timeOver"
                     class="text-xxl" 
                     :show-day="false" 
-                    :minute="0" 
-                    :second="30"
+                    :minute="15" 
+                    :second="0"
                     @timeup="timeup"
                      />
                      <text 
@@ -98,6 +98,7 @@
         <view 
         v-if="orderData !== null"
         class="">
+            <!-- 订单详情弹窗 S -->
             <uni-popup ref="orderInfoPopup" type="center">
                 <view 
                 @tap="closeOrderInfo"
@@ -137,6 +138,28 @@
 
                 </view>
             </uni-popup>
+            <!-- 订单详情弹窗 E -->
+            
+            <!-- 支付弹窗 S -->
+            <uni-popup ref="payPopup" type="center">
+                <view class="flex-direction justify-center align-center padding-lr bg-white">
+                    <view class="pay-img-box margin-bottom">
+                        <image
+                        v-if="payType" 
+                        src="/static/image/wx-pay.png" 
+                        mode="widthFix" />
+                        <image 
+                        v-else
+                        src="/static/image/zfb-pay.jpg" 
+                        mode="widthFix" />
+                    </view>
+                    <view class="text-xxl">
+                        <text>如果你觉得这个项目还不错，欢迎你支持我进行更多开源项目的开发。</text>
+                    </view>
+                </view>
+            </uni-popup>
+            <!-- 支付弹窗 E -->
+
         </view>
         <!-- 弹窗区域 E -->
 
@@ -179,6 +202,7 @@
         methods: {
             pay(){
                 console.log('唤起支付');
+                this.$refs.payPopup.open();
             }
             ,
             /**
@@ -229,5 +253,8 @@
         position: absolute;
         bottom: 100rpx;
         width: 100%;
+    }
+    .pay-img-box{
+        width: 350rpx;
     }
 </style>

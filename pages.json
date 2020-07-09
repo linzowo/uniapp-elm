@@ -161,7 +161,8 @@
 		}, {
 			"path": "pages/userSetting/userSetting",
 			"style": {
-				"navigationBarTitleText": "用户信息设置"
+				"navigationBarTitleText": "用户信息设置",
+				"navigationStyle": "custom"
 			}
 		}, {
 			"path": "pages/gold/goldShop",

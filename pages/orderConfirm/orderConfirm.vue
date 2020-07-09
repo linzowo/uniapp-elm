@@ -383,7 +383,7 @@
     /**
      * @module 订单确认模块
      */
-    import {mapState} from 'vuex';
+    import {mapState,mapMutations} from 'vuex';
 
     import mpvuePicker from '@/components/mpvue-picker/mpvuePicker.vue';
 
@@ -393,6 +393,7 @@
         ,
         data(){
             return{
+                orderId: null, // 临时使用的订单id如果正式上线则直接处理后台返回的订单即可
                 orderData:{}, // 订单数据
                 cart:{}, // 购物车数据
                 storeData:{}, // 店铺数据
@@ -415,6 +416,10 @@
                 'note',
                 'invoice'
             ])
+        }
+        ,
+        onLoad(e){
+            this.orderId = e.order_id;
         }
         ,
         created() {
@@ -473,6 +478,48 @@
              * 前往支付页支付
              */
             pay(){
+                // 将当前店铺的订单数据转移至待付订单中
+                let unpaidOrder = null;
+                let cartList = null;
+
+                // 获取当前的购物车列表数据
+                try {
+                    cartList = JSON.parse(uni.getStorageSync('cart_map'));
+                } catch (e) {
+                    console.log(e);
+                }
+
+                // 检查本地存储中是否有待付订单对象
+                try {
+                    unpaidOrder = JSON.parse(uni.getStorageSync('unpaid_order'));
+                } catch (e) {
+                    console.log(e);
+                }
+
+                // 本地无相关对象
+                if(!unpaidOrder){
+                    unpaidOrder = {};
+                }
+
+                // 有相关对象
+                unpaidOrder[this.orderId] = {
+                    info:cartList[this.orderId],
+                    expires: this._.now() + (15 * 60 * 1000)
+                };
+
+                // 存储到本地
+                uni.setStorage({
+                    key: 'unpaid_order',
+                    data: JSON.stringify(unpaidOrder),
+                    success: function () {
+                        console.log('success');
+                    }
+                });
+
+                // 将该数据从购物车删除
+                this.REMOVE_CART(this.orderId);
+                
+                // 跳转至支付页
                 uni.navigateTo({
                      url: this.$pages_path.pay,
                      fail(e) {
@@ -589,6 +636,10 @@
                 this.$utils.log('closePopup','关闭弹窗'+ref);
                 this.$refs[ref].close();
             }
+            ,
+            ...mapMutations([
+                'REMOVE_CART'
+            ])
         }
     }
 </script>

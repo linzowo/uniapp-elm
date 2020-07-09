@@ -38,48 +38,58 @@
 			<!-- 三个月内无订单 E -->
 			
 			<!-- 订单展示区 S -->
-			<view class="order-list">
+			<view class="order-list flex-direction">
 				
 				<view 
 				v-for="(item,index) in orderData"
 				:key="index"
 				@tap="gotoOrderInfo(item)"
-				class="order-item flex-sub padding margin-bottom bg-white">
+				class="order-item flex-sub padding margin-bottom bg-white flex-direction">
 
 					
-					<!-- 店铺封面 -->
-					<image 
-					class="store-cover margin-right-sm"
-					:src="item.image_path|imgUrlFilter" 
-					mode="widthFix" />
+					<view class="flex-sub">
+						<!-- 店铺封面 -->
+						<image 
+						class="store-cover margin-right-sm"
+						:src="item.image_path|imgUrlFilter" 
+						mode="widthFix" />
 
-					<view class="flex-direction flex-sub">
+						<view class="flex-direction flex-sub">
 
-						<!-- 顶部店铺名称等基础信息 S -->
-						<view class="justify-between padding-bottom-sm border-bottom border-color-e">
-							<view class="flex-direction">
-								<!-- 店名 -->
-								<view class="align-center margin-bottom-xs">
-									<text class="text-xl text-color-3 margin-right-xs">{{item.name}}</text>
-									<text class="lg text-gray cuIcon-right"></text>
+							<!-- 顶部店铺名称等基础信息 S -->
+							<view class="justify-between padding-bottom-sm border-bottom border-color-e">
+								<view class="flex-direction">
+									<!-- 店名 -->
+									<view class="align-center margin-bottom-xs">
+										<text class="text-xl text-color-3 margin-right-xs">{{item.name}}</text>
+										<text class="lg text-gray cuIcon-right"></text>
+									</view>
+
+									<!-- 订单创建时间 -->
+									<text class="text-xs text-grey">{{item.created_at}}</text>
 								</view>
 
-								<!-- 订单创建时间 -->
-								<text class="text-xs text-grey">{{item.created_at}}</text>
+								<text class="text-color-3">{{getArrayTips(item)}}</text>
+
 							</view>
+							<!-- 顶部店铺名称等基础信息 E -->
 
-							<text class="text-color-3">{{item.is_arrive?$c_t.order.is_arrive:$c_t.deliverying}}</text>
+							<!-- 商品基本详情 S -->
+							<view class="align-center padding-tb-sm justify-between">
+								<text class="text-color-6 food-name text-cut">{{item.foods[0].name}}{{item.foods.length>1?'等'+item.foods.length+'件商品':''}}</text>
+								<text class="text-price text-color-3 text-lg">{{item.total_price}}</text>	
+							</view>
+							<!-- 商品基本详情 S -->
 
 						</view>
-						<!-- 顶部店铺名称等基础信息 E -->
+					</view>
 
-						<!-- 商品基本详情 S -->
-						<view class="align-center padding-tb-sm justify-between">
-							<text class="text-color-6 food-name text-cut">{{item.foods[0].name}}{{item.foods.length>1?'等'+item.foods.length+'件商品':''}}</text>
-							<text class="text-price text-color-3 text-lg">{{item.total_price}}</text>	
-						</view>
-						<!-- 商品基本详情 S -->
-
+					<view 
+					v-if="getArrayTips(item) == '订单超时未支付'"
+					class="border-top border-color-e justify-end padding-top">
+						<text 
+						@tap.stop.prevent="reCreatOrder"
+						class="padding-xs border border-color-blue text-blue">再来一单</text>
 					</view>
 					
 				</view>
@@ -132,6 +142,7 @@
 				orderData:[], // 历史订单数据
 				showCodingTips: false, // 显示开发中提示
 				dataLoading: false, // 当前是否处于数据加载中
+				unpaidOrder: null, // 未付订单
 			}
 		},
 		computed:{
@@ -141,6 +152,28 @@
 		}
 		,
 		created() {
+
+			// 获取当前订单
+			try{
+				this.unpaidOrder = JSON.parse(uni.getStorageSync('unpaid_order'));
+			}catch(e){
+				console.log(e);
+			}
+
+			if(this.unpaidOrder){
+				this.$http.get.history_order().then((res)=>{
+
+					for (const key in this.unpaidOrder) {
+						res.orders[0].expires = this.unpaidOrder[key].expires;
+						this.orderData = this.orderData.concat(res.orders);
+					}
+					this.hasOrderIn3m = true;
+					this.dataLoading = false;
+				},(e)=>{
+					console.log('请求数据失败',e);
+				});
+			}
+
 			// 获取历史订单数据
 
 			// 有三个月内数据
@@ -154,6 +187,33 @@
 		,
 		methods:{
 			/**
+			 * 再来一单
+			 */
+			reCreatOrder(){
+				uni.navigateTo({
+					 url: this.$pages_path.store_index,
+					 fail(e) {
+						 console.log(e);
+					 }
+				});
+			}
+			,
+			/**
+			 * 获取订单是否送达的提示
+			 * @param {Object} order 订单对象
+			 * @return {String} 提示文本
+			 */
+			getArrayTips(order){
+				// 判断订单是否有过期时间
+				if(order.expires){
+					return (this._.now() + (15 * 60 * 1000)) > order.expires ? this.$c_t.order.timeup : this.$c_t.order.unpaid;
+				}
+
+				// 没有超时时间
+				return order.is_arrive?this.$c_t.order.is_arrive:this.$c_t.order.deliverying;
+			}
+			,
+			/**
 			 * 获取三个月以上一年以内购物数据
 			 */
 			get3mOrder(){
@@ -163,7 +223,9 @@
 
 				
 				this.$http.get.history_order().then((res)=>{
-					this.orderData = res.orders;
+					this.$set(this,'orderData',[].concat(this.orderData,res.orders));
+					console.log(this.orderData);
+
 					this.dataLoading = false;
 				},(e)=>{
 					console.log('请求数据失败',e);

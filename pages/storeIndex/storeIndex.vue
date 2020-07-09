@@ -2208,7 +2208,7 @@
 
 				// 跳转到订单确定页
 				uni.navigateTo({
-					url:this.$pages_path.order_confirm,
+					url:this.$pages_path.order_confirm + '?order_id=' + this.storeData.rst.id,
 					fail(e) {
 						console.log('跳转失败',e);
 					}

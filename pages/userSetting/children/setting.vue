@@ -35,7 +35,7 @@
 
                     <view class="align-center">
                         <text class="margin-right-xl">手机号</text>
-                        <text>184****1234</text>
+                        <text>{{userInfo.phone}}</text>
                     </view>
 
                     <button 
@@ -132,6 +132,13 @@
 </template>
 
 <script>
+    /**
+     * @module 用户信息修改页
+     * @description 在此页修改用户的名称电话及密码等
+     */
+
+	import {mapState,mapMutations} from 'vuex';
+
     export default {
         data() {
             return {
@@ -162,13 +169,21 @@
                         this.passwordInput.new !== '' && 
                         this.passwordInput.confirm !== '' &&
                         this.passwordInput.new == this.passwordInput.confirm)
-            }
+            },
+            ...mapState([
+                'userInfo'
+            ])
         }
         ,
         methods:{
+            ...mapMutations([
+                'SAVE_USERINFO'
+            ])
+            ,
             setPassword(e){
                 if(!this.showSavePasswordBtn){
                     console.log('存储新密码',e);
+                    this.$refs.codingPopup.open();
                 }
             }
             ,
@@ -182,7 +197,17 @@
              * 存储用户姓名数据
              */
             setUsername(e){
-                console.log(e.detail.value);
+                if(this._.inRange(this.usernameInput.length,5,25)){
+                    console.log(e.detail.value);
+                    let newInfo = JSON.parse(JSON.stringify(this.userInfo));
+                    newInfo.name = this.usernameInput;
+                    console.log(newInfo);
+                    this.SAVE_USERINFO(newInfo);
+
+                    uni.navigateBack({
+                         delta: 1
+                    });
+                }
             }
             ,
 			/**

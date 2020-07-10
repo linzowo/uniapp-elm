@@ -6,7 +6,8 @@ import {
 	REMOVE_CART,
 	INIT_CART,
 	CONFIRM_NOTE,
-	CONFIRM_INVOICE
+	CONFIRM_INVOICE,
+	SAVE_LOGIN_STATE
 } from './mutations-type.js';
 
 import _ from 'lodash';
@@ -14,6 +15,10 @@ import Vue from 'vue';
 
 
 export default {
+	[SAVE_LOGIN_STATE](state,loginState){
+		state.login = loginState;
+	}
+	,
 	// 存储发票数据
 	[CONFIRM_INVOICE](state,newInvoice){
 		state.invoice = newInvoice;

@@ -80,7 +80,7 @@
 	 * @description 修改用户相关信息
 	 */
 
-	import {mapState} from 'vuex';
+	import {mapState,mapMutations} from 'vuex';
 
 	export default {
 		data() {
@@ -95,6 +95,10 @@
 		}
 		,
 		methods:{
+			...mapMutations([
+				'SAVE_LOGIN_STATE'
+			])
+			,
 			/**
 			 * 修改头像
 			 */
@@ -110,7 +114,18 @@
 				});
 			}
 			,
-			logout(){}
+			/**
+			 * 退出登录
+			 */
+			logout(){
+				console.log('退出登录');
+				this.SAVE_LOGIN_STATE(false);
+
+				uni.switchTab({
+					 url: this.$pages_path.user,
+					 fail(e) {console.log(e);}
+				});
+			}
 
 		}
 	}

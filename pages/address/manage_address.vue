@@ -171,7 +171,7 @@
             editAddress(index){
                 console.log('编辑地址',index);
                 uni.navigateTo({
-                     url: this.$pages_path.edit_address,
+                     url: this.$pages_path.edit_address + '?index=' + index,
                      fail(e) {
                          console.log(e);
                      }

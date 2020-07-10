@@ -110,7 +110,17 @@
 		}, {
 			"path": "pages/address/edit_address",
 			"style": {
-				"navigationBarTitleText": "地址编辑"
+				"navigationBarTitleText": "地址编辑",
+				"app-plus":{
+					"titleNView":{
+						"buttons":[
+							{
+								"text":"删除",
+								"fontSize":"15px"
+							}
+						]
+					}
+				}
 			}
 		}, {
 			"path": "pages/search/search",

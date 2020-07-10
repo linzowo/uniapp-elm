@@ -39,18 +39,6 @@
 		class="cu-load bg-white loading"></view>
 		<!-- loading E -->
 		
-		<!-- 没有结果 S -->
-		<view 
-		v-if="!storeListData.length && !loading"
-		class="search-no-result padding-lg justify-center align-center">
-			<image :src="$i_u.search_no_result" mode="widthFix" class="search-no-result-img"></image>
-			<view class="search-no-result-text flex-direction">
-				<text class="text-lg margin-bottom-xs">附近没有搜索结果</text>
-				<text class="text-xs text-color-9">换个关键词试试吧</text>
-			</view>
-		</view>
-		<!-- 没有结果 E -->
-		
 		<view 
 		v-if="!loading"
 		class="content-box flex-sub">
@@ -67,6 +55,18 @@
 			<view
 			 v-if="login"
 			 class="flex-direction login store-list flex-sub">
+		
+				<!-- 没有结果 S -->
+				<view 
+				v-if="!storeListData.length"
+				class="search-no-result padding-lg justify-center align-center">
+					<image :src="$i_u.search_no_result" mode="widthFix" class="search-no-result-img"></image>
+					<view class="search-no-result-text flex-direction">
+						<text class="text-lg margin-bottom-xs">附近没有搜索结果</text>
+						<text class="text-xs text-color-9">换个关键词试试吧</text>
+					</view>
+				</view>
+				<!-- 没有结果 E -->
 			 
 				<!-- store-list-item S -->
 				<view 

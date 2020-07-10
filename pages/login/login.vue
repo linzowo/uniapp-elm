@@ -77,7 +77,15 @@
 </template>
 
 <script>
+	/**
+	 * @module login
+	 * @description 登录模块
+	 */
+
+	import {mapState,mapMutations} from 'vuex';
+
 	export default {
+		name:'login',
 		data() {
 			return {
 				inputState:{
@@ -96,7 +104,18 @@
 				}
 			}
 		},
+		computed:{
+			...mapState([
+				'userInfo'
+			])
+		}
+		,
 		methods:{
+			...mapMutations([
+				'SAVE_LOGIN_STATE',
+				'SAVE_USERINFO'
+			])
+			,
 			inputFocus(index){
 				this.inputState.inputFocusIndex = index;
 			},
@@ -197,6 +216,18 @@
 				
 				// 发起登录请求
 				console.log('发起登录请求');
+
+				// 将用户输入的电话作为用户电话使用
+				let newInfo = JSON.parse(JSON.stringify(this.userInfo));
+				newInfo.phone = this.inputState.phoneState.phone;
+				this.SAVE_USERINFO(newInfo);
+				
+				// 修改登录状态为已登录
+				this.SAVE_LOGIN_STATE(true);
+				uni.navigateBack({
+					 delta: 1
+				});
+				
 			}
 		}
 	}

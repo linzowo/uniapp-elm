@@ -197,7 +197,25 @@ const watch = {
 	 * @param {Object} n
 	 * @param {Object} o
 	 */
-	pageState(n,o){}
+	pageState(n,o){},
+	/**
+	 * 监听登录状态变化
+	 * 如果新状态与旧状态不一致且新状态为已登录就获取数据
+	 */
+	login(n,o){
+		if(n !== o && n){
+			this.storeListDataLoading = true;
+
+			this.$http.get.store_list_data_1().then((res)=>{
+				this.storeListData = res.items;
+				this.hasNext = res.has_next;
+				this.storeListDataLoading = false;
+			},e=>{
+				console.log(e);
+				this.storeListDataLoading = false;
+			});
+		}
+	}
 };
 
 export default {
@@ -246,6 +264,8 @@ export default {
 				console.log(e);
 				this.storeListDataLoading = false;
 			});
+		}else{
+			this.storeListDataLoading = false;
 		}
 		
 	}

@@ -22,6 +22,7 @@
     city: "/pages/city/city",
     store_index: "/pages/storeIndex/storeIndex",
     user_setting: "/pages/userSetting/userSetting",
+    input_user_setting: "/pages/userSetting/children/setting",
     gold_shop: "/pages/gold/goldShop",
     gold_exchange: "/pages/gold/goldExchange",
     share: "/pages/share/share",

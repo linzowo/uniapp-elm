@@ -22,7 +22,7 @@
 				type="number"
 				@input="inputPhone"
 				@confirm="inputState.showBtn?loggin():getCode()"
-				></input>
+				>
 				<button 
 				@tap="getCode"
 				:disabled="inputState.showBtn" class='cu-btn bg-green shadow'>{{inputState.phoneState.getCodeBtnText}}</button>
@@ -40,7 +40,7 @@
 				@input="inputCode"
 				@confirm="loggin"
 				:focus="inputState.codeState.codeFocus"
-				></input>
+				>
 			</view>
 			
 		</view>

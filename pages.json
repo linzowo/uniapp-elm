@@ -165,6 +165,12 @@
 				"navigationStyle": "custom"
 			}
 		}, {
+			"path": "pages/userSetting/children/setting",
+			"style": {
+				"navigationBarTitleText": "修改设置页",
+				"navigationStyle": "custom"
+			}
+		}, {
 			"path": "pages/gold/goldShop",
 			"style": {
 				"navigationBarTitleText": "金币商城"

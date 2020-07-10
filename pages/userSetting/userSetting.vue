@@ -1,7 +1,9 @@
 <template>
 	<view class="flex-direction">
 		<!-- 头像 -->
-		<view class="justify-between text-xl bg-white padding-sm align-center border-bottom border-color-e">
+		<view 
+		@tap="setAvatar"
+		class="justify-between text-xl bg-white padding-sm align-center border-bottom border-color-e">
 			<text class="text-color-0">头像</text>
 			<view class="align-center">
 				<view class="user-avatar-box margin-right-xs round">
@@ -14,17 +16,21 @@
 			</view>
 		</view>
 		<!-- 用户名 -->
-		<view class="justify-between text-xl bg-white padding-sm">
+		<view 
+		@tap="gotoInput('username')"
+		class="justify-between text-xl bg-white padding-sm">
 			<text class="text-color-0">用户名</text>
 
-			<view class="">
+			<view class="align-center">
 				<text>{{userInfo.name}}</text>
 				<text class="lg text-gray cuIcon-right"></text>
 			</view>
 			
 		</view>
 		<!-- 手机号 -->
-		<view class="flex-direction padding-top-sm">
+		<view 
+		@tap="gotoInput('phone')"
+		class="flex-direction padding-top-sm">
 			<text class="text-xs padding-sm text-color-9">账号绑定</text>
 			<view class="justify-between bg-white padding-sm text-xl">
 				<view class="align-center">
@@ -38,7 +44,9 @@
 			</view>
 		</view>
 		<!-- 密码设置 -->
-		<view class="flex-direction padding-top-sm">
+		<view 
+		@tap="gotoInput('password')"
+		class="flex-direction padding-top-sm">
 			<text class="text-xs padding-sm text-color-9">安全设置</text>
 			<view class="justify-between bg-white padding-sm text-xl">
 				<text>登录密码</text>
@@ -50,9 +58,18 @@
 		</view>
 
 		<!-- 退出登录 -->
-		<view class="bg-white padding-tb margin-top-xl justify-center">
+		<view 
+		@tap="logout"
+		class="bg-white padding-tb margin-top-xl justify-center">
 			<text class="text-red text-xl text-bold">退出登录</text>
 		</view>
+
+		<!-- 弹窗组件 S -->
+		<view class="">
+			<codingPopup ref="codingPopup"></codingPopup>
+		</view>
+		<!-- 弹窗组件 E -->
+
 
 	</view>
 </template>
@@ -77,6 +94,25 @@
 			])
 		}
 		,
+		methods:{
+			/**
+			 * 修改头像
+			 */
+			setAvatar(){
+				console.log('修改头像');
+				this.$refs.codingPopup.open();
+			}
+			,
+			gotoInput(mode){
+				uni.navigateTo({
+					 url: this.$pages_path.input_user_setting + '?mode=' + mode,
+					 fail(e) {console.log(e);}
+				});
+			}
+			,
+			logout(){}
+
+		}
 	}
 </script>
 

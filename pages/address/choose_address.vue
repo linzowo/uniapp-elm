@@ -6,7 +6,9 @@
         <!-- 数据加载中 E -->
 
         <!-- 数据加载成功 S -->
-        <view class="flex-direction">
+        <view 
+        v-if="!pageState.loading"
+        class="flex-direction">
             <!-- 配送范围内店铺 S -->
             <view class="flex-direction address-list">
                 

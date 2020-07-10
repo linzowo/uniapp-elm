@@ -21,7 +21,7 @@
 					:value="inputText"
 					type="text" 
 					placeholder="请输入地址" 
-					confirm-type="search"></input>
+					confirm-type="search">
 					<text 
 					v-if="inputText"
 					@tap="clearInput"

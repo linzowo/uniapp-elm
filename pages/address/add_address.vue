@@ -7,7 +7,7 @@
 			<form class="from-box" @submit="formSubmit">
 				<view class="cu-form-group">
 					<view class="title">联系人</view>
-					<input placeholder="姓名" name="name" type="text" v-model="formData.name"></input>
+					<input placeholder="姓名" name="name" type="text" v-model="formData.name">
 				</view>
 				<view class="cu-form-group justify-start">
 					<view class="title"></view>
@@ -31,7 +31,7 @@
 				</view>
 				<view class="cu-form-group">
 					<view class="title">电话</view>
-					<input placeholder="手机号码" name="phone" type="number" v-model="formData.phone"></input>
+					<input placeholder="手机号码" name="phone" type="number" v-model="formData.phone">
 				</view>
 				<view class="cu-form-group" @tap="chooseAddress">
 					<view class="title">地址</view>
@@ -45,7 +45,7 @@
 				</view>
 				<view class="cu-form-group">
 					<view class="title">门牌号</view>
-					<input placeholder="10号楼5层501室222" name="addressInfo" v-model="formData.addressInfo"></input>
+					<input placeholder="10号楼5层501室222" name="addressInfo" v-model="formData.addressInfo">
 					<text class='cuIcon-edit'></text>
 				</view>
 				<view class="cu-form-group justify-start">
@@ -93,7 +93,7 @@
 			<view class="cu-bar search bg-white">
 				<view class="search-form round">
 					<text class="cuIcon-search"></text>
-					<input @focus="InputFocus" @blur="InputBlur" :adjust-position="false" type="text" placeholder="请输入小区/写字楼/学校等" confirm-type="search"></input>
+					<input @focus="InputFocus" @blur="InputBlur" :adjust-position="false" type="text" placeholder="请输入小区/写字楼/学校等" confirm-type="search">
 				</view>
 				<view class="action">
 					<button class="cu-btn bg-blue-base shadow-blur round">搜索</button>
@@ -262,9 +262,15 @@
 				});
 				
 				// 返回收货地址选择页
-				 uni.redirectTo({
-				 	url:'/pages/address/address'
-				 });
+				if(getCurrentPages().length < 3){
+					uni.redirectTo({
+						url:'/pages/address/address'
+					});
+				}else{
+					uni.navigateBack({
+						delta: 1
+					});
+				}
 			}
 		}
 	}

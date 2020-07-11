@@ -17,6 +17,19 @@ import Vue from 'vue';
 export default {
 	[SAVE_LOGIN_STATE](state,loginState){
 		state.login = loginState;
+
+		let login_state = JSON.stringify({
+			login:loginState,
+			expires: _.now() + (24 * 60 * 60 * 1000)
+		});
+
+		uni.setStorage({
+			key: 'login_state',
+			data: login_state,
+			success: function () {
+				console.log('success');
+			}
+		});
 	}
 	,
 	// 存储发票数据

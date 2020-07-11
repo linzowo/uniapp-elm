@@ -14,6 +14,18 @@ export default {
 		console.log('App Hide');
 	},
 	created() {
+		// 检查并设置登录状态
+		let loginState;
+		try {
+			loginState = JSON.parse(uni.getStorageSync('login_state'));
+		} catch (e) {
+			console.log(e);
+		}
+		if(loginState && loginState.expires > this._.now()){
+			this.SAVE_LOGIN_STATE(loginState.login);
+		}
+
+
 		// 获取用户的登录信息
 		this.getUserInfo();
 		// 获取用户当前的位置信息
@@ -29,7 +41,8 @@ export default {
 		])
 		,
 		...mapMutations([
-			'INIT_CART'
+			'INIT_CART',
+			'SAVE_LOGIN_STATE'
 		])
 	}
 };

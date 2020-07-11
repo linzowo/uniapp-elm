@@ -12,7 +12,8 @@
 				<view class="flex text-center">
 					<view 
 					class="cu-item flex-sub" 
-					:class="item.selected?'text-orange cur':''" v-for="(item,index) in storeNavList" 
+					:class="item.selected?'text-orange cur':''" 
+					v-for="(item,index) in storeNavList" 
 					:key="index" 
 					@tap="tabSelect" 
 					:data-id="index">
@@ -210,7 +211,7 @@
 						class="store-activities text-color-6 flex-sub text-xs align-start">
 							<view class="active-left flex-direction text-scale-9">
 								<view 
-								v-for="(e,i) in item.restaurant.act_tag ? item.restaurant.activities : item.restaurant.activities.slice(0,2)"
+								v-for="(e) in item.restaurant.act_tag ? item.restaurant.activities : item.restaurant.activities.slice(0,2)"
 								:key="e.id"
 								class="activities-item align-center margin-tb-xs">
 									<text class="radius active-tag text-xs margin-right-xs color-white"
@@ -321,7 +322,7 @@
 					<!-- 推荐标题 E -->
 					
 					<view 
-					v-for="(item,index) in recommendData"
+					v-for="(item) in recommendData"
 					:key="item.restaurant.authentic_id"
 					@tap="gotoStoreIndex(item.restaurant.id)"
 					class="store-list-item padding-tb padding-lr-sm border-bottom border-color-e align-start flex-sub">
@@ -463,6 +464,7 @@
 		
 		<!-- 筛选及排序弹窗 S -->
 		<uni-popup 
+		v-if="storeListData.length"
 		ref="filterBarPopup" 
 		:type="'top'"
 		@change="popupChange"

@@ -13,7 +13,7 @@
 				@input="InputEnter"
 				type="text" 
 				placeholder="输入城市名或者拼音" 
-				confirm-type="search"></input>
+				confirm-type="search">
 			</view>
 		</view>
 		<!-- 搜索栏 E -->
@@ -37,7 +37,7 @@
 			<!-- v-show="!inputText" -->
 			<view
 			 class="flex-sub"
-			 v-for="(value,key,index) in newList" :key="key + index"
+			 v-for="(value,key,index) in newList" :key="key"
 			 >
 				<view 
 				:class="'indexItem-' + key" 
@@ -52,7 +52,7 @@
 						<view 
 						class="cu-item border-top border-color-e" 
 						v-for="(cityName,sub,i) in value" 
-						:key="sub+i"
+						:key="sub"
 						@tap="changeCity(cityName)"
 						v-show="itemShow(cityName)"
 						>

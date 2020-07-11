@@ -23,7 +23,7 @@
 					placeholder="输入商家、商品名称(输入'没有结果'查看搜索无结果情况)" 
 					confirm-type="search"
 					@confirm="requestSearchRes"
-					></input>
+					>
 					
 					<view 
 					v-show="inputText"
@@ -166,8 +166,8 @@
 				
 				<!-- 普通搜索提示 S -->
 				<view 
-				v-for="(item,index) in searchCueData.word_with_meta"
-				:key="'word_with_meta'+index"
+				v-for="(item) in searchCueData.word_with_meta"
+				:key="item.word"
 				@tap="fillSearch(item.word)"
 				class="search-cue-item flex-sub flex-direction">
 				

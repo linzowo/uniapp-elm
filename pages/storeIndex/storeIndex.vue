@@ -279,8 +279,8 @@
 											class="cu-list flex-direction flex-sub bg-white"
 											>
 												<view 
-												v-for="(ele,i) in item.foods"
-												:key="'cu-item'+i"
+												v-for="(ele) in item.foods"
+												:key="ele.item_id"
 												@tap="showGoodsInfoPopup(ele)"
 												class="cu-item flex-sub align-start margin-bottom-lg">
 													
@@ -1392,7 +1392,7 @@
 							<!-- 有类别选项 -->
 							<view 
 							v-for="(ele,k,index) in item.taste"
-							:key="key + k"
+							:key="k"
 							class="justify-between border-bottom border-color-e padding-tb"
 							>
 								<view class="text-lg align-center">

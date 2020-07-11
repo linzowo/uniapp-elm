@@ -253,6 +253,8 @@
 					console.log(e);
 					this.storeListDataLoading = false;
 				});
+			}else{
+				this.storeListDataLoading = false;
 			}
 			
 		}

@@ -71,7 +71,7 @@
 				<!-- store-list-item S -->
 				<view 
 				v-for="(item,index) in storeListData"
-				:key="item.restaurant.authentic_id + index"
+				:key="index"
 				@tap="gotoStoreIndex(item.restaurant.id)"
 				class="store-list-item padding-tb padding-lr-sm border-bottom border-color-e align-start flex-sub">
 					<!-- 遮罩层 S -->
@@ -485,7 +485,7 @@
 					 class="cu-list menu flex-sub order-box">
 						<view 
 						v-for="(item,index) in storeNavList[0].list"
-						:key="item.name+index"
+						:key="item.name"
 						@tap="orderTap(index)"
 						class="cu-item"
 						:class="storeNavList[0].listSelected ? 

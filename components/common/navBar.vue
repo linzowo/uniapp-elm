@@ -5,9 +5,9 @@
 		v-if="!hideAddress"
 		 url="/pages/address/address" 
 		 class="add-box font-w700">
-			<svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-Locationpinmarker"></use></svg>
+			<text class="iconfont icon-Locationpinmarker"></text>
 			<text class="add-content">{{address?address:'未能获取地址'}}</text>
-			<svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-sanjiao"></use></svg>
+			<text class="iconfont icon-sanjiao"></text>
 		</navigator>
 		<!-- 当前位置信息 E -->
 		
@@ -15,7 +15,7 @@
 		<view
 		@tap="searchTap"
 		class="search flex vs-space-center vs-align-center color-black9">
-			<svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-fangdajing"></use></svg>
+			<text class="iconfont icon-fangdajing"></text>
 			<text class="search-text color-black9">搜索饿了么商家、商品名称</text>
 		</view>
 		<!-- 搜索框 E -->

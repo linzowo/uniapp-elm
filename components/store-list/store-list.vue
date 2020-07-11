@@ -17,9 +17,10 @@
 					@tap="tabSelect" 
 					:data-id="index">
 						<text>{{item.title}}</text>
-						<svg 
+						<text 
 						v-if="index == 0"
-						class="icon-svg text-xs " aria-hidden="true"><use xlink:href="#icon-sanjiao"></use></svg>
+						class="iconfont text-xs icon-sanjiao"></text>
+
 						<text 
 						v-if="index == 3"
 						class="lg" :class="'cuIcon-filter'"></text>

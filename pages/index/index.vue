@@ -59,9 +59,9 @@
 				url="/pages/member/member"
 				class="member padding-sm flex justify-between margin-sm margin-top-xs align-center margin-bottom">
 					<view class="left align-center">
-						<svg class="icon-svg member-icon margin-right-xs" aria-hidden="true"><use xlink:href="#icon-huangguan"></use></svg>
+						<text class="iconfont icon-huangguan member-icon margin-right-xs"></text>
 						<h3 class="text">超级会员</h3>
-						<svg class="icon-svg text-xs " aria-hidden="true"><use xlink:href="#icon-dian"></use></svg>
+						<text class="iconfont icon-dian text-xs"></text>
 						<text class="text-xs">每月享超值权益</text>
 					</view>
 					<text class="right text-xs">

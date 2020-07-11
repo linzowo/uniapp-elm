@@ -22,13 +22,6 @@ export default {
 		this.INIT_CART();
 	}
 	,
-	mounted() {
-		// 字体图标
-		let ele = document.createElement('script');
-		ele.src = '//at.alicdn.com/t/font_1704517_jw90lxnndyq.js';
-		document.head.appendChild(ele);
-	}
-	,
 	methods:{
 		...mapActions([
 			'getUserInfo',
@@ -47,4 +40,5 @@ export default {
 @import 'colorui/main.css';
 @import 'colorui/animation.css';
 @import "app.css";
+@import 'css/aliicon.css';
 </style>

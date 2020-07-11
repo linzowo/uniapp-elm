@@ -53,7 +53,7 @@
                     class="alipay align-center pay-item padding-lr padding-tb-sm border-bottom border-color-e justify-between">
                         <view class="align-center">
                             <view class="text-sl margin-right-sm">
-                                <svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-zhifubao"></use></svg>
+                                <text class="iconfont icon-zhifubao"></text>
                             </view>
                             <text class="text-lg text-color-0">支付宝</text>
                         </view>
@@ -69,7 +69,7 @@
                     class="alipay align-center pay-item padding-lr padding-tb-sm border-bottom border-color-e justify-between">
                         <view class="align-center">
                             <view class="text-sl margin-right-sm">
-                                <svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-weixinzhifu1"></use></svg>
+                                <text class="iconfont icon-weixinzhifu1"></text>
                             </view>
                             <text class="text-lg text-color-0">微信支付</text>
                         </view>

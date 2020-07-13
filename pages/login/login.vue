@@ -224,6 +224,15 @@
 				
 				// 修改登录状态为已登录
 				this.SAVE_LOGIN_STATE(true);
+
+				// 如果当前页面栈中没有返回的区域就返回主页
+				if(getCurrentPages().length < 2){
+					uni.switchTab({
+						 url: this.$pages_path.index
+					});
+					return;
+				}
+
 				uni.navigateBack({
 					 delta: 1
 				});

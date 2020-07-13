@@ -6,7 +6,7 @@
 		<view 
 		v-if="storeListData.length"
 		:style="{top:top + 'px'}"
-		class="content-list-tab-box bg-white flex-sub"
+		class="content-list-tab-box bg-white"
 		>
 			<scroll-view scroll-x class="nav">
 				<view class="flex text-center">

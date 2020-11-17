@@ -65,6 +65,7 @@
 					:autoplay="true" 
 					interval="5000" 
 					duration="500"
+					v-if="storeRedPackets"
 					>
 						<swiper-item 
 						v-for="(item,index) in parseInt(storeRedPackets.prizes.length/6)" 
@@ -96,7 +97,9 @@
 			</view>
 			
 			<!-- box3 -->
-			<view class="card-box card-box-3 margin-tb-xs flex-sub bg-white padding-sm flex-direction">
+			<view 
+			v-if="rewardReadPackets"
+			class="card-box card-box-3 margin-tb-xs flex-sub bg-white padding-sm flex-direction">
 				<view class="card-title margin-bottom-sm flex-direction">
 					<view class="align-center">
 						<text class="title-tag text-sm padding-lr-xs text-bold margin-right-xs">{{rewardReadPackets.tag}}</text>
@@ -149,6 +152,7 @@
 					:autoplay="true" 
 					interval="5000" 
 					duration="500"
+					v-if="saleGoods"
 					>
 						<swiper-item 
 						v-for="(item,index) in parseInt(saleGoods.query_list.length/4)" 
@@ -234,9 +238,9 @@
 	export default {
 		data() {
 			return {
-				storeRedPackets:[], // 商家大额红包服务数据
-				rewardReadPackets:[], // 奖励红包数据
-				saleGoods:[], // 折扣商品数据
+				storeRedPackets:null, // 商家大额红包服务数据
+				rewardReadPackets:null, // 奖励红包数据
+				saleGoods:null, // 折扣商品数据
 				showFooterBtn:false, // 控制底部按钮出现的指标
 			}
 		},
@@ -250,12 +254,23 @@
 			
 			// 模拟获取必要数据过程
 			// 获取支持商家大额红包兑换的商家列表
-			this.storeRedPackets = this.$t_d.STORE_RED_PACKETS;
+			this.$http.get.store_red_packets().then((res)=>{
+				this.storeRedPackets = res;
+			},e=>{
+				console.log(e);
+			});
 			// 获取奖励红包数据
-			this.rewardReadPackets = this.$t_d.REWARD_RED_PACKETS[2];
+			this.$http.get.reward_red_packets().then((res)=>{
+				this.rewardReadPackets = res[2];
+			},e=>{
+				console.log(e);
+			});
 			// 折扣商品数据
-			this.saleGoods =  this.$t_d.MEMBER_SALE_GOODS;
-			// console.log(this.saleGoods);
+			this.$http.get.member_sale_goods().then((res)=>{
+				this.saleGoods = res;
+			},e=>{
+				console.log(e);
+			});
 		},
 		onPageScroll(e) {
 			if(this.$utils.getElementInfo('.card-box-3').bottom <= this.$system_info.screenHeight && !this.showFooterBtn){
@@ -274,7 +289,7 @@
 					console.log('跳转至会员开通页面');
 				}else{
 					uni.navigateTo({
-						url:'/pages/login/login',
+						url:this.$pages_path.login,
 						fail(e) {
 							console.log('跳转登录页失败：',e);
 						}

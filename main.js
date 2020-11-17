@@ -17,12 +17,14 @@ Vue.config.devtools = isDebug_mode;
 Vue.config.productionTip = isDebug_mode;
 
 // 引入工具文件
-import utils from '@/common/utils.js';
+import utils from '@/utils/utils.js';
 Vue.prototype.$utils = utils;
+
 import _ from 'lodash';
 Vue.prototype._ = _;
+
 // 网络请求模块
-import http from '@/common/http/service.js';
+import http from '@/utils/http/service.js';
 Vue.prototype.$http = http;
 
 // 引入配置文件
@@ -31,14 +33,20 @@ import {
 	COMMON_TEXT
 } from '@/config/common_text.js';
 Vue.prototype.$c_t = COMMON_TEXT;
+
 // 公共图片地址
 import {
 	IMG_URL
 } from '@/config/img_url.js';
 Vue.prototype.$i_u = IMG_URL;
+
 // 测试数据
 import TEST_DATA from '@/config/test_data.js';
 Vue.prototype.$t_d = TEST_DATA;
+
+// 页面导航地址配置
+import {PAGES_PATH} from '@/config/pages_path.js';
+Vue.prototype.$pages_path = PAGES_PATH;
 
 // 将系统信息绑定到对象上方便后面使用
 uni.getSystemInfo({
@@ -47,6 +55,28 @@ uni.getSystemInfo({
 		Vue.prototype.$system_info = e;
 	}
 });
+
+// 全局组件绑定
+// 功能开发中提示组件
+import codingPopup from '@/components/coding-popup/coding-popup.vue';
+Vue.component('codingPopup',codingPopup);
+// 未登录提示组件
+import noLogin from '@/components/noLogin/noLogin.vue';
+Vue.component('noLogin',noLogin);
+// 数据加载中组件
+import loading from '@/components/loading/loading.vue';
+Vue.component('loading',loading);
+
+// 弹窗组件
+import uniPopup from '@/components/uni-popup/uni-popup.vue';
+import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog.vue';
+import UniPopupMessage from '@/components/uni-popup/uni-popup-message.vue';
+import UniPopupShare from '@/components/uni-popup/uni-popup-share.vue';
+Vue.component('uniPopup',uniPopup);
+Vue.component('uniPopupDialog',uniPopupDialog);
+Vue.component('UniPopupMessage',UniPopupMessage);
+Vue.component('UniPopupShare',UniPopupShare);
+
 
 // 创建全局过滤器
 
@@ -63,4 +93,5 @@ const app = new Vue({
 	store,
 	...App
 })
+
 app.$mount()

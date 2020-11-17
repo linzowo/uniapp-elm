@@ -14,23 +14,35 @@ export default {
 		console.log('App Hide');
 	},
 	created() {
+		// 检查并设置登录状态
+		let loginState;
+		try {
+			loginState = JSON.parse(uni.getStorageSync('login_state'));
+		} catch (e) {
+			console.log(e);
+		}
+		if(loginState && loginState.expires > this._.now()){
+			this.SAVE_LOGIN_STATE(loginState.login);
+		}
+
+
 		// 获取用户的登录信息
 		this.getUserInfo();
 		// 获取用户当前的位置信息
 		this.saveAddress();
-	}
-	,
-	mounted() {
-		// 云函数
-		let ele = document.createElement('script');
-		ele.src = '//at.alicdn.com/t/font_1704517_k40zo27cx3b.js';
-		document.head.appendChild(ele);
+		// 检查本地缓存中是否有购物车数据
+		this.INIT_CART();
 	}
 	,
 	methods:{
 		...mapActions([
 			'getUserInfo',
 			'saveAddress'
+		])
+		,
+		...mapMutations([
+			'INIT_CART',
+			'SAVE_LOGIN_STATE'
 		])
 	}
 };
@@ -41,4 +53,5 @@ export default {
 @import 'colorui/main.css';
 @import 'colorui/animation.css';
 @import "app.css";
+@import 'css/aliicon.css';
 </style>

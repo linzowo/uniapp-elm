@@ -6,20 +6,22 @@
 		<view 
 		v-if="storeListData.length"
 		:style="{top:top + 'px'}"
-		class="content-list-tab-box bg-white flex-sub"
+		class="content-list-tab-box bg-white"
 		>
 			<scroll-view scroll-x class="nav">
 				<view class="flex text-center">
 					<view 
 					class="cu-item flex-sub" 
-					:class="item.selected?'text-orange cur':''" v-for="(item,index) in storeNavList" 
+					:class="item.selected?'text-orange cur':''" 
+					v-for="(item,index) in storeNavList" 
 					:key="index" 
 					@tap="tabSelect" 
 					:data-id="index">
 						<text>{{item.title}}</text>
-						<svg 
+						<text 
 						v-if="index == 0"
-						class="icon-svg text-xs " aria-hidden="true"><use xlink:href="#icon-sanjiao"></use></svg>
+						class="iconfont text-xs icon-sanjiao"></text>
+
 						<text 
 						v-if="index == 3"
 						class="lg" :class="'cuIcon-filter'"></text>
@@ -31,20 +33,16 @@
 		
 		
 		<!-- content S -->
-		
-		<!-- 没有结果 S -->
+
+		<!-- loading S -->
 		<view 
-		v-if="!storeListData.length"
-		class="search-no-result padding-lg justify-center align-center">
-			<image :src="$i_u.search_no_result" mode="widthFix" class="search-no-result-img"></image>
-			<view class="search-no-result-text flex-direction">
-				<text class="text-lg margin-bottom-xs">附近没有搜索结果</text>
-				<text class="text-xs text-color-9">换个关键词试试吧</text>
-			</view>
-		</view>
-		<!-- 没有结果 E -->
+		v-if="loading"
+		:style="{display:'block'}"
+		class="cu-load bg-white loading"></view>
+		<!-- loading E -->
 		
 		<view 
+		v-if="!loading"
 		class="content-box flex-sub">
 			
 			<!-- 未登录 S -->
@@ -59,12 +57,24 @@
 			<view
 			 v-if="login"
 			 class="flex-direction login store-list flex-sub">
+		
+				<!-- 没有结果 S -->
+				<view 
+				v-if="!storeListData.length"
+				class="search-no-result padding-lg justify-center align-center">
+					<image :src="$i_u.search_no_result" mode="widthFix" class="search-no-result-img"></image>
+					<view class="search-no-result-text flex-direction">
+						<text class="text-lg margin-bottom-xs">附近没有搜索结果</text>
+						<text class="text-xs text-color-9">换个关键词试试吧</text>
+					</view>
+				</view>
+				<!-- 没有结果 E -->
 			 
 				<!-- store-list-item S -->
 				<view 
 				v-for="(item,index) in storeListData"
-				:key="item.restaurant.authentic_id + index"
-				@tap="gotoStoreIndex(index)"
+				:key="index"
+				@tap="gotoStoreIndex(item.restaurant.id)"
 				class="store-list-item padding-tb padding-lr-sm border-bottom border-color-e align-start flex-sub">
 					<!-- 遮罩层 S -->
 					<view 
@@ -78,10 +88,15 @@
 					<!-- 遮罩层 E -->
 					
 					<!-- 店铺封面 S -->
-					<image 
-					class="store-cover margin-right-xs" 
-					:src="item.restaurant.image_path|imgUrlFilter" 
-					mode="widthFix"></image>
+					<view class="store-cover-box margin-right-xs">
+						<image 
+						class="store-cover" 
+						:src="item.restaurant.image_path|imgUrlFilter" 
+						mode="widthFix"></image>
+						<view 
+						v-if="cartList[item.restaurant.id]"
+						class="cu-tag badge">{{cartList[item.restaurant.id].count}}</view>
+					</view>
 					<!-- 店铺封面 E -->
 					
 					<!-- 店铺详情 S -->
@@ -196,7 +211,7 @@
 						class="store-activities text-color-6 flex-sub text-xs align-start">
 							<view class="active-left flex-direction text-scale-9">
 								<view 
-								v-for="(e,i) in item.restaurant.act_tag ? item.restaurant.activities : item.restaurant.activities.slice(0,2)"
+								v-for="(e) in item.restaurant.act_tag ? item.restaurant.activities : item.restaurant.activities.slice(0,2)"
 								:key="e.id"
 								class="activities-item align-center margin-tb-xs">
 									<text class="radius active-tag text-xs margin-right-xs color-white"
@@ -307,9 +322,9 @@
 					<!-- 推荐标题 E -->
 					
 					<view 
-					v-for="(item,index) in recommendData"
+					v-for="(item) in recommendData"
 					:key="item.restaurant.authentic_id"
-					@tap="gotoStoreIndex(index)"
+					@tap="gotoStoreIndex(item.restaurant.id)"
 					class="store-list-item padding-tb padding-lr-sm border-bottom border-color-e align-start flex-sub">
 						
 						<!-- 店铺封面 S -->
@@ -449,6 +464,7 @@
 		
 		<!-- 筛选及排序弹窗 S -->
 		<uni-popup 
+		v-if="storeListData.length"
 		ref="filterBarPopup" 
 		:type="'top'"
 		@change="popupChange"
@@ -472,7 +488,7 @@
 					 class="cu-list menu flex-sub order-box">
 						<view 
 						v-for="(item,index) in storeNavList[0].list"
-						:key="item.name+index"
+						:key="item.name"
 						@tap="orderTap(index)"
 						class="cu-item"
 						:class="storeNavList[0].listSelected ? 
@@ -512,6 +528,7 @@
 								class="cu-item"
 								:style="{padding:0}"
 								>
+									<text>{{name}}</text>
 									<view 
 									class="margin-top-xs align-center bg-grey-fa margin-right-xs padding-tb-xs justify-center" 
 									:class="[
@@ -531,7 +548,7 @@
 						</view>
 						
 						<!-- 按钮 S -->
-						<view class="flex-sub">
+						<view>
 							<text 
 							class="flex-sub bg-white padding solid shadow text-center"
 							:class="
@@ -576,7 +593,7 @@
 	import {mapState,mapMutations} from 'vuex';
 	
 	// 回到顶部工具
-	import gotop from '@/components/common/gotop.vue';
+	import gotop from '@/components/gotop/gotop.vue';
 	
 	// 未登录模块
 	import noLogin from '@/components/noLogin/noLogin.vue';
@@ -600,6 +617,7 @@
 				gotopShow: false, // 控制回到顶部按钮的显示与隐藏
 				zIndexControl: false, // 控制导航栏的层级
 				showTextModeGoods:[], // 索引值在这个列表中的即为显示状态不在的即为隐藏状态
+				// cartList:{}, // 存储购物车数据
 			}
 		},
 		components:{noLogin,gotop},
@@ -663,10 +681,17 @@
 				type: String,
 				default: 'normal'
 			}
+			,
+			// 数据加载中
+			loading:{
+				type: Boolean,
+				default: true
+			},
 		},
 		computed:{
 			...mapState([
-				'login'
+				'login',
+				'cartList'
 			])
 		}
 		,
@@ -693,14 +718,28 @@
 			// 请求一些渲染页面必须的数据
 			
 			// 模拟网络请求需要数据
-			
-			this.storeNavList = this.$t_d.STORE_FILTER_DATA;
-			
-		}
-		,
-		mounted() {
-			// 获取
-			// console.log(this.$utils.getElementInfo('.content-list-tab-box'));
+			try {
+				this.storeNavList = JSON.parse(uni.getStorageSync('store_filter_data'));
+			} catch (e) {
+				console.log('获取缓存失败');
+			}
+
+			if(!this.storeNavList || !this.storeNavList.length){
+
+				this.$http.get.store_filter_data().then((res)=>{
+					this.storeNavList = res;
+
+					uni.setStorage({
+						key: 'store_filter_data',
+						data: JSON.stringify(res),
+						success: function () {
+							console.log('存储store_filter_data成功');
+						}
+					});
+				},(e)=>{
+					console.log('请求失败',e);
+				})
+			}
 		}
 		,
 		filters:{
@@ -735,13 +774,13 @@
 			,
 			/**
 			 * 跳转到用户点击的店铺主页
-			 * @param {Object} index
+			 * @param {String} storeId 店铺id
 			 */
-			gotoStoreIndex(index){
-				this.$utils.log('gotoStoreIndex','跳转到用户点击的店铺主页'+index);
+			gotoStoreIndex(storeId){
+				this.$utils.log('gotoStoreIndex','跳转到用户点击的店铺主页'+storeId);
 				
 				uni.navigateTo({
-					url:'/pages/storeIndex/storeIndex'
+					url:this.$pages_path.store_index + '?store_id=' + storeId
 				})
 			}
 			,
@@ -1023,9 +1062,10 @@
 		height: 100rpx;
 		line-height: 100rpx;
 	}
-	.store-cover{
+	.store-cover-box{
 		width: 128rpx;
 		height: 128rpx;
+		position: relative;
 	}
 	
 	.store-title-text{

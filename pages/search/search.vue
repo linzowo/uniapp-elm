@@ -23,7 +23,7 @@
 					placeholder="输入商家、商品名称(输入'没有结果'查看搜索无结果情况)" 
 					confirm-type="search"
 					@confirm="requestSearchRes"
-					></input>
+					>
 					
 					<view 
 					v-show="inputText"
@@ -166,8 +166,8 @@
 				
 				<!-- 普通搜索提示 S -->
 				<view 
-				v-for="(item,index) in searchCueData.word_with_meta"
-				:key="'word_with_meta'+index"
+				v-for="(item) in searchCueData.word_with_meta"
+				:key="item.word"
 				@tap="fillSearch(item.word)"
 				class="search-cue-item flex-sub flex-direction">
 				
@@ -193,6 +193,7 @@
 				:nativeNav="false"
 				:nativeTabbar="false"
 				:storeListData="searchRes"
+				:loading="searchResLoading"
 				:recommendData="recommendData"
 				:hasNext="hasNext"
 				:mode="'search'"
@@ -219,6 +220,7 @@
 				searchCueData: {}, // 搜索提示数据
 				searchHistory: [], // 搜索历史数据
 				searchRes: [], // 搜索结果数据
+				searchResLoading: true, // 搜索结果加载中
 				hasNext: false, // 是否还存在下一组数据
 				recommendData:[], // 更多推荐数据
 			}
@@ -276,18 +278,17 @@
 			}
 			
 			// 热门搜索
-			this.hotData = this.$t_d.HOT_SEARCH;
-			
+			this.$http.get.hot_search().then((res)=>{
+				this.hotData = res;
+				this.searchResLoading = false;
+			},e=>{
+				console.log(e);
+				this.searchResLoading = false;
+			})
 			
 		}
 		,
-		onReachBottom() {
-			// if(this.searchRes.length && !this.recommendData.length){
-			// 	setTimeout(()=>{
-			// 		this.recommendData = [...this.$t_d.SEARCH_RES_1.inside[1].restaurant_with_foods];
-			// 	},500);
-			// }
-		}
+		onReachBottom() {}
 		,
 		methods:{
 			/**
@@ -344,23 +345,28 @@
 				this.searchCueData.word_with_meta = true;
 				uni.showLoading({
 					title:''
-				})
-				setTimeout(()=>{
-					
-					if(this.inputText == '没有结果'){
-						// 模拟搜索没有结果的情况
-						this.searchRes = []
-						this.recommendData = [...this.$t_d.SEARCH_RES_1.inside[1].restaurant_with_foods];
-						
-					}else{
-						// 模拟搜索有结果的情况
-						this.searchRes = [...this.$t_d.SEARCH_RES_1.inside[0].restaurant_with_foods];
-						this.recommendData = [...this.$t_d.SEARCH_RES_1.inside[1].restaurant_with_foods];
-					}
-					
-					uni.hideLoading();
-				},1000);
+				});
 				
+				if(this.inputText == '没有结果'){
+					// 模拟搜索没有结果的情况
+					this.searchRes = []
+					this.$http.get.search_res_1().then((res)=>{
+						this.recommendData = res.inside[1].restaurant_with_foods;
+						uni.hideLoading();
+					},e=>{
+						console.log(e);
+					});
+					
+				}else{
+					// 模拟搜索有结果的情况
+					this.$http.get.search_res_1().then((res)=>{
+						this.searchRes = res.inside[0].restaurant_with_foods;
+						this.recommendData = res.inside[1].restaurant_with_foods;
+						uni.hideLoading();
+					},e=>{
+						console.log(e);
+					});
+				}
 				
 			}
 			,
@@ -373,10 +379,11 @@
 				// 清空旧数据
 				this.searchCueData = {};
 				
-				// 模拟网络请求获取搜索提示数据
-				setTimeout(()=>{
-					this.searchCueData = this.$t_d.SEARCH_CUE;
-				},1000);
+				this.$http.get.search_cue().then((res)=>{
+					this.searchCueData = res;
+				},e=>{
+					console.log(e);
+				})
 			}
 			,
 			/**

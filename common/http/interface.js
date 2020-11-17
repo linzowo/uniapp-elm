@@ -27,7 +27,7 @@ function _isProductionTip(){
 
 export default {
 	config: {
-		baseUrl: "https://linzowo.ml/json/ele_data/",
+		baseUrl: "https://linzowo.github.io/json/ele_data/",
 		header: {
 			'Content-Type':'application/json;charset=UTF-8',
 			'Content-Type':'application/x-www-form-urlencoded'

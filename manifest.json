@@ -59,7 +59,8 @@
     "mp-weixin" : {
         "appid" : "",
         "setting" : {
-            "urlCheck" : false
+            "urlCheck" : false,
+            "es6" : false
         },
         "usingComponents" : true
     },
@@ -77,10 +78,16 @@
             "maps" : {}
         },
         "optimization" : {
-			"preload":true,
+            "preload" : true,
             "treeShaking" : {
                 "enable" : true
             }
-        }
+        },
+        "domain" : "https://linzowo.ml",
+        "router" : {
+            "base" : "/h5/elm-uniapp/",
+            "mode" : "hash"
+        },
+        "title" : "饿了么"
     }
 }

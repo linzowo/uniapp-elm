@@ -22,7 +22,7 @@
 				type="number"
 				@input="inputPhone"
 				@confirm="inputState.showBtn?loggin():getCode()"
-				></input>
+				>
 				<button 
 				@tap="getCode"
 				:disabled="inputState.showBtn" class='cu-btn bg-green shadow'>{{inputState.phoneState.getCodeBtnText}}</button>
@@ -40,7 +40,7 @@
 				@input="inputCode"
 				@confirm="loggin"
 				:focus="inputState.codeState.codeFocus"
-				></input>
+				>
 			</view>
 			
 		</view>
@@ -77,7 +77,15 @@
 </template>
 
 <script>
+	/**
+	 * @module login
+	 * @description 登录模块
+	 */
+
+	import {mapState,mapMutations} from 'vuex';
+
 	export default {
+		name:'login',
 		data() {
 			return {
 				inputState:{
@@ -96,7 +104,18 @@
 				}
 			}
 		},
+		computed:{
+			...mapState([
+				'userInfo'
+			])
+		}
+		,
 		methods:{
+			...mapMutations([
+				'SAVE_LOGIN_STATE',
+				'SAVE_USERINFO'
+			])
+			,
 			inputFocus(index){
 				this.inputState.inputFocusIndex = index;
 			},
@@ -109,7 +128,7 @@
 				// todo:根据点击的不同区域传递不同参数
 				
 				uni.navigateTo({
-				    url: '/pages/file/file'
+				    url: this.$pages_path.file
 				});
 			},
 			/**
@@ -197,6 +216,27 @@
 				
 				// 发起登录请求
 				console.log('发起登录请求');
+
+				// 将用户输入的电话作为用户电话使用
+				let newInfo = JSON.parse(JSON.stringify(this.userInfo));
+				newInfo.phone = this.inputState.phoneState.phone;
+				this.SAVE_USERINFO(newInfo);
+				
+				// 修改登录状态为已登录
+				this.SAVE_LOGIN_STATE(true);
+
+				// 如果当前页面栈中没有返回的区域就返回主页
+				if(getCurrentPages().length < 2){
+					uni.switchTab({
+						 url: this.$pages_path.index
+					});
+					return;
+				}
+
+				uni.navigateBack({
+					 delta: 1
+				});
+				
 			}
 		}
 	}

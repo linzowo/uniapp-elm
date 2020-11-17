@@ -35,7 +35,7 @@
 					
 					<!-- 商铺基本信息 S -->
 					<view 
-					@tap="storeTap"
+					@tap="storeTap(item.restaurant.id)"
 					class="store-info justify-between align-center margin-bottom">
 						
 						<!-- 店铺头像 -->
@@ -78,7 +78,7 @@
 						<view 
 						v-for="(ele,i) in item.foods.slice(0,1)"
 						:key="ele.food_id"
-						@tap="comboTap(ele.food_id)"
+						@tap="comboTap(item.restaurant.id,ele.food_id)"
 						class="combo-item margin-bottom">
 							<!-- 套餐图片 -->
 							<image 
@@ -106,6 +106,7 @@
 						v-show="showMoreGoods.includes(index)"
 						v-for="(ele,i) in item.foods.slice(1)"
 						:key="ele.food_id"
+						@tap="comboTap(item.restaurant.id,ele.food_id)"
 						class="combo-item margin-bottom">
 							<!-- 套餐图片 -->
 							<image 
@@ -180,8 +181,37 @@
 		created() {
 			
 			// 模拟获取数据过程
-			this.navData = this.$t_d.COMBO_DATA.tabs;
-			this.storeList = this.$t_d.COMBO_DATA.query_list;
+			let comboData;
+			uni.showLoading({
+				title: ''
+			});
+			try {
+				comboData = JSON.parse(uni.getStorageSync('combo_data'));
+				this.navData = comboData.tabs;
+				this.storeList = comboData.query_list
+				uni.hideLoading();
+			} catch (e) {
+				console.log('获取缓存失败');
+			}
+
+			if(!comboData || this._.isEmpty(comboData)){
+
+				this.$http.get.combo_data().then((res)=>{
+					this.navData = res.tabs;
+					this.storeList = res.query_list
+					uni.hideLoading();
+
+					uni.setStorage({
+						key: 'combo_data',
+						data: JSON.stringify(res),
+						success: function () {
+							console.log('存储combo_data成功');
+						}
+					});
+				},(e)=>{
+					console.log('请求失败',e);
+				})
+			}
 			
 		}
 		,
@@ -193,13 +223,14 @@
 		methods: {
 			/**
 			 * 套餐商品点击事件
-			 * @param {Number} id 商品id用于传递到商铺主页定位其在页面中的位置
+			 * @param {String} storeId 店铺id
+			 * @param {Number} foodId 商品id用于传递到商铺主页定位其在页面中的位置
 			 */
-			comboTap(id){
+			comboTap(storeId,foodId){
 				// 跳转至商铺主页 并定位到该套餐
 				
 				uni.navigateTo({
-					url:'/pages/storeIndex/storeIndex?food_id='+id,
+					url:this.$pages_path.store_index+'?food_id='+foodId + '&store_id=' + storeId,
 					fail(e) {
 						console.log('跳转失败');
 					}
@@ -208,11 +239,12 @@
 			,
 			/**
 			 * 店铺标题点击事件
+			 * @param {String} storeId 店铺id
 			 */
-			storeTap(){
+			storeTap(storeId){
 				// 跳转至商铺主页
 				uni.navigateTo({
-					url:'/pages/storeIndex/storeIndex',
+					url:this.$pages_path.store_index + '?store_id=' + storeId,
 					fail(e) {
 						console.log('跳转失败');
 					}
@@ -245,6 +277,8 @@
 			 * 获取更多数据
 			 */
 			getMore(){
+				if(!this.hasNext) return;
+
 				// 发起获取更多数据请求
 				this.$utils.log('getMore','获取更多套餐数据')
 			}

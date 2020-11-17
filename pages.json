@@ -1,27 +1,92 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+	"pages": [
 		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "饿了么",
-				"navigationStyle": "custom"
+				"navigationStyle": "custom",
+				"mp-weixin":{
+					"navigationStyle": "default"
+				}
 			}
 		}, {
 			"path": "pages/discover/discover",
 			"style": {
-				"navigationBarTitleText": "发现"
+				"navigationBarTitleText": "发现",
+				"navigationStyle":"custom",
+				"mp-weixin":{
+					"navigationStyle": "default"
+				}
 			}
 		}, {
 			"path": "pages/order/order",
 			"style": {
-				"navigationBarTitleText": "订单页",
-				"navigationStyle":"custom"
+				"navigationBarTitleText": "订单",
+				"navigationStyle":"custom",
+				"mp-weixin":{
+					"navigationStyle": "default"
+				}
 			}
 		}, {
+			"path": "pages/order/orderInfo",
+			"style": {
+				"navigationBarTitleText": "订单详情",
+				"app-plus":{
+					"titleNView":{
+						"buttons":[
+							{
+								"text":"\ue6b7",
+								"fontSrc": "/static/icon/iconfont.ttf",
+								"fontSize":"15px",
+								"width":"20px"
+							}
+						]
+					}
+				}
+			}
+		}, {
+			"path": "pages/orderConfirm/orderConfirm",
+			"style": {
+				"navigationBarTitleText": "确认订单"
+			}
+		}, {
+			"path": "pages/orderConfirm/children/order_note",
+			"style": {
+				"navigationBarTitleText": "订单备注"
+			}
+		}, {
+			"path": "pages/invoice/choose_invoice",
+			"style": {
+				"navigationBarTitleText": "选择发票信息"
+			}
+		}, {
+			"path": "pages/invoice/add_invoice",
+			"style": {
+				"navigationBarTitleText": "新增发票信息"
+			}
+		}, {
+			"path": "pages/invoice/edit_invoice",
+			"style": {
+				"navigationBarTitleText": "修改发票信息"
+			}
+		}, {
+			"path": "pages/pay/pay",
+			"style": {
+				"navigationBarTitleText": "在线支付",
+				"app-plus":{
+					"titleNView":{
+						"autoBackButton":false
+					}
+				}
+			}
+		},{
 			"path": "pages/user/user",
 			"style": {
 				"navigationBarTitleText": "我的",
-				"navigationStyle":"custom"
+				"navigationStyle":"custom",
+				"mp-weixin":{
+					"navigationStyle": "default"
+				}
 			}
 		}, {
 			"path": "pages/address/address",
@@ -47,42 +112,74 @@
 		}, {
 			"path": "pages/address/manage_address",
 			"style": {
-				"navigationBarTitleText": "地址管理"
+				"navigationBarTitleText": "我的地址"
+			}
+		}, {
+			"path": "pages/address/choose_address",
+			"style": {
+				"navigationBarTitleText": "选择地址"
+			}
+		}, {
+			"path": "pages/address/edit_address",
+			"style": {
+				"navigationBarTitleText": "地址编辑",
+				"app-plus":{
+					"titleNView":{
+						"buttons":[
+							{
+								"text":"删除",
+								"fontSize":"15px"
+							}
+						]
+					}
+				}
 			}
 		}, {
 			"path": "pages/search/search",
 			"style": {
-				"navigationBarTitleText": "搜索页",
-				"navigationStyle": "custom"
+				"navigationBarTitleText": "搜索",
+				"navigationStyle": "custom",
+				"mp-weixin":{
+					"navigationStyle": "default"
+				}
 			}
 		}, {
 			"path": "pages/categoryList/categoryList",
 			"style": {
-				"navigationBarTitleText": "分类列表页",
-				"navigationStyle": "custom"
+				"navigationBarTitleText": "分类列表",
+				"navigationStyle": "custom",
+				"mp-weixin":{
+					"navigationStyle": "default"
+				}
 			}
 		}, {
 			"path": "pages/combo/combo",
 			"style": {
-				"navigationBarTitleText": "品质套餐页",
-				"navigationStyle": "custom"
+				"navigationBarTitleText": "品质套餐",
+				"navigationStyle": "custom",
+				"mp-weixin":{
+					"navigationStyle": "default"
+				}
 			}
 		}, {
 			"path": "pages/member/member",
 			"style": {
-				"navigationBarTitleText": "会员页",
-				"navigationStyle": "custom"
+				"navigationBarTitleText": "会员",
+				"navigationStyle": "custom",
+				"mp-weixin":{
+					"navigationStyle": "default"
+				}
 			}
 		}, {
 			"path": "pages/login/login",
 			"style": {
 				"navigationStyle":"custom",
-				"navigationBarTitleText": "登录页"
+				"navigationBarTitleText": "登录"
 			}
 		}, {
 			"path": "pages/file/file",
 			"style": {
-				"navigationBarTitleText": "文件展示页"
+				"navigationBarTitleText": "文件展示"
 			}
 		}, {
 			"path": "pages/city/city",
@@ -93,12 +190,28 @@
 			"path": "pages/storeIndex/storeIndex",
 			"style": {
 				"navigationBarTitleText": "店铺主页",
-				"navigationStyle": "custom"
+				"navigationStyle": "custom",
+				"mp-weixin":{
+					"navigationStyle": "default"
+				}
 			}
 		}, {
 			"path": "pages/userSetting/userSetting",
 			"style": {
-				"navigationBarTitleText": "用户信息设置"
+				"navigationBarTitleText": "用户信息设置",
+				"navigationStyle": "custom",
+				"mp-weixin":{
+					"navigationStyle": "default"
+				}
+			}
+		}, {
+			"path": "pages/userSetting/children/setting",
+			"style": {
+				"navigationBarTitleText": "修改设置",
+				"navigationStyle": "custom",
+				"mp-weixin":{
+					"navigationStyle": "default"
+				}
 			}
 		}, {
 			"path": "pages/gold/goldShop",
@@ -156,7 +269,7 @@
 			"pagePath": "pages/index/index",
 			"iconPath": "static/image/sy.png",
 			"selectedIconPath": "static/image/sy-hover.png",
-			"text": "首页"
+			"text": "首"
 		}, {
 			"pagePath": "pages/discover/discover",
 			"iconPath": "static/image/fx.png",

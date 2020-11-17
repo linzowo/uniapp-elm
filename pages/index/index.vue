@@ -4,7 +4,7 @@
 	>
 		<!-- 导航栏 S -->
 		<navBar 
-		:address="address"
+		:address="userInfo.shipAddress.position_name"
 		:style="{top:old.scrollTop>10?'-37px':0}"
 		></navBar>
 		<!-- 导航栏 S -->
@@ -14,7 +14,7 @@
 		:style="{marginTop:old.scrollTop>10?'60px':'97px'}"
 		class="content-body flex flex-sub">
 			<!-- 获取到城市时显示 S -->
-			<view v-if="address" class="vs-column vs-space-center">
+			<view v-if="userInfo.shipAddress.position_name" class="vs-column vs-space-center">
 				<!-- 导航区 S -->
 				<view class="nav vs-column">
 					<view class="bg-white vs-flex-item vs-column">
@@ -26,13 +26,13 @@
 							v-for="(item,index) in navList" 
 							:key="index">
 									<image 
-									:src="item.img" 
+									:src="item.image_hash,'w_90,h_90'|imgUrlFilter" 
 									mode="aspectFill"
 									class="nav-img"
 									></image>
 									<text 
 									class="nav-title font-20 color-black6"
-									>{{item.title}}</text>
+									>{{item.name}}</text>
 							</navigator>
 						</view>
 					</view>
@@ -59,9 +59,9 @@
 				url="/pages/member/member"
 				class="member padding-sm flex justify-between margin-sm margin-top-xs align-center margin-bottom">
 					<view class="left align-center">
-						<svg class="icon-svg member-icon margin-right-xs" aria-hidden="true"><use xlink:href="#icon-huangguan"></use></svg>
+						<text class="iconfont icon-huangguan member-icon margin-right-xs"></text>
 						<h3 class="text">超级会员</h3>
-						<svg class="icon-svg text-xs " aria-hidden="true"><use xlink:href="#icon-dian"></use></svg>
+						<text class="iconfont icon-dian text-xs"></text>
 						<text class="text-xs">每月享超值权益</text>
 					</view>
 					<text class="right text-xs">
@@ -84,6 +84,7 @@
 					:navTapFn="scrollToStoreList"
 					:storeListData="storeListData"
 					:hasNext="hasNext"
+					:loading="storeListDataLoading"
 					class="store-list"
 					></store-list>
 					
@@ -127,13 +128,13 @@ import {mapState,mapActions,mapMutations} from 'vuex';
 // 引入未获取到城市时的提示页面
 import noPosition from '@/components/noPosition/noPosition.vue';
 // 引入顶部导航栏模块
-import navBar from '@/components/common/navBar.vue';
+import navBar from '@/components/navBar/navBar.vue';
 // 地址模块
 import addressPage from '@/pages/address/address.vue';
 // 店铺排序筛选模块
 import storeList from '@/components/store-list/store-list.vue'; 
 // 回到顶部工具
-import gotop from '@/components/common/gotop.vue';
+import gotop from '@/components/gotop/gotop.vue';
 
 // 引入官方组件
 import uniPopup from '@/components/uni-popup/uni-popup.vue';
@@ -174,6 +175,7 @@ const data = function() {
 		controlPageScroll: true, // 控制主页面是否可以滑动的
 		navBarHeight:60, // 顶部自定义navbar的默认高度用来设置其他元素的高度使用的
 		storeListData: [], // 商铺列表数据
+		storeListDataLoading: true, // 商铺数据加载中
 		hasNext: false, // 是否还存在下一组数据
 	};
 };
@@ -182,11 +184,7 @@ const computed = {
 	...mapState([
 		'userInfo',
 		'login'
-	]),
-	// 顶部收货地址
-	address(){
-		return this.userInfo.shipAddress.position_name || null;
-	}
+	])
 };
 
 const watch = {
@@ -195,7 +193,25 @@ const watch = {
 	 * @param {Object} n
 	 * @param {Object} o
 	 */
-	pageState(n,o){}
+	pageState(n,o){},
+	/**
+	 * 监听登录状态变化
+	 * 如果新状态与旧状态不一致且新状态为已登录就获取数据
+	 */
+	login(n,o){
+		if(n !== o && n){
+			this.storeListDataLoading = true;
+
+			this.$http.get.store_list_data_1().then((res)=>{
+				this.storeListData = res.items;
+				this.hasNext = res.has_next;
+				this.storeListDataLoading = false;
+			},e=>{
+				console.log(e);
+				this.storeListDataLoading = false;
+			});
+		}
+	}
 };
 
 export default {
@@ -209,14 +225,43 @@ export default {
 		
 		// 将收货定位信息绑定到元素上
 		// this.address = this.userInfo.shipAddress.position_name || null;
+		try {
+			this.navList = JSON.parse(uni.getStorageSync('index_enter_data'));
+		} catch (e) {
+			this.navList = [];
+		}
+
+		// 本地没有数据向网络请求数据
+		if(!this.navList || !this.navList.length){
+			this.$http.get.index_enter_data().then((res)=>{
+				this.navList = res;
+
+				uni.setStorage({
+					key: 'index_enter_data',
+					data: JSON.stringify(res),
+					success: function () {
+						console.log('存储index_enter_data成功');
+					}
+				});
+
+			},(e)=>{
+				console.log('请求失败');
+			});
+		}
+
 		
-		this.navList = Array(10);
-		this.navList.fill(this.$t_d.NAV_LIST_DATA[0],0,5);
-		this.navList.fill(this.$t_d.NAV_LIST_DATA[1],5,10);
 		
 		if(this.login){
-			this.storeListData = [...this.$t_d.STORE_lIST_DATA_1.items];
-			this.hasNext = this.$t_d.STORE_lIST_DATA_1.has_next;
+			this.$http.get.store_list_data_1().then((res)=>{
+				this.storeListData = res.items;
+				this.hasNext = res.has_next;
+				this.storeListDataLoading = false;
+			},e=>{
+				console.log(e);
+				this.storeListDataLoading = false;
+			});
+		}else{
+			this.storeListDataLoading = false;
 		}
 		
 	}
@@ -250,25 +295,32 @@ export default {
 			// console.log('滑到底部了');
 			// 发起请求获取新的数据
 			
-			
-			// 模拟请求过程
 			if(this.hasNext){
-				setTimeout(()=>{
-					if(this.storeListData.length>8){
+
+				if(this.storeListData.length>8){
+					this.$http.get.store_list_data_3().then(res=>{
 						this.storeListData = [
-								...this.storeListData,
-								...this.$t_d.STORE_lIST_DATA_3.items
-							];
-						this.hasNext = this.$t_d.STORE_lIST_DATA_3.has_next;
-						return;
-					}
-					
-					this.storeListData = [
 							...this.storeListData,
-							...this.$t_d.STORE_lIST_DATA_2.items
+							...res.items
 						];
-					this.hasNext = this.$t_d.STORE_lIST_DATA_2.has_next;
-				},500);
+						this.hasNext = res.has_next;
+					},e=>{
+						console.log(e);
+						this.hasNext = false;
+					});
+					return;
+				}
+
+				this.$http.get.store_list_data_2().then(res=>{
+					this.storeListData = [
+						...this.storeListData,
+						...res.items
+					];
+					this.hasNext = res.has_next;
+				},e=>{
+					console.log(e);
+					this.hasNext = false;
+				});
 			}
 			
 		}
@@ -329,8 +381,7 @@ export default {
 		}
 		,
 		...mapActions([
-			'getUserInfo',
-			'saveAddress'
+			'getUserInfo'
 		])
 		,
 		// 使主页面回到顶部

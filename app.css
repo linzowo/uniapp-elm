@@ -85,6 +85,11 @@ view {
 }
 
 /* 背景颜色 */
+.fengniao{
+    background-image: linear-gradient(90deg,#0af,#0085ff);
+    color: #fff;
+    border-radius: 1px;
+}
 .bg-grey-fa{
 	background-color: #fafafa;
 }
@@ -95,12 +100,19 @@ view {
 	background-color: #f7f7f7;
 	color: #666;
 }
+.bg-grey-f9{
+	background-color: #f9f9f9;
+	color: #666;
+}
 .bg-grey-fc{
 	background-color: #fcfcfc;
 }
 .bg-blue-base{
 	background-color: #0097ff;
 	color: #fff;
+}
+.bg-e{
+	background-color: #eee;
 }
 .mbg-gradual-blue{
 	background-image: linear-gradient(90deg, #0af, #0085ff);
@@ -226,6 +238,10 @@ view {
 	padding: 0 6rpx;
 	transform: scale(.8);
 	
+}
+/* 活动标签 */
+.activity-tag{
+	padding: 0 6rpx;
 }
 .bg-tag-color-yellow{
 	background-image: linear-gradient(-139deg,#fff100,#ffe339);

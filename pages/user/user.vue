@@ -43,7 +43,7 @@
 				@tap="go('/pages/gold/goldExchange')"
 				class="padding-lg flex-sub flex-direction align-center justify-center">
 					<view class="user-icon-box bg-green padding-xs round margin-bottom-xs">
-						<svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-29"></use></svg>
+						<text class="iconfont icon-29"></text>
 					</view>
 					<text class="text-sm text-color-6 text-bold">金币</text>
 				</view>
@@ -103,7 +103,7 @@
 				@tap="go('download')"
 				class="card-content-item bg-white justify-between align-center flex-sub padding-sm border-bottom border-color-e">
 					<view class="align-center">
-						<svg class="icon-blue text-xl icon-svg margin-right-xs" aria-hidden="true"><use xlink:href="#icon-platform-eleme"></use></svg>
+						<text class="iconfont icon-blue text-xl margin-right-xs icon-platform-eleme"></text>
 						<text class="text-lg text-color-3">下载饿了么APP</text>
 					</view>
 					<text class="lg text-grey cuIcon-right"></text>
@@ -165,7 +165,7 @@
 				
 				// 如果用户已登录 跳转至用户信息设置页
 				// 用户未登录跳转至登录注册页
-				let pagePath = this.login ? '/pages/userSetting/userSetting' : '/pages/login/login';
+				let pagePath = this.login ? this.$pages_path.user_setting : this.$pages_path.login;
 				uni.navigateTo({
 					url:pagePath,
 					fail(e) {

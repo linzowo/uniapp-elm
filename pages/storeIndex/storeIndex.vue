@@ -233,7 +233,7 @@
 										<view 
 										class="cu-item text-xs justify-center flex-direction" 
 										:class="index==foodsCategoryTabCur?'text-green cur':''" 
-										v-for="(item,index) in storeData.menu" 
+										v-for="(item,index) in foodsData.areaData" 
 										:key="index" 
 										@tap="foodsCategoryTabSelect"
 										:data-id="index"
@@ -256,11 +256,12 @@
 									style="height:100vh"
 									:scroll-into-view="'main-'+mainCur" 
 									@scroll="VerticalMain"
+									scroll-anchoring="true"
 									>
 										<!-- 菜单分区 -->
 										<view 
 										class="padding-lr flex-direction flex-sub" 
-										v-for="(item,index) in storeData.menu" 
+										v-for="(item,index) in showFoodsData" 
 										:key="index" 
 										:id="'main-'+index"
 										>
@@ -284,7 +285,8 @@
 												v-for="(ele) in item.foods"
 												:key="ele.item_id"
 												@tap="showGoodsInfoPopup(ele)"
-												class="cu-item flex-sub align-start margin-bottom-lg">
+												class="cu-item flex-sub align-start margin-bottom-lg"
+												>
 													
 													<!-- 商品图片 -->
 													<view 
@@ -364,6 +366,7 @@
 												
 											</view>
 										</view>
+
 									</scroll-view>
 									<!-- 右侧菜单内容滑动列表 E -->
 								
@@ -1637,10 +1640,17 @@
 				}, // 店铺私有购物车数据，加入数据后会同步到总购物车中
 				goodsInfoPopupData:null, // 临时存储商品详情弹窗所需的数据
 				goodsTasteData:[], // 临时存储用户选择的商品口味
+				// 拆解后的数据
 				foodsData:{
-					list:[],
-					length:0
-				}
+					list:[], // 商品数据
+					areaData:[], // 分区数据
+					start:0, // 起始商品区间
+					end: 20, // 结束商品区间
+				},
+				foodsListDefaultEnd:20, // 食品列表默认的大小
+				foodsListUpdateSize:10, // 食品列表分页默认跟新尺寸
+				// 商品列表滑动时的数据跟新边界
+				foodsListScrollBoundary:2000,
 			}
 		},
 		watch:{
@@ -1684,6 +1694,27 @@
 		}
 		,
 		computed:{
+			/**
+			 * 根据起始结束索引动态计算要显示哪些数据
+			 */
+			showFoodsData(){
+				// 商品数据
+				let foods = this.foodsData.list.slice(
+					this.foodsData.start,this.foodsData.end
+				);
+
+				// 分区数据
+				let area = JSON.parse(JSON.stringify(this.foodsData.areaData));
+
+				area.forEach(ele=>{
+					ele.foods = foods.filter(e=>{
+						return e.index >= ele.start && e.index < ele.end
+					})
+				})
+
+				return area;
+			}
+			,
 			/**
 			 * 统计每个分类下有几件商品
 			 * @return {Object} {category_id:count}
@@ -1772,6 +1803,31 @@
 			this.$http.get.store_index_data().then((res)=>{
 					this.lodingEnd = true;
 					this.storeData = res;
+
+					// 拆解数据
+					res.menu.forEach((ele,i)=>{
+
+						// 拆解区域数据
+						this.foodsData.areaData.push({
+							name:ele.name,
+							description:ele.description,
+							id:ele.id,
+							start:this.foodsData.list.length,
+							end:ele.foods.length + this.foodsData.list.length
+						})
+
+						// 拆解商品数据
+						ele.foods.forEach((e,j)=>{
+							e.index = this.foodsData.list.length;
+							this.foodsData.list.push(e);
+						})
+
+					})
+
+					// console.log(this.foodsData.areaData);
+					// console.log(this.foodsData.list);
+					// console.log(this.foodsData);
+				
 					this.storeId?this.storeData.rst.id = this.storeId:'';
 
 					// 判断当前店铺是否有购物车数据存储在公共区域
@@ -2464,28 +2520,25 @@
 			 * @param {Object} e
 			 */
 			VerticalMain(e) {
-				// console.log(e);
 
-				// console.log(this.storeData.menu);
-				// 筛选数据保证页面中只渲染12条数据
+				let distanceTop = e.detail.scrollTop;
+				let distanceBottom = e.detail.scrollHeight - (uni.getSystemInfoSync().screenHeight + e.detail.scrollTop);
 
-				this.storeData.menu.forEach(ele=>{
-					if(this.foodsData.length >= 12) return false;
+				// 向下滑动时插入
+				// 向上滑动时删除
+				if(
+						distanceTop < this.foodsListScrollBoundary
+						&& this.foodsData.end > this.foodsListDefaultEnd
+				){
+					this.foodsData.end = this.foodsListDefaultEnd;
+				}
 
-					let e = JSON.parse(JSON.stringify(ele));
-
-					if(e.foods.length + this.foodsData.length < 12){
-						this.foodsData.list.push(e);
-						this.foodsData.length += e.foods.length;
-					}else{
-						e.foods.splice(12-this.foodsData.length);
-						this.foodsData.list.push(e)
-						this.foodsData.length = 12;
-						return false;
-					}
-				})
-
-				console.log(this.foodsData.list);
+				if(
+						distanceBottom < this.foodsListScrollBoundary 
+						&& this.foodsData.end < this.foodsData.list.length
+					){
+						this.foodsData.end += this.foodsListUpdateSize;
+				}
 
 				// 如果此时页面没有滑动到顶部 自动滑动到顶部 
 				if(this.$utils.getElementInfo('.store-menu-box') != 0){
@@ -2510,6 +2563,7 @@
 						view.fields({
 							size: true
 						}, data => {
+							if(!data) return false;
 							this.storeData.menu[i].top = tabHeight;
 							tabHeight = tabHeight + data.height;
 							this.storeData.menu[i].bottom = tabHeight;
@@ -2761,6 +2815,7 @@
 	// 垂直商铺菜单列表相关样式
 	.VerticalMain{
 		padding-bottom: 100rpx;
+		overflow-anchor: auto;
 	}
 	.VerticalNav.nav {
 		width: 200upx;

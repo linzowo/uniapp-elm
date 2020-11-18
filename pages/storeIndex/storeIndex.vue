@@ -1646,9 +1646,10 @@
 					areaData:[], // 分区数据
 					start:0, // 起始商品区间
 					end: 20, // 结束商品区间
+					timer:null
 				},
 				foodsListDefaultEnd:20, // 食品列表默认的大小
-				foodsListUpdateSize:10, // 食品列表分页默认跟新尺寸
+				foodsListUpdateSize:80, // 食品列表分页默认跟新尺寸
 				// 商品列表滑动时的数据跟新边界
 				foodsListScrollBoundary:2000,
 			}
@@ -1690,6 +1691,14 @@
 
 				},
 				deep:true
+			},
+			TabCur(n){
+				if(parseInt(n) === 0){
+					this.foodsPage()
+				}else{
+					clearInterval(this.foodsData.timer)
+					this.foodsData.end = this.foodsListDefaultEnd;
+				}
 			}
 		}
 		,
@@ -1824,6 +1833,11 @@
 
 					})
 
+					// 动态插入商品列表数据
+					this.foodsPage()
+
+					// 	this.foodsData.end += this.foodsListUpdateSize;
+					// },1000)
 					// console.log(this.foodsData.areaData);
 					// console.log(this.foodsData.list);
 					// console.log(this.foodsData);
@@ -2521,24 +2535,6 @@
 			 */
 			VerticalMain(e) {
 
-				let distanceTop = e.detail.scrollTop;
-				let distanceBottom = e.detail.scrollHeight - (uni.getSystemInfoSync().screenHeight + e.detail.scrollTop);
-
-				// 向下滑动时插入
-				// 向上滑动时删除
-				if(
-						distanceTop < this.foodsListScrollBoundary
-						&& this.foodsData.end > this.foodsListDefaultEnd
-				){
-					this.foodsData.end = this.foodsListDefaultEnd;
-				}
-
-				if(
-						distanceBottom < this.foodsListScrollBoundary 
-						&& this.foodsData.end < this.foodsData.list.length
-					){
-						this.foodsData.end += this.foodsListUpdateSize;
-				}
 
 				// 如果此时页面没有滑动到顶部 自动滑动到顶部 
 				if(this.$utils.getElementInfo('.store-menu-box') != 0){
@@ -2557,7 +2553,7 @@
 				let that = this;
 				let tabHeight = 0;
 
-				if (this.load) {
+				// if (this.load) {
 					for (let i = 0; i < this.storeData.menu.length; i++) {
 						let view = uni.createSelectorQuery().select("#main-" + i);
 						view.fields({
@@ -2569,8 +2565,8 @@
 							this.storeData.menu[i].bottom = tabHeight;
 						}).exec();
 					}
-					this.load = false
-				}
+				// 	this.load = false
+				// }
 
 				let scrollTop = e.detail.scrollTop + 10;
 				for (let i = 0; i < this.storeData.menu.length; i++) {
@@ -2581,6 +2577,24 @@
 						return false
 					}
 				}
+			},
+			/**
+			 * 商品数据分页插入方法
+			 * 将过长的商品数据拆分为多个分段依次插入页面
+			 * 采用定时器
+			 */
+			foodsPage(){
+				this.mainCur = 0;
+				this.foodsCategoryTabCur = 0;
+				// 动态插入商品列表数据
+				this.foodsData.timer = setInterval(()=>{
+					if(this.foodsData.end >= this.foodsData.list.length){
+						clearInterval(this.foodsData.timer);
+						return;
+					}
+
+					this.foodsData.end += this.foodsListUpdateSize;
+				},500)
 			}
 		}
 	}

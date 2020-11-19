@@ -19,7 +19,7 @@
   "homepage": "https://github.com/linzowo/vue-elm#readme",
   "dependencies": {
     "@dcloudio/uni-ui": "^1.1.8",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.20"
   },
   "devDependencies": {
     "cz-conventional-changelog": "^3.1.0"

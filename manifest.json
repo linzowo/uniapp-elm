@@ -83,11 +83,11 @@
                 "enable" : true
             }
         },
-        "domain" : "https://linzowo.ml",
+        "domain" : "https://linzowo.github.io",
         "router" : {
             "base" : "/h5/elm-uniapp/",
             "mode" : "hash"
         },
-        "title" : "饿了么"
+        "title" : "饿了么-linzowo"
     }
 }

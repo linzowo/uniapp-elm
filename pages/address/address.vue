@@ -29,7 +29,7 @@
 				</view>
 		</view>
 		
-		<view v-if="login" class="content flex-direction">
+		<view v-show="login" class="content flex-direction">
 			
 			<!-- 我的地址 S -->
 			<view 
@@ -88,7 +88,7 @@
 		
 		<!-- 搜索結果列表 S -->
 		<view 
-		v-if="inputText"
+		v-show="inputText"
 		class="search-res flex-direction">
 			<view 
 			class="current-address-content padding-tb-xs padding-lr flex-sub justify-between bg-white border-color-e align-center"
@@ -123,7 +123,26 @@
 				searchRes:[], // 存储搜索结果
 			}
 		},
-		onShow() {},
+		onLoad() {
+			
+			let tmp = uni.getStorageSync('city_data');
+
+			// 本地没有数据向网络请求数据
+			if(!tmp){
+				this.$http.get.city_data().then((res)=>{
+					uni.setStorage({
+						key: 'city_data',
+						data: JSON.stringify(res),
+						success: function () {
+							console.log('存储城市成功');
+						}
+					});
+
+				},(e)=>{
+					console.log('请求城市列表信息失败');
+				});
+			}
+		},
 		created() {
 			// 未登录状态下不请求其他数据
 			if(!this.login) return;

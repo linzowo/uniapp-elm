@@ -115,7 +115,7 @@ github-[在线demo](https://linzowo.github.io/h5/elm-uniapp/)
 
 ### 项目设计稿
 
-[点击此查看项目设计图，连接过期时间2020-7-20](https://app.mockplus.cn/s/Owft38ZuMS)
+[点击此查看项目设计图](https://app.mockplus.cn/team/invitation/F1lI55_TnG)
 
 
 

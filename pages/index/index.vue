@@ -226,7 +226,8 @@ export default {
 		// 将收货定位信息绑定到元素上
 		// this.address = this.userInfo.shipAddress.position_name || null;
 		try {
-			this.navList = JSON.parse(uni.getStorageSync('index_enter_data'));
+			let tmp = uni.getStorageSync('index_enter_data');
+			if(tmp) this.navList = JSON.parse(tmp);
 		} catch (e) {
 			this.navList = [];
 		}

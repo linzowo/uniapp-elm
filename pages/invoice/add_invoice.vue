@@ -156,7 +156,8 @@
                 let invoice_list = [];
 
                 try {
-                    invoice_list = JSON.parse(uni.getStorageSync('invoice_list'));
+                    let tmp = uni.getStorageSync('invoice_list');
+				    if(tmp) invoice_list = JSON.parse(tmp);
                 } catch (e) {
                     console.log(e);
                 }

@@ -484,14 +484,16 @@
 
                 // 获取当前的购物车列表数据
                 try {
-                    cartList = JSON.parse(uni.getStorageSync('cart_map'));
+                    let tmp = uni.getStorageSync('cart_map');
+				    if(tmp) cartList = JSON.parse(tmp);
                 } catch (e) {
                     console.log(e);
                 }
 
                 // 检查本地存储中是否有待付订单对象
                 try {
-                    unpaidOrder = JSON.parse(uni.getStorageSync('unpaid_order'));
+                    let tmp = uni.getStorageSync('unpaid_order');
+				    if(tmp) unpaidOrder = JSON.parse(tmp);
                 } catch (e) {
                     console.log(e);
                 }

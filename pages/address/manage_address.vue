@@ -93,7 +93,8 @@
 		onShow(){
 			
 			try{
-                this.myAddress = JSON.parse(uni.getStorageSync('my_address'));
+                let tmp = uni.getStorageSync('my_address');
+				if(tmp) this.myAddress = JSON.parse(tmp);
                 this.pageState.loading = false;
 			}catch(e){
                 console.log('获取缓存失败');
@@ -125,7 +126,8 @@
 			// 模拟网络环境下请求我的地址数据
 
 			try{
-                this.myAddress = JSON.parse(uni.getStorageSync('my_address'));
+                let tmp = uni.getStorageSync('my_address');
+				if(tmp) this.myAddress = JSON.parse(tmp);
                 this.pageState.loading = false;
 			}catch(e){
                 console.log('获取缓存失败');

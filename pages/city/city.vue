@@ -125,7 +125,8 @@
 		,
 		created() {
 			try {
-				this.list = JSON.parse(uni.getStorageSync('city_data'));
+				let tmp = uni.getStorageSync('city_data');
+				if(tmp) this.list = JSON.parse(tmp);
 				this.listKey = Object.keys(this.list);
 			} catch (e) {
 				this.list = {};

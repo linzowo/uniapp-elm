@@ -186,7 +186,8 @@
 				title: ''
 			});
 			try {
-				comboData = JSON.parse(uni.getStorageSync('combo_data'));
+				let tmp = uni.getStorageSync('combo_data');
+				if(tmp) comboData = JSON.parse(tmp);
 				this.navData = comboData.tabs;
 				this.storeList = comboData.query_list
 				uni.hideLoading();

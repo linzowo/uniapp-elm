@@ -155,7 +155,8 @@
 
 			// 获取当前订单
 			try{
-				this.unpaidOrder = JSON.parse(uni.getStorageSync('unpaid_order'));
+				let tmp = uni.getStorageSync('unpaid_order');
+				if(tmp) this.unpaidOrder = JSON.parse(tmp);
 			}catch(e){
 				console.log(e);
 			}

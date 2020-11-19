@@ -131,7 +131,8 @@
         created() {
             
             try{
-                this.invoiceList = JSON.parse(uni.getStorageSync('invoice_list'));
+                let tmp = uni.getStorageSync('invoice_list');
+				if(tmp) this.invoiceList = JSON.parse(tmp);
             }catch(e){
                 uni.showModal({
                     title: '提示',

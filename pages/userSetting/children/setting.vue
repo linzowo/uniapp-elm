@@ -198,7 +198,7 @@
              */
             setUsername(e){
                 if(this._.inRange(this.usernameInput.length,5,25)){
-                    console.log(e.detail.value);
+                    // console.log(e.detail.value);
                     let newInfo = JSON.parse(JSON.stringify(this.userInfo));
                     newInfo.name = this.usernameInput;
                     console.log(newInfo);

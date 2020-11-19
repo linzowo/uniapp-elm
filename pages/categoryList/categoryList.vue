@@ -205,7 +205,8 @@
 			// 顶部导航栏下拉菜单需要的数据
 			
 			try {
-				this.categoryData = JSON.parse(uni.getStorageSync('category_data'));
+				let tmp = uni.getStorageSync('category_data');
+				if(tmp) this.categoryData = JSON.parse(tmp);
 			} catch (e) {
 				console.log('获取缓存失败');
 			}

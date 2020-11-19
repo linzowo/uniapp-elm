@@ -88,7 +88,8 @@ export default {
 	// 初始化购物车数据：如果本地存储有购物车相关数据就读取其数据存储至vuex
 	[INIT_CART](state){
 		try{
-			state.cartList = JSON.parse(uni.getStorageSync('cart_map'));
+			let tmp = uni.getStorageSync('cart_map');
+			if(tmp) state.cartList = JSON.parse(tmp);
 		}catch(e){
 			//TODO handle the exception
 			console.log('本地无购物车数据');

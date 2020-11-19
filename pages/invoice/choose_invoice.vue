@@ -99,7 +99,8 @@
         created() {
 
             try{
-				this.invoiceList = JSON.parse(uni.getStorageSync('invoice_list'));	
+                let tmp = uni.getStorageSync('invoice_list');
+				if(tmp) this.invoiceList = JSON.parse(tmp);
 			}catch(e){
                 console.log('获取缓存失败');
                 uni.setStorage({

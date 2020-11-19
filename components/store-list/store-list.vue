@@ -719,7 +719,8 @@
 			
 			// 模拟网络请求需要数据
 			try {
-				this.storeNavList = JSON.parse(uni.getStorageSync('store_filter_data'));
+				let tmp = uni.getStorageSync('store_filter_data');
+				if(tmp) this.storeNavList = JSON.parse(tmp);
 			} catch (e) {
 				console.log('获取缓存失败');
 			}

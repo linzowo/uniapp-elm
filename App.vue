@@ -17,10 +17,12 @@ export default {
 		// 检查并设置登录状态
 		let loginState;
 		try {
-			loginState = JSON.parse(uni.getStorageSync('login_state'));
+			let tmp = uni.getStorageSync('login_state');
+			if(tmp) loginState = JSON.parse(tmp);
 		} catch (e) {
 			console.log(e);
 		}
+		
 		if(loginState && loginState.expires > this._.now()){
 			this.SAVE_LOGIN_STATE(loginState.login);
 		}

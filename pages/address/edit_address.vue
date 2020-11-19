@@ -173,7 +173,9 @@
 			})
 
 			try{
-				this.my_address = JSON.parse(uni.getStorageSync('my_address'));	
+				
+				let tmp = uni.getStorageSync('my_address');
+				if(tmp) this.my_address = JSON.parse(tmp);	
 			}catch(e){
 				console.log('获取缓存失败');
             }

@@ -111,7 +111,9 @@
 		,
 		created() {
 			try{
-				this.navData = JSON.parse(uni.getStorageSync('discover_enter_data'));
+				
+				let tmp = uni.getStorageSync('discover_enter_data');
+				if(tmp) this.navData = JSON.parse(tmp);
 			}catch(e){
 				console.log(e);
 			}
@@ -134,7 +136,9 @@
 
 			
 			try{
-				this.exchangeData = JSON.parse(uni.getStorageSync('discover_duiba_gifs'));
+				let tmp = uni.getStorageSync('discover_duiba_gifs');
+				if(tmp) this.exchangeData = JSON.parse(tmp);
+
 			}catch(e){
 				console.log(e);
 			}

@@ -11,7 +11,8 @@
 ## 项目简介
 这是一个前端练习项目，灵感来源于[vue2-elm](https://github.com/bailicangdu/vue2-elm)，如果你是一个前端学习者，想要完成一个相对复杂的项目来锻炼自己，那么不妨尝试一下这个项目。我将为你提供较为完整的设计图纸和一些必要的静态数据源。
 
-在线[demo](https://linzowo.github.io/h5/elm-uniapp/)  
+码云-[在线demo](https://linzowo.gitee.io/h5/elm-uniapp/)  
+github-[在线demo](https://linzowo.github.io/h5/elm-uniapp/)  
 
 `注意：电脑端访问时请在开发模式中开启手机模拟，具体操作：f12 → ctrl + shift + m 或者 鼠标点击相关图标切换`
 

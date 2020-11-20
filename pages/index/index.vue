@@ -332,12 +332,45 @@ export default {
 		scrollToStoreList(){
 			this.$utils.log('scrollToStoreList','使页面滚动到商铺列表位置');
 			
-			if(this.$utils.getElementInfo('.store-list').top > this.navBarHeight){
-				uni.pageScrollTo({
-					duration:0,
-					scrollTop: this.$utils.getElementInfo('.store-list').top - this.$utils.getElementInfo('.container').top - this.navBarHeight
-				})
-			}
+			// uni.pageScrollTo({
+			// 	duration:0,
+			// 	scrollTop: 0
+			// })
+			
+			// uni.createSelectorQuery().select('.store-list').boundingClientRect(ele=>{
+			// 	if(ele.top > this.navBarHeight){
+			// 		let a,b,c;
+			// 		uni.createSelectorQuery().select('.store-list').boundingClientRect().select('.container').boundingClientRect(data=>{
+			// 			a = data;
+			// 		}).exec(data=>{
+			// 			b = data;
+			// 			console.log(a,b);
+			// 			uni.pageScrollTo({
+			// 				duration:0,
+			// 				scrollTop: a.top - b.top - this.navBarHeight
+			// 			})
+			// 		});
+			// 	}
+			// }).exec();
+			
+			
+			this.$utils.getElementInfo('.store-list',(ele)=>{
+				if(ele.top > this.navBarHeight){
+					// this.$utils.getElementInfo('.store-list' ,(e)=>{})
+					console.log(ele.top);
+					uni.pageScrollTo({
+						duration:0,
+						scrollTop: 470
+					})
+				}
+			})
+			
+			// if(this.$utils.getElementInfo('.store-list').top > this.navBarHeight){
+			// 	uni.pageScrollTo({
+			// 		duration:0,
+			// 		scrollTop: this.$utils.getElementInfo('.store-list').top - this.$utils.getElementInfo('.container').top - this.navBarHeight
+			// 	})
+			// }
 		}
 		,
 		/**

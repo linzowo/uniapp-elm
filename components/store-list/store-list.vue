@@ -528,7 +528,6 @@
 								class="cu-item"
 								:style="{padding:0}"
 								>
-									<text>{{name}}</text>
 									<view 
 									class="margin-top-xs align-center bg-grey-fa margin-right-xs padding-tb-xs justify-center" 
 									:class="[

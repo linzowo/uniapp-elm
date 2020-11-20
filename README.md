@@ -11,6 +11,8 @@
 ## 项目简介
 这是一个前端练习项目，灵感来源于[vue2-elm](https://github.com/bailicangdu/vue2-elm)，如果你是一个前端学习者，想要完成一个相对复杂的项目来锻炼自己，那么不妨尝试一下这个项目。我将为你提供较为完整的设计图纸和一些必要的静态数据源。
 
+`注意：因为gitee无法进行跨域访问，所以静态数据挂载在github上，国内请求速度可能较为缓慢。（页面加载速度会有影响）。但是第一次加载完成后会将数据缓存到本地，后续访问速度会有提升。`
+
 码云-[在线demo](https://linzowo.gitee.io/h5/elm-uniapp/)  
 github-[在线demo](https://linzowo.github.io/h5/elm-uniapp/)  
 

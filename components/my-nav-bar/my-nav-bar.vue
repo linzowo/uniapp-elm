@@ -25,7 +25,7 @@
 <script>
 	import {mapState} from 'vuex';
 	export default {
-		name:'navbar',
+		name:'my-nav-bar',
 		data() {
 			return {}
 		},

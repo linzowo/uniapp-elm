@@ -3,10 +3,10 @@
 	class="container vs-flex-item vs-column" 
 	>
 		<!-- 导航栏 S -->
-		<navBar 
+		<my-nav-bar 
 		:address="userInfo.shipAddress.position_name"
 		:style="{top:old.scrollTop>10?'-37px':0}"
-		></navBar>
+		></my-nav-bar>
 		<!-- 导航栏 S -->
 		
 		<!-- 主体内容部分 S -->
@@ -128,7 +128,7 @@ import {mapState,mapActions,mapMutations} from 'vuex';
 // 引入未获取到城市时的提示页面
 import noPosition from '@/components/noPosition/noPosition.vue';
 // 引入顶部导航栏模块
-import navBar from '@/components/navBar/navBar.vue';
+// import myNavBar from '@/components/my-nav-bar/my-nav-bar.vue';
 // 地址模块
 import addressPage from '@/pages/address/address.vue';
 // 店铺排序筛选模块
@@ -148,7 +148,7 @@ import uniPopup from '@/components/uni-popup/uni-popup.vue';
  * @property {Component} addressPage 地址管理模块
  * @property {Component} uniPopup uni组件-弹出层
  */
-const components = { noPosition,navBar,uniPopup,addressPage,storeList,gotop };
+const components = { noPosition,uniPopup,addressPage,storeList,gotop };
 
 
 /**
@@ -331,32 +331,10 @@ export default {
 		 */
 		scrollToStoreList(){
 			this.$utils.log('scrollToStoreList','使页面滚动到商铺列表位置');
-			
-			// uni.pageScrollTo({
-			// 	duration:0,
-			// 	scrollTop: 0
-			// })
-			
-			// uni.createSelectorQuery().select('.store-list').boundingClientRect(ele=>{
-			// 	if(ele.top > this.navBarHeight){
-			// 		let a,b,c;
-			// 		uni.createSelectorQuery().select('.store-list').boundingClientRect().select('.container').boundingClientRect(data=>{
-			// 			a = data;
-			// 		}).exec(data=>{
-			// 			b = data;
-			// 			console.log(a,b);
-			// 			uni.pageScrollTo({
-			// 				duration:0,
-			// 				scrollTop: a.top - b.top - this.navBarHeight
-			// 			})
-			// 		});
-			// 	}
-			// }).exec();
-			
-			
+
+			// #ifdef APP-PLUS
 			this.$utils.getElementInfo('.store-list',(ele)=>{
 				if(ele.top > this.navBarHeight){
-					// this.$utils.getElementInfo('.store-list' ,(e)=>{})
 					console.log(ele.top);
 					uni.pageScrollTo({
 						duration:0,
@@ -364,13 +342,23 @@ export default {
 					})
 				}
 			})
+			// #endif
+
+			// #ifdef MP-WEIXIN
+			uni.pageScrollTo({
+				duration:0,
+				scrollTop: 470
+			})
+			// #endif
 			
-			// if(this.$utils.getElementInfo('.store-list').top > this.navBarHeight){
-			// 	uni.pageScrollTo({
-			// 		duration:0,
-			// 		scrollTop: this.$utils.getElementInfo('.store-list').top - this.$utils.getElementInfo('.container').top - this.navBarHeight
-			// 	})
-			// }
+			// #ifdef H5
+			if(this.$utils.getElementInfo('.store-list').top > this.navBarHeight){
+				uni.pageScrollTo({
+					duration:0,
+					scrollTop: this.$utils.getElementInfo('.store-list').top - this.$utils.getElementInfo('.container').top - this.navBarHeight
+				})
+			}
+			// #endif
 		}
 		,
 		/**

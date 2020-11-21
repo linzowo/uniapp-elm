@@ -78,7 +78,7 @@
 				class="store-list-item padding-tb padding-lr-sm border-bottom border-color-e align-start flex-sub">
 					<!-- 遮罩层 S -->
 					<view 
-					v-show="index == storeMaskIndex"
+					v-if="index == storeMaskIndex"
 					@tap.stop.prevent="controlStoreMask(index)"
 					class="store-item-mask align-center justify-center">
 						<text 

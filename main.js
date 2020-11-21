@@ -63,6 +63,9 @@ Vue.component('codingPopup',codingPopup);
 // 未登录提示组件
 import noLogin from '@/components/noLogin/noLogin.vue';
 Vue.component('noLogin',noLogin);
+// 引入顶部导航栏模块
+import myNavBar from '@/components/my-nav-bar/my-nav-bar.vue';
+Vue.component('myNavBar',myNavBar);
 // 数据加载中组件
 import loading from '@/components/loading/loading.vue';
 Vue.component('loading',loading);

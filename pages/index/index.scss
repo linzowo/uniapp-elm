@@ -1,0 +1,56 @@
+
+.city-page {
+	width: 100%;
+}
+.nav-img{
+	width: 90rpx;
+	height: 90rpx;
+}
+.banner{
+	background-color: #fafafa;
+	margin: 0 20rpx;
+	padding: 24rpx 0 0 30rpx;
+	
+	&-text{
+		height: 220rpx;
+	}
+	
+	&-title{
+		// margin-bottom: 1.33333 * 7.5rpx;
+	}
+	
+	&-info{
+		// margin-bottom: 2.4 * 7.5rpx;
+	}
+	
+	&-link{
+		
+	}
+	
+	&-img{
+		width: 282rpx;
+		height: 188rpx;
+	}
+}
+
+.member{
+	background-image: linear-gradient(90deg,#ffefc4,#f3dda0);
+	color: #644f1b;
+	
+	&-icon{
+		width: 34rpx;
+		height: 34rpx;
+		color: #D8B266;
+	}
+}
+
+.content-list-title-text::before,
+.content-list-title-text::after{
+	content: "";
+	display: inline-block;
+    vertical-align: middle;
+	width: 50rpx;
+	height: 1rpx;
+	background-color: #999;
+	margin: 0 30rpx;
+}

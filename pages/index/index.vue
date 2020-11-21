@@ -99,6 +99,7 @@
 			<!-- 未获取到城市时显示 E -->
 		</view>
 		<!-- 主体内容部分 E -->
+
 			
 		
 		
@@ -121,6 +122,8 @@
  * @module index-项目首页
  * @description 项目首页
  */
+
+import "./index.scss";
 
 // 引入vuex中的对象方便调用方法
 import {mapState,mapActions,mapMutations} from 'vuex';
@@ -266,8 +269,6 @@ export default {
 		}
 		
 	}
-	,
-	mounted() {}
 	,
 	onPageScroll(e) {
 		this.old.scrollTop = e.scrollTop;
@@ -419,60 +420,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
-.city-page {
-	width: 100%;
-}
-.nav-img{
-	width: 90rpx;
-	height: 90rpx;
-}
-.banner{
-	background-color: #fafafa;
-	margin: 0 20rpx;
-	padding: 24rpx 0 0 30rpx;
-	
-	&-text{
-		height: 220rpx;
-	}
-	
-	&-title{
-		// margin-bottom: 1.33333 * 7.5rpx;
-	}
-	
-	&-info{
-		// margin-bottom: 2.4 * 7.5rpx;
-	}
-	
-	&-link{
-		
-	}
-	
-	&-img{
-		width: 282rpx;
-		height: 188rpx;
-	}
-}
-
-.member{
-	background-image: linear-gradient(90deg,#ffefc4,#f3dda0);
-	color: #644f1b;
-	
-	&-icon{
-		width: 34rpx;
-		height: 34rpx;
-		color: #D8B266;
-	}
-}
-
-.content-list-title-text::before,
-.content-list-title-text::after{
-	content: "";
-	display: inline-block;
-    vertical-align: middle;
-	width: 50rpx;
-	height: 1rpx;
-	background-color: #999;
-	margin: 0 30rpx;
-}
+	// @import url(./index.scss);
 </style>

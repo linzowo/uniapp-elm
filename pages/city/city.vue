@@ -47,18 +47,38 @@
 
       <!-- 搜索数据加载中显示加载图标 -->
       <!-- loading S -->
+      
+      <!--  #ifndef  MP-WEIXIN -->
       <view
-        v-show="searchLoading"
-        :style="{ display: 'block' }"
-        class="cu-load bg-white loading"
-      ></view>
+          v-show="searchLoading"
+          :style="{ display: 'block' }"
+          class="cu-load bg-white loading"
+        ></view>
+      <!--  #endif -->
+      <!--  #ifdef  MP-WEIXIN -->
+      <view
+          v-if="searchLoading"
+          :style="{ display: 'block' }"
+          class="cu-load bg-white loading"
+        ></view>
+      <!--  #endif -->
+      
       <!-- loading E -->
 
       <!-- 无结果 -->
+      <!--  #ifndef  MP-WEIXIN -->
       <view
         v-show="!searchList && inputText"
         class="search-no bg-white flex-direction align-center"
       >
+      <!--  #endif -->
+      <!--  #ifdef  MP-WEIXIN -->
+      <view
+        v-if="!searchList && inputText"
+        class="search-no bg-white flex-direction align-center"
+      >
+      <!--  #endif -->
+      
         <text class="text-lg text-color-6">没有找到相关城市</text>
       </view>
       <!-- 搜索列表区域 E -->

@@ -20,9 +20,18 @@
                     class="align-center">
                         <view 
                         class="choose-tag-box margin-right-xs text-xxl">
+                        
+                            <!--  #ifndef  MP-WEIXIN -->
                             <text 
                             v-show="JSON.stringify(item) == JSON.stringify(userInfo.shipAddress)"
                             class="lg text-green cuIcon-roundcheckfill"></text>
+                            <!--  #endif -->
+                            <!--  #ifdef  MP-WEIXIN -->
+                            <text 
+                            v-if="JSON.stringify(item) == JSON.stringify(userInfo.shipAddress)"
+                            class="lg text-green cuIcon-roundcheckfill"></text>
+                            <!--  #endif -->
+                            
                         </view>
 
                         <view class="user-box flex-direction">

@@ -257,9 +257,18 @@
 							<!-- 图片展示模式 E -->
 							
 							<!-- 文字模式 S -->
+							
+							<!--  #ifndef  MP-WEIXIN -->
 							<view 
 							v-show="showTextModeGoods.includes(index)"
 							class="text-mode flex-direction">
+							<!--  #endif -->
+
+							<!--  #ifdef  MP-WEIXIN -->
+							<view 
+							v-if="showTextModeGoods.includes(index)"
+							class="text-mode flex-direction">
+							<!--  #endif -->
 								<view 
 								v-for="(ele,i) in item.foods.slice(3)"
 								:key="i"
@@ -278,12 +287,25 @@
 							v-if="item.foods.length"
 							@tap.stop.prevent="controlGoodsList(index)"
 							class="store-goods-show-more align-center flex-sub justify-center padding-sm text-xs">
+
+								<!--  #ifndef  MP-WEIXIN -->
 								<view v-show="!showTextModeGoods.includes(index)">
+								<!--  #endif -->
+
+								<!--  #ifdef  MP-WEIXIN -->
+								<view v-if="!showTextModeGoods.includes(index)">
+								<!--  #endif -->
 									<text>查看其他相关商品 {{item.foods.length-3}} 个</text>
 									<text class="lg text-gray cuIcon-unfold margin-left-xs"></text>
 								</view>
 								
+								<!--  #ifndef  MP-WEIXIN -->
 								<view v-show="showTextModeGoods.includes(index)">
+								<!--  #endif -->
+
+								<!--  #ifdef  MP-WEIXIN -->
+								<view v-if="showTextModeGoods.includes(index)">
+								<!--  #endif -->
 									<text>收起</text>
 									<text class="lg text-gray cuIcon-fold margin-left-xs"></text>
 								</view>

@@ -29,7 +29,12 @@
 				</view>
 		</view>
 		
+		<!--  #ifndef  MP-WEIXIN -->
 		<view v-show="login" class="content flex-direction">
+		<!--  #endif -->
+		<!--  #ifdef  MP-WEIXIN -->
+		<view v-if="login" class="content flex-direction">
+		<!--  #endif -->
 			
 			<!-- 我的地址 S -->
 			<view 

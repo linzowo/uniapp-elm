@@ -25,10 +25,19 @@
 					@confirm="requestSearchRes"
 					>
 					
+					<!--  #ifndef  MP-WEIXIN -->
 					<view 
 					v-show="inputText"
 					@tap="clearSearch"
 					class="padding-xs">
+					<!--  #endif -->
+					<!--  #ifdef  MP-WEIXIN -->
+					<view 
+					v-if="inputText"
+					@tap="clearSearch"
+					class="padding-xs">
+					<!--  #endif -->
+					
 						<text class="lg text-gray cuIcon-close text-bold text-lg"></text>
 					</view>
 				</view>
@@ -43,9 +52,18 @@
 		<view class="content flex-sub">
 			
 			<!-- 搜索标签 S -->
+			
+			<!--  #ifndef  MP-WEIXIN -->
 			<view 
 			v-show="!inputText"
 			class="search-tag-box flex-direction">
+			<!--  #endif -->
+			<!--  #ifdef  MP-WEIXIN -->
+			<view 
+			v-if="!inputText"
+			class="search-tag-box flex-direction">
+			<!--  #endif -->
+			
 				<!-- 历史搜索 S -->
 				<view 
 				v-if="searchHistory.length"
@@ -90,9 +108,17 @@
 			<!-- 搜索标签 E -->
 			
 			<!-- 搜索提示 S -->
+			<!--  #ifndef  MP-WEIXIN -->
 			<view 
 			v-show="inputText && (!searchRes.length && !recommendData.length)"
 			class="search-cue-box flex-sub padding-lr flex-direction">
+			<!--  #endif -->
+			<!--  #ifdef  MP-WEIXIN -->
+			<view 
+			v-if="inputText && (!searchRes.length && !recommendData.length)"
+			class="search-cue-box flex-sub padding-lr flex-direction">
+			<!--  #endif -->
+			
 			
 				<!-- 输入内容显示 S -->
 				<view 
@@ -185,9 +211,18 @@
 			<!-- 搜索提示 E -->
 			
 			<!-- 搜索结果 S -->
+			<!--  #ifndef  MP-WEIXIN -->
+			
 			<view 
 			v-show="searchRes.length || recommendData.length"
 			class="search-result-box flex-sub">
+			<!--  #endif -->
+			<!--  #ifdef  MP-WEIXIN -->
+			
+			<view 
+			v-if="searchRes.length || recommendData.length"
+			class="search-result-box flex-sub">
+			<!--  #endif -->
 				<storeList
 				:top="100"
 				:nativeNav="false"

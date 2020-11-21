@@ -95,9 +95,18 @@
 				</view>
 
 			</view>
+			
+			<!--  #ifndef  MP-WEIXIN -->
 			<view 
 			v-show="dataLoading"
 			class="cu-load bg-white loading"></view>
+			<!--  #endif -->
+			<!--  #ifdef  MP-WEIXIN -->
+			<view 
+			v-if="dataLoading"
+			class="cu-load bg-white loading"></view>
+			<!--  #endif -->
+			
 			<!-- 订单展示区 E -->
 
 			<!-- 三月提示 S -->

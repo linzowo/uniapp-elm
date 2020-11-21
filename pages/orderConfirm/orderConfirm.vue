@@ -345,9 +345,18 @@
                                         <text class="text-color-9 text-xs">（{{item.delivery_fee_description}}）</text>
                                     </view>
                                     <view class="text-xxl">
+                                        
+                                        <!--  #ifndef  MP-WEIXIN -->
                                         <text 
                                         v-show="deliverTimesTabIndex == deliverTimesCur[0] && index == deliverTimesCur[1]"
                                         class="lg text-green cuIcon-roundcheckfill"></text>
+                                        <!--  #endif -->
+                                        <!--  #ifdef  MP-WEIXIN -->
+                                        <text 
+                                        v-if="deliverTimesTabIndex == deliverTimesCur[0] && index == deliverTimesCur[1]"
+                                        class="lg text-green cuIcon-roundcheckfill"></text>
+                                        <!--  #endif -->
+                                        
                                     </view>
                                 </view>
                             </view>

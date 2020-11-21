@@ -128,13 +128,13 @@ github-[在线demo](https://linzowo.github.io/h5/elm-uniapp/)
 
 - [x] H5支持
 
-- [ ] 微信小程序支持
+- [x] 微信小程序支持
 
 - [ ] 支付宝小程序支持
 
 - [ ] 头条小程序支持
 
-- [ ] app支持
+- [x] app支持
 
   
 ---

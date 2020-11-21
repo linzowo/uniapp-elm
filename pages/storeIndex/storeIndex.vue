@@ -1,9 +1,17 @@
 <template>
 	<view class="store-index-container flex-direction">
 		<!-- 数据加载完成前显示 S -->
+		<!--  #ifndef  MP-WEIXIN -->
 		<view 
 		v-show="!lodingEnd"
 		class="loding">
+		<!--  #endif -->
+		<!--  #ifdef  MP-WEIXIN -->
+		<view 
+		v-if="!lodingEnd"
+		class="loding">
+		<!--  #endif -->
+		
 			<image 
 			:style="{width:'750rpx'}"
 			:src="$i_u.lodding_bg" 
@@ -12,10 +20,18 @@
 		<!-- 数据加载完成前显示 E -->
 		
 		<!-- 数据加载完成后显示 S -->
-		<view 
+			<!--  #ifndef  MP-WEIXIN -->
+			<view 
 		v-if="lodingEnd"
 		v-show="!pageState.showBannercontent"
 		class="loding-end flex-direction">
+			<!--  #endif -->
+			<!--  #ifdef  MP-WEIXIN -->
+			<view 
+		v-if="lodingEnd && !pageState.showBannercontent"
+		class="loding-end flex-direction">
+			<!--  #endif -->
+		
 		
 			<!-- nav S -->
 			<view class="store-index-nav">
@@ -127,9 +143,17 @@
 				<!-- tab-content S -->
 				<view class="tab-content">
 					<!-- 点餐 S -->
+					<!--  #ifndef  MP-WEIXIN -->
 					<view 
 					v-show="TabCur == 0"
 					class="flex-direction">
+					<!--  #endif -->
+					<!--  #ifdef  MP-WEIXIN -->
+					<view 
+					v-if="TabCur == 0"
+					class="flex-direction">
+					<!--  #endif -->
+					
 						<!-- 广告 -->
 						<view 
 						@tap="controlBannerPage(true)"
@@ -389,9 +413,18 @@
 								 -->
 								 
 								<!-- 节省金额提示 S -->
+								
+								<!--  #ifndef  MP-WEIXIN -->
 								<view 
 								v-show="shopCartPriceCount.save_money&&!pageState.shopCartOpenState"
 								class="save-money-tips flex-sub align-center justify-center text-xs text-color-3">
+								<!--  #endif -->
+								<!--  #ifdef  MP-WEIXIN -->
+								<view 
+								v-if="shopCartPriceCount.save_money&&!pageState.shopCartOpenState"
+								class="save-money-tips flex-sub align-center justify-center text-xs text-color-3">
+								<!--  #endif -->
+								
 									<text>已减{{shopCartPriceCount.save_money}}元</text>
 								</view>
 								<!-- 节省金额提示 E -->
@@ -405,9 +438,20 @@
 									class="lg text-xxl cuIcon-cartfill"
 									:class="shopCart.count?'text-white':'text-color-6'"
 									></text>
+									
+									<!--  #ifndef  MP-WEIXIN -->
+									
 									<view 
 									v-show="shopCart.count"
-									class="cu-tag badge">{{shopCart.count}}</view>
+									class="cu-tag badge">
+									<!--  #endif -->
+									<!--  #ifdef  MP-WEIXIN -->
+									
+									<view 
+									v-if="shopCart.count"
+									class="cu-tag badge">
+									<!--  #endif -->
+									{{shopCart.count}}</view>
 								</view>
 								
 								<!-- 选购商品提示 -->
@@ -442,6 +486,8 @@
 								class="shopping-cart-pay-btn-box text-white align-center justify-center"
 								:style="{backgroundColor:shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount?'':'#535356'}"
 								>
+								
+									<!--  #ifndef  MP-WEIXIN -->
 									<text 
 									v-show="shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount"
 									class="text-lg">去结算</text>
@@ -449,7 +495,19 @@
 									<text 
 									v-show="shopCartPriceCount.price < storeData.rst.float_minimum_order_amount"
 									class="text-lg"
-									>{{shopCartPriceCount.price?'差':''}}¥{{parseInt(storeData.rst.float_minimum_order_amount - shopCartPriceCount.price)}}起送</text>
+									>
+									<!--  #endif -->
+									<!--  #ifdef  MP-WEIXIN -->
+									<text 
+									v-if="shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount"
+									class="text-lg">去结算</text>
+									
+									<text 
+									v-if="shopCartPriceCount.price < storeData.rst.float_minimum_order_amount"
+									class="text-lg"
+									>
+									<!--  #endif -->
+									{{shopCartPriceCount.price?'差':''}}¥{{parseInt(storeData.rst.float_minimum_order_amount - shopCartPriceCount.price)}}起送</text>
 								</view>
 								
 							</view>
@@ -461,9 +519,17 @@
 					<!-- 点餐 E -->
 					
 					<!-- 评价 S -->
+					<!--  #ifndef  MP-WEIXIN -->
 					<view 
 					v-show="TabCur == 1"
 					class="flex-sub flex-direction bg-grey-f5">
+					<!--  #endif -->
+					<!--  #ifdef  MP-WEIXIN -->
+					<view 
+					v-if="TabCur == 1"
+					class="flex-sub flex-direction bg-grey-f5">
+					<!--  #endif -->
+					
 					
 						<!-- 顶部店铺评分栏 S -->
 						<view class="align-center justify-around flex-sub text-color-6 padding-top-lg padding-bottom-xl bg-white margin-bottom-sm">
@@ -679,9 +745,17 @@
 					<!-- 评价 E -->
 					
 					<!-- 详细信息 S -->
+					<!--  #ifndef  MP-WEIXIN -->
 					<view 
 					v-show="TabCur == 2"
 					class="flex-sub flex-direction bg-grey-f5">
+					<!--  #endif -->
+					<!--  #ifdef  MP-WEIXIN -->
+					<view 
+					v-if="TabCur == 2"
+					class="flex-sub flex-direction bg-grey-f5">
+					<!--  #endif -->
+					
 					
 						<!-- 配送信息 -->
 						<view class="margin-bottom bg-white padding flex-direction">
@@ -891,9 +965,18 @@
 				 -->
 				 
 				<!-- 节省金额提示 S -->
+				
+				<!--  #ifndef  MP-WEIXIN -->
 				<view 
 				v-show="shopCartPriceCount.save_money&&!pageState.shopCartOpenState"
 				class="save-money-tips flex-sub align-center justify-center text-xs text-color-3">
+				<!--  #endif -->
+				<!--  #ifdef  MP-WEIXIN -->
+				<view 
+				v-if="shopCartPriceCount.save_money&&!pageState.shopCartOpenState"
+				class="save-money-tips flex-sub align-center justify-center text-xs text-color-3">
+				<!--  #endif -->
+				
 					<text>已减{{shopCartPriceCount.save_money}}元</text>
 				</view>
 				<!-- 节省金额提示 E -->
@@ -907,9 +990,18 @@
 					class="lg text-xxl cuIcon-cartfill"
 					:class="shopCart.count?'text-white':'text-color-6'"
 					></text>
+					
+					<!--  #ifndef  MP-WEIXIN -->
 					<view 
 					v-show="shopCart.count"
-					class="cu-tag badge">{{shopCart.count}}</view>
+					class="cu-tag badge">
+					<!--  #endif -->
+					<!--  #ifdef  MP-WEIXIN -->
+					<view 
+					v-if="shopCart.count"
+					class="cu-tag badge">
+					<!--  #endif -->
+					{{shopCart.count}}</view>
 				</view>
 				
 				<!-- 选购商品提示 -->
@@ -944,6 +1036,7 @@
 				class="shopping-cart-pay-btn-box text-white align-center justify-center"
 				:style="{backgroundColor:shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount?'':'#535356'}"
 				>
+					<!--  #ifndef  MP-WEIXIN -->
 					<text 
 					v-show="shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount"
 					class="text-lg">去结算</text>
@@ -951,7 +1044,19 @@
 					<text 
 					v-show="shopCartPriceCount.price < storeData.rst.float_minimum_order_amount"
 					class="text-lg"
-					>{{shopCartPriceCount.price?'差':''}}¥{{parseInt(storeData.rst.float_minimum_order_amount - shopCartPriceCount.price)}}起送</text>
+					>
+					<!--  #endif -->
+					<!--  #ifdef  MP-WEIXIN -->
+					<text 
+					v-if="shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount"
+					class="text-lg">去结算</text>
+					
+					<text 
+					v-if="shopCartPriceCount.price < storeData.rst.float_minimum_order_amount"
+					class="text-lg"
+					>
+					<!--  #endif -->
+					{{shopCartPriceCount.price?'差':''}}¥{{parseInt(storeData.rst.float_minimum_order_amount - shopCartPriceCount.price)}}起送</text>
 				</view>
 				
 			</view>
@@ -1363,9 +1468,17 @@
 				<view class="shopcart-popup-box bg-white flex-direction">
 					
 					<!-- 节省金额提示 S -->
+					<!--  #ifndef  MP-WEIXIN -->
 					<view 
 					v-show="shopCartPriceCount.save_money"
 					class="save-money-tips flex-sub align-center justify-center text-xs text-color-3">
+					<!--  #endif -->
+					<!--  #ifdef  MP-WEIXIN -->
+					<view 
+					v-if="shopCartPriceCount.save_money"
+					class="save-money-tips flex-sub align-center justify-center text-xs text-color-3">
+					<!--  #endif -->
+					
 						<text>已减{{shopCartPriceCount.save_money}}元</text>
 					</view>
 					<!-- 节省金额提示 E -->

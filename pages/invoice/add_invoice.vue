@@ -21,9 +21,15 @@
                         class="border border-color-c margin-lr-xs padding-tb-xs padding-lr border-radius-10"
                         :class="[index==curType?'border-color-blue text-blue':'']" 
                         v-for="(item,index) in radioItems" :key="index">
-                            <view
-                            v-show="false"
-                            >
+                        
+					
+                            <!--  #ifndef  MP-WEIXIN -->
+                            <view v-show="false">
+                            <!--  #endif -->
+                            <!--  #ifdef  MP-WEIXIN -->
+                            <view v-if="false">
+                            <!--  #endif -->
+                            
                                 <radio 
                                 :id="index+''" 
                                 :value="index+''" 
@@ -58,10 +64,19 @@
                     
                     </view>
                     
+                    <!--  #ifndef  MP-WEIXIN -->
                     <text 
                     v-show="nameInput"
                     @tap="clearInput('nameInput')"
                     class="lg text-gray cuIcon-roundclosefill text-xl"></text>
+                    <!--  #endif -->
+                    <!--  #ifdef  MP-WEIXIN -->
+                    <text 
+                    v-if="nameInput"
+                    @tap="clearInput('nameInput')"
+                    class="lg text-gray cuIcon-roundclosefill text-xl"></text>
+                    <!--  #endif -->
+                    
 
                 </view>
 
@@ -88,10 +103,19 @@
                         
                         </view>
                         
+                        <!--  #ifndef  MP-WEIXIN -->
                         <text 
                         v-show="taxidInput"
                         @tap="clearInput('taxidInput')"
                         class="lg text-gray cuIcon-roundclosefill text-xl"></text>
+                        <!--  #endif -->
+                        <!--  #ifdef  MP-WEIXIN -->
+                        <text 
+                        v-if="taxidInput"
+                        @tap="clearInput('taxidInput')"
+                        class="lg text-gray cuIcon-roundclosefill text-xl"></text>
+                        <!--  #endif -->
+                        
 
                     </view>
 

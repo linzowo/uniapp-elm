@@ -102,12 +102,25 @@
 						<!-- 默认显示的第一件商品 E -->
 						
 						<!-- 更多商品 S -->
+						
+						<!--  #ifndef  MP-WEIXIN -->
 						<view 
 						v-show="showMoreGoods.includes(index)"
 						v-for="(ele,i) in item.foods.slice(1)"
 						:key="ele.food_id"
 						@tap="comboTap(item.restaurant.id,ele.food_id)"
 						class="combo-item margin-bottom">
+						<!--  #endif -->
+						<!--  #ifdef  MP-WEIXIN -->
+						<view v-if="showMoreGoods.includes(index)">
+						<view 
+						v-for="(ele,i) in item.foods.slice(1)"
+						:key="ele.food_id"
+						@tap="comboTap(item.restaurant.id,ele.food_id)"
+						class="combo-item margin-bottom">
+						<!--  #endif -->
+						
+						
 							<!-- 套餐图片 -->
 							<image 
 							class="combo-img margin-right-sm"
@@ -127,6 +140,10 @@
 								</view>
 							</view>
 						</view>
+						
+						<!--  #ifdef  MP-WEIXIN -->
+						</view>
+						<!--  #endif -->
 						<!-- 更多商品 E -->
 						
 						<!-- 套餐 E -->
@@ -134,17 +151,38 @@
 					<!-- 套餐列表 S -->
 					
 					<!-- 显示更多套餐 S -->
+					
+					<!--  #ifndef  MP-WEIXIN -->
 					<view 
 					@tap.stop.prevent="controlGoodsList(index)"
 					v-show="!showMoreGoods.includes(index)"
 					class="show-more padding-sm justify-center text-color-9 align-center">
+					<!--  #endif -->
+					<!--  #ifdef  MP-WEIXIN -->
+					<view 
+					@tap.stop.prevent="controlGoodsList(index)"
+					v-if="!showMoreGoods.includes(index)"
+					class="show-more padding-sm justify-center text-color-9 align-center">
+					<!--  #endif -->
+
+					
 						<text>展开更多套餐 {{item.foods.length-1}}个</text>
 						<text class="lg text-gray cuIcon-unfold margin-left-xs"></text>
 					</view>
+					
+					<!--  #ifndef  MP-WEIXIN -->
 					<view 
 					@tap.stop.prevent="controlGoodsList(index)"
 					v-show="showMoreGoods.includes(index)"
 					class="show-more padding-sm justify-center text-color-9 align-center">
+					<!--  #endif -->
+					<!--  #ifdef  MP-WEIXIN -->
+					<view 
+					@tap.stop.prevent="controlGoodsList(index)"
+					v-if="showMoreGoods.includes(index)"
+					class="show-more padding-sm justify-center text-color-9 align-center">
+					<!--  #endif -->
+					
 						<text>收起</text>
 						<text class="lg text-gray cuIcon-fold margin-left-xs"></text>
 					</view>

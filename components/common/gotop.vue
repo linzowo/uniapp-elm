@@ -1,9 +1,18 @@
 <template>
 	<!-- 回到顶部按钮 S -->
+	<!--  #ifndef  MP-WEIXIN -->
 	<view
 	v-show="gotopShow"
 	@tap.stop.prevent="gotop"
 	 class="gotop round bg-white border border-lg border-color-e justify-center align-center">
+	<!--  #endif -->
+
+	<!--  #ifdef  MP-WEIXIN -->
+	<view
+	v-show="gotopShow"
+	@tap.stop.prevent="gotop"
+	 class="gotop round bg-white border border-lg border-color-e justify-center align-center">
+	<!--  #endif -->
 		<text class="lg text-gray cuIcon-top text-xxl"></text>
 	</view>
 	<!-- 回到顶部按钮 E -->

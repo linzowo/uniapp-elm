@@ -4,9 +4,18 @@
         @tap="chooseInvoice(null)"
         class="padding bg-white align-center">
             <view class="confirm-tag-box text-xxl margin-right-xs">
+                
+                <!--  #ifndef  MP-WEIXIN -->
                 <text 
                 v-show="invoice === null"
                 class="lg text-green cuIcon-roundcheckfill"></text>
+                <!--  #endif -->
+                <!--  #ifdef  MP-WEIXIN -->
+                <text 
+                v-if="invoice === null"
+                class="lg text-green cuIcon-roundcheckfill"></text>
+                <!--  #endif -->
+                
             </view>
             <text class="text-bold text-lg text-color-3">不需要发票</text>
         </view>
@@ -27,9 +36,18 @@
                 @tap="chooseInvoice(index)"
                 class="align-center flex-sub">
                     <view class="confirm-tag-box text-xxl margin-right-xs">
+                        
+                        <!--  #ifndef  MP-WEIXIN -->
                         <text 
                         v-show="JSON.stringify(invoice) == JSON.stringify(item)"
                         class="lg text-green cuIcon-roundcheckfill"></text>
+                        <!--  #endif -->
+                        <!--  #ifdef  MP-WEIXIN -->
+                        <text 
+                        v-if="JSON.stringify(invoice) == JSON.stringify(item)"
+                        class="lg text-green cuIcon-roundcheckfill"></text>
+                        <!--  #endif -->
+                        
                     </view>
 
                     <!-- 单位 -->

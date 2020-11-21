@@ -1,9 +1,17 @@
 <template>
 	<view class="add-address-container flex-direction">
 		<!-- 表单区域 E -->
+		<!--  #ifndef  MP-WEIXIN -->
 		<view 
 		v-show="!pageState.searchShow"
 		class="from-box flex-direction">
+		<!--  #endif -->
+		<!--  #ifdef  MP-WEIXIN -->
+		<view 
+		v-if="!pageState.searchShow"
+		class="from-box flex-direction">
+		<!--  #endif -->
+		
 			<form class="from-box" @submit="formSubmit">
 				<view class="cu-form-group">
 					<view class="title">联系人</view>
@@ -87,9 +95,17 @@
 		<!-- 表单区域 S -->
 		
 		<!-- 地址搜索区 s -->
+		
+		<!--  #ifndef  MP-WEIXIN -->
 		<view 
 		v-show="pageState.searchShow"
 		class="search-address flex-direction flex-sub">
+		<!--  #endif -->
+		<!--  #ifdef  MP-WEIXIN -->
+		<view 
+		v-if="pageState.searchShow"
+		class="search-address flex-direction flex-sub">
+		<!--  #endif -->
 			<view class="cu-bar search bg-white">
 				<view class="search-form round">
 					<text class="cuIcon-search"></text>

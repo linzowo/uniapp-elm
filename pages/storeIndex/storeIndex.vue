@@ -163,80 +163,13 @@
 							:src="storeData.rst.posters[0].image_hash,'w_686'|imgUrlFilter" 
 							mode="widthFix"></image>
 						</view>
-						
-						<!-- 滑动菜单 -->
-						<view class="scroll-menu-column flex-direction">
-							<text class="title padding-lr text-lg text-bold margin-bottom-sm">商家推荐</text>
-							
-							<scroll-view 
-							class="scroll-view_H recommend-foods-list" 
-							scroll-x="true"
-							>
-							
-								<view 
-								v-for="(item,index) in storeData.recommend[0].items"
-								:key="item.item_id"
-								class="scroll-view-item_H recommend-foods-item flex-direction border-radius-6 margin-left-sm"
-								>
-									<image 
-									@tap="showFoodTasteChoosePopup(item)"
-									class="border-radius-6"
-									:src="item.image_path,'w_240'|imgUrlFilter" 
-									mode="widthFix"
-									></image>
-									
-									<view 
-									@tap="showGoodsInfoPopup(item)"
-									class="flex-direction">
-										<text
-										class="recommend-foods-name text-cut"
-										>
-										{{item.name}}
-										</text>
-										<!-- 商品售卖情况 -->
-										<view class="text-xs text-grey margin-bottom-xs">
-											<text class="margin-right-xs">月售{{item.month_sales}}</text>
-											<text>好评率{{item.satisfy_rate_text?item.satisfy_rate_text:0}}%</text>
-										</view>
-										
-										<!-- 价格及添加购物车 -->
-										<view class="justify-between align-center">
-											<text 
-											class="text-price text-xl text-color-price"
-											>
-											{{item.price}}
-											</text>
-											<view class="align-center">
-												<text
-												class="text-sm text-color-6 margin-right-xs"
-												v-if="item.min_purchase>1&&!shopCart.foodsList[item.item_id]"
-												>{{item.min_purchase}}份起售</text>
-												<view class="add-remove-box align-center">
-													<text 
-													v-if="shopCart.foodsList[item.item_id]"
-													@tap.stop.prevent="cutFromCart(item)"
-													class="lg add-btn-blue text-xxl cuIcon-rounddown"></text>
-													
-													<text 
-													v-if="shopCart.foodsList[item.item_id]"
-													class="text-cut goods-number"
-													>{{shopCart.foodsList[item.item_id].count}}</text>
-													
-													<text 
-													@tap.stop.prevent="item.attrs.length?showFoodTasteChoosePopup(item):add2cart(item)"
-													class="lg add-btn-blue text-xxl cuIcon-roundaddfill"
-													></text>
-												</view>
-											</view>
-											
-										</view>
-									</view>
-									
-								</view>
-								
-							</scroll-view>
-						</view>
-					
+
+						<recommend 
+						:shopCart="shopCart" 
+						:recommendData="storeData.recommend[0].items"
+						@add2cart="add2cart"
+						></recommend>
+
 						<!-- 店铺菜单模块 -->
 						<view class="store-menu-box">
 						
@@ -403,7 +336,7 @@
 							<!-- 底部购物车 S -->
 							<view 
 							@tap="shopCart.count?showShopCartPopup():''"
-							class="shopping-cart-box justify-between align-center"
+							class="shopping-cart-box justify-end align-center"
 							:style="{zIndex:11}"
 							>
 								<!-- 
@@ -1062,638 +995,24 @@
 			</view>
 			<!-- 底部购物车 E -->
 			
-			
 		</view>
 		<!-- banner弹窗 E -->
 
-		
-		<!-- 页面弹窗组件 S -->
-		<view
-		v-if="lodingEnd"
-		>
-			<!-- 店铺信息弹窗 S -->
-			<uni-popup
-			ref="storeInfoPopup" 
-			:type="'center'"
-			@change="popupChange"
-			:animation="true"
-			id="store-info-popup-box"
-			>
-				<!-- 弹窗填充内容 -->
-				<view class="store-info-popup-box flex-direction align-center">
-					
-					<!-- 弹窗主体 -->
-					<view class="bg-white border-radius-10 flex-direction align-center padding-bottom-xl padding-top-sm">
-						<!-- 店铺名称 -->
-						<view class="padding-lr-sm flex-wrap text-center padding">
-							<text class="text-color-3 text-bold text-xxl margin-right-xs">{{storeData.rst.name}}</text>
-						</view>
-						
-						<!-- 基础信息 -->
-						<view 
-						:style="{width:'100%'}"
-						class="align-end justify-around padding-lr-xs">
-							
-							<!-- 评分 -->
-							<view class="flex-direction align-center">
-								<text class="text-color-3 margin-bottom-xs text-bold text-lg">{{storeData.rst.rating}}</text>
-								<text class="text-xs text-color-9">评分</text>
-							</view>
-							
-							<!-- 月售 -->
-							<view class="flex-direction align-center">
-								<text class="text-color-3 margin-bottom-xs text-bold text-lg">{{storeData.rst.recent_order_num}}单</text>
-								<text class="text-xs text-color-9">月售</text>
-							</view>
-							
-							<!-- 商家配送 -->
-							<view class="flex-direction align-center">
-								<text class="text-color-3 margin-bottom-xs text-bold text-lg">商家配送</text>
-								<text class="text-xs text-color-9">约{{storeData.rst.order_lead_time}}分钟</text>
-							</view>
-							
-							<!-- 配送费 -->
-							<view class="flex-direction align-center">
-								<text class="text-color-3 margin-bottom-xs text-bold text-lg">{{storeData.rst.float_delivery_fee}}元</text>
-								<text class="text-xs text-color-9">配送费</text>
-							</view>
-							
-							<!-- 距离 -->
-							<view class="flex-direction align-center">
-								<text class="text-color-3 margin-bottom-xs text-bold text-lg">{{storeData.rst.distance_text}}</text>
-								<text class="text-xs text-color-9">距离</text>
-							</view>
-							
-						</view>
-						
-						<!-- 公告 -->
-						<view class="flex-direction align-center">
-							
-							<view class="announcement justify-center padding">
-								<text class="text-color-9 text-sm bg-white">公告</text>
-							</view>
-							<text>{{storeData.rst.promotion_info}}</text>
-						</view>
-					</view>
-					
-					<!-- 关闭按钮 -->
-					<text 
-					@tap="closePopup('storeInfoPopup')"
-					class="margin-top-xl lg text-gray cuIcon-roundclose text-sl"></text>
-					
-				</view>
-				
-			</uni-popup>
-			<!-- 店铺信息弹窗 E -->
-			
-			<!-- 红包信息弹窗 S -->
-			<uni-popup
-			ref="redpackPopup" 
-			:type="'bottom'"
-			@change="popupChange"
-			:animation="true"
-			>
-				<!-- 弹窗主体 -->
-				<view 
-				:style="{width:'750rpx'}"
-				class="flex-direction bg-grey-f5">
-				
-					<!-- 顶部标题 -->
-					<view class="padding align-center">
-						<view class="text-black flex-sub justify-center text-bold text-xl">
-							<text>店铺专享红包</text>
-						</view>
-						<text 
-						@tap="closePopup('redpackPopup')"
-						class="lg text-gray cuIcon-close text-xxl"></text>
-					</view>
-					
-					<!-- 滑动红包列表 -->
-					<scroll-view 
-					scroll-y="true" 
-					:style="{height:'567rpx'}"
-					class="padding-lr"
-					>
-						<!-- 会员红包 -->
-						<view 
-						v-if="redpackFilter(storeData.redpack).member.length"
-						class="flex-direction">
-							<!-- 标题 -->
-							<view class="text-xs margin-bottom-sm">
-								<text class="text-bold text-color-6 margin-right-xs">超级会员特权</text>
-								<text class="text-color-9">限超级会员用户兑换</text>
-							</view>
-							<!-- 红包列表 -->
-							<view class="redpack-list flex-direction">
-								
-								<view 
-								v-for="(item,index) in redpackFilter(storeData.redpack).member"
-								:key="index"
-								class="redpack-item card-round-icon member-redpack-item-bg justify-between padding-tb-sm align-center margin-bottom-sm">
-									<view class="align-center">
-										<text 
-										class="text-price redpack-price text-bold text-color-brown margin-lr"
-										>{{item.value}}</text>
-										<view class="flex-direction">
-											<view class="text-bold text-color-brown margin-bottom-xs align-center">
-												<text class="lg text-yellow cuIcon-crownfill margin-right-xs"></text>
-												<text>满任意金额可用</text>
-											</view>
-											<text 
-											:style="{color:'#735b27'}"
-											class="text-xs"
-											>限本店使用, 2020-06-16到期</text>
-										</view>
-									</view>
-									<view class="redpack-btn-box align-center justify-center padding-lr padding-tb-lg border-left border-color-e">
-										<text 
-										v-if="!redpackInShopcart(item)"
-										@tap="exchangeRedpack('vip',item)"
-										class="padding-lr padding-tb-xs app-bg-brown round ">兑换</text>
-										<image 
-										v-if="redpackInShopcart(item)"
-										:src="$i_u.exchange_redpack_success" 
-										mode="widthFix"></image>
-									</view>
-								</view>
-								
-							</view>
-						</view>
-						
-						<!-- 店铺红包  -->
-						
-						<!-- 红包列表 -->
-						<view 
-						v-if="redpackFilter(storeData.redpack).normal.length"
-						class="redpack-list flex-direction">
-							
-							<view 
-							v-for="(item,index) in redpackFilter(storeData.redpack).normal"
-							:key="index"
-							class="redpack-item card-round-icon justify-between padding-tb-sm align-center margin-bottom-sm">
-								<view class="align-center">
-									<text 
-									:style="{color:'#ff5339'}"
-									class="text-price redpack-price text-bold margin-lr"
-									>{{item.value}}</text>
-									<view class="flex-direction">
-										<view class="text-bold text-color-3 margin-bottom-xs align-center">
-											<text>{{item.title_detail}}</text>
-										</view>
-										<text 
-										class="text-xs text-color-6"
-										>限本店使用, 2020-06-16到期</text>
-									</view>
-								</view>
-								<view class="redpack-btn-box align-center justify-center padding-lr padding-tb-lg border-left border-color-e">
-									<text 
-									v-if="!redpackInShopcart(item)"
-									@tap="exchangeRedpack('normal',item)"
-									class="padding-lr padding-tb-xs app-bg-red round ">领取</text>
-									<image 
-									v-if="redpackInShopcart(item)"
-									:src="$i_u.exchange_redpack_success" 
-									mode="widthFix"></image>
-								</view>
-							</view>
-								
-						</view>
-						
-					</scroll-view>
-					
-				</view>
-				
-			</uni-popup>
-			<!-- 红包信息弹窗 E -->
-			
-			<!-- 超级会员开通弹窗 S -->
-			<uni-popup
-			ref="openSvipPopup" 
-			:type="'center'"
-			@change="popupChange"
-			:animation="true"
-			>
-				<view 
-				:style="{width:'640rpx'}"
-				class="bg-white flex-direction border-radius-10 align-center">
-				
-					<!-- 顶部标签 -->
-					<view class="svip-popup-title-box">
-						<!-- 背景图片 -->
-						<image 
-						class="svip-popup-title-bg"
-						src="/static/image/open-svip-title.png" 
-						mode="widthFix"></image>
-					</view>
-					
-					<!-- 展示图片 -->
-					<view class="sale-value-box">
-						<image 
-						class="sale-value-bg"
-						src="/static/image/open-svip-bg.png" 
-						mode="widthFix"></image>
-						<view class="sale-value-text flex-direction align-center">
-							<text class="text-white text-lg margin-top-sm">本单立享</text>
-							<text 
-							:style="{color:'#7d490f'}"
-							class="text-price text-sl text-bold margin-top">7</text>
-						</view>
-					</view>
-					
-					<!-- 超级会员介绍 -->
-					<text class="svip-popup-info-box flex-wrap margin-tb">
-						<text class="text-color-6">开通会员每月领至少20元无门槛红包平均每年</text><text class="text-color-price">可省785元</text>
-					</text>
-					
-					<!-- 开通 放弃 按钮 -->
-					<view class="svip-popup-btn-box justify-around margin-bottom">
-						<button 
-						@click="closePopup('openSvipPopup')"
-						class="svip-popup-btn svip-popup-btn-giveup" type="default">放弃优惠</button>
-						<button 
-						@click="openSvip"
-						class="svip-popup-btn svip-popup-btn-open" type="default">立即开通</button>
-					</view>
-					
-					
-				</view>
-			</uni-popup>
-			<!-- 超级会员开通弹窗 E -->
-			
-			
-			<!-- 优惠活动弹窗 S -->
-			<uni-popup
-			ref="saleActPopup" 
-			:type="'bottom'"
-			@change="popupChange"
-			:animation="true"
-			>
-				<!-- 弹窗主体 -->
-				<view 
-				:style="{width:'750rpx'}"
-				class="flex-direction bg-grey-f5">
-				
-					<!-- 顶部标题 -->
-					<view class="padding align-center">
-						<view class="text-black flex-sub justify-center text-bold text-xl">
-							<text>优惠活动</text>
-						</view>
-						<text 
-						@tap="closePopup('saleActPopup')"
-						class="lg text-gray cuIcon-close text-xxl"></text>
-					</view>
-					
-					<!-- 滑动红包列表 -->
-					<scroll-view 
-					scroll-y="true" 
-					:style="{height:'380rpx'}"
-					class="padding-lr"
-					>
-						<!-- 优惠活动列表 -->
-						<view class="flex-direction">
-							<view 
-							v-for="(e,i) in storeData.rst.activities"
-							:key="e.id"
-							class="align-start margin-tb-xs">
-								<text class="radius active-tag text-xs margin-right-xs border text-scale-9 padding-lr-xs"
-								:style="{color:e.text_color,borderColor:e.border}"
-								>{{e.icon_name}}</text>
-								<text
-								class="text-color-6"
-								:style="{width:'580rpx'}"
-								>{{e.tips}}</text>
-							</view>
-						</view>
-						
-					</scroll-view>
-					
-				</view>
-				
-			</uni-popup>
-			<!-- 优惠活动弹窗 E -->
-			
-			<!-- 商品大图介绍 S -->
-			<uni-popup
-			ref="goodsInfoPopup" 
-			:type="'bottom'"
-			@change="popupChange"
-			:animation="true"
-			:zIndex="10"
-			>
-				<view 
-				v-if="goodsInfoPopupData"
-				class="flex-direction bg-white"
-				:style="{height:'100vh',width:'750rpx'}"
-				>
-					<!-- 顶部大图展示区 -->
-					<view class="goods-cover-box">
-						<image 
-						class="goods-cover"
-						:src="goodsInfoPopupData.image_path,'w_376,h_376'|imgUrlFilter" 
-						mode="widthFix"
-						></image>
-						<text 
-						@tap="closePopup('goodsInfoPopup')"
-						class="goods-cover-icon lg text-white cuIcon-close text-xxl"></text>
-					</view>
-					
-					<!-- 商品介绍区 -->
-					<view class="flex-direction padding">
-						
-						<text class="margin-bottom-sm text-bold text-xxl text-color-0">{{goodsInfoPopupData.name}}</text>
-						
-						<view class="margin-bottom-sm text-xs">
-							<text class="margin-right-xs">月售{{goodsInfoPopupData.month_sales}}份</text>
-							<text class="">好评率{{goodsInfoPopupData.satisfy_rate_text?goodsInfoPopupData.satisfy_rate_text:0}}%</text>
-						</view>
-						
-						<view class="margin-bottom-sm align-center justify-between">
-							
-							<view class="align-center">
-								<text class="text-price text-color-price text-lg margin-right-sm">{{goodsInfoPopupData.price}}</text>
-								<text class="delete-line text-price text-color-9">{{goodsInfoPopupData.origin_price}}</text>
-								<text 
-								class="sale-tag padding-lr-xs border-radius-3 text-scale-8"
-								:style="{color:'#eb6551'}"
-								>{{goodsInfoPopupData.discount_rate}}折</text>
-								<text
-								v-if="goodsInfoPopupData.activity"
-								class="text-xs"
-								:style="{color:'#f07373'}"
-								>{{goodsInfoPopupData.activity.applicable_quantity_text}}</text>
-							</view>
-							
-							<view class="add-remove-box align-center">
-								<text 
-								v-if="shopCart.foodsList[goodsInfoPopupData.item_id]"
-								@tap="cutFromCart(goodsInfoPopupData)"
-								class="lg add-btn-blue text-xxl cuIcon-rounddown"></text>
-								
-								<text 
-								v-if="shopCart.foodsList[goodsInfoPopupData.item_id]"
-								class="text-cut goods-number"
-								>{{shopCart.foodsList[goodsInfoPopupData.item_id].count}}</text>
-								
-								<text 
-								@tap="goodsInfoPopupData.attrs.length?showFoodTasteChoosePopup(goodsInfoPopupData):add2cart(goodsInfoPopupData)"
-								class="lg add-btn-blue text-xxl cuIcon-roundaddfill"
-								></text>
-							</view>
-							
-						</view>
-						
-						<text class="text-xs margin-bottom-xs">主要原料：其他</text>
-						
-						<view 
-						@tap="goToPriceDescription"
-						class="text-xs align-center">
-							<text class="">价格说明</text>
-							<text class="lg text-gray cuIcon-questionfill"></text>
-						</view>
-						
-					</view>
-					
-				</view>
-			</uni-popup>
-			<!-- 商品大图介绍 E -->
-			
-			<!-- 底部购物车弹窗 S -->
-			<uni-popup
-			ref="shopCartPopup" 
-			:type="'bottom'"
-			@change="popupChange"
-			:animation="true"
-			:zIndex="10"
-			>
-				<view class="shopcart-popup-box bg-white flex-direction">
-					
-					<!-- 节省金额提示 S -->
-					<!--  #ifndef  MP-WEIXIN -->
-					<view 
-					v-show="shopCartPriceCount.save_money"
-					class="save-money-tips flex-sub align-center justify-center text-xs text-color-3">
-					<!--  #endif -->
-					<!--  #ifdef  MP-WEIXIN -->
-					<view 
-					v-if="shopCartPriceCount.save_money"
-					class="save-money-tips flex-sub align-center justify-center text-xs text-color-3">
-					<!--  #endif -->
-					
-						<text>已减{{shopCartPriceCount.save_money}}元</text>
-					</view>
-					<!-- 节省金额提示 E -->
-					
-					<!-- 购物车标题及清空按钮 -->
-					<view 
-					class="padding align-center justify-between text-color-6"
-					:style="{backgroundColor:'#eceff1'}"
-					>
-						<text class="text-lg">已选商品</text>
-						<view 
-						@tap="clearShopcart"
-						class="align-center">
-							<text class="lg cuIcon-delete margin-right-xs"></text>
-							<text>清空</text>
-						</view>
-					</view>
-					
-					<!-- 商品列表滑动区域 -->
-					<scroll-view 
-					:scroll-y="true" 
-					class="shopcart-list padding-sm"
-					>
-						<!-- 商品列表 -->
-						<view
-						v-for="(item,key) in shopCart.foodsList"
-						:key="key"
-						class="shopcart-item flex-direction"
-						>
-							<!-- 有类别选项 -->
-							<view 
-							v-for="(ele,k,index) in item.taste"
-							:key="k"
-							class="justify-between border-bottom border-color-e padding-tb"
-							>
-								<view class="text-lg align-center">
-									
-									<view class="flex-direction">
-										<text class="text-cut margin-right-xs text-color-3"
-										:style="{width:'350rpx'}"
-										>{{item.info.name}}</text>
-										
-										<view class="text-xs text-color-9">
-											<text
-											v-for="(e,i) in ele.index"
-											:key="i"
-											>{{item.info.attrs[i].values[e]}}{{_.inRange(i,-1,ele.index.length-1)?'/':''}}
-											</text>
-										</view>
-									</view>
-									
-									<text class="delete-line text-xs text-price margin-right-xs">{{((item.info.origin_price * 100 )*item.count)/100}}</text>
-									<text class="text-price text-color-price text-bold">{{goodsTastePriceFilter(item,k,index)}}</text>
-								</view>
-								
-								<view class="add-remove-box align-center">
-									<text 
-									@tap="cutTasteGoodsFromCart(key,k)"
-									class="lg add-btn-blue text-xxl cuIcon-rounddown"></text>
-									
-									<text 
-									class="text-cut goods-number"
-									>{{ele.count}}</text>
-									
-									<text 
-									@tap="addTasteGoods2Cart(key,k)"
-									class="lg add-btn-blue text-xxl cuIcon-roundaddfill"
-									></text>
-								</view>
-							</view>
-							
-							<!-- 没有口味/类别选项 -->
-							<view 
-							v-if="_.isEmpty(item.taste)"
-							class="justify-between border-bottom border-color-e padding-tb"
-							>
-								
-								<view class="text-lg align-center">
-									<text 
-									class="text-cut margin-right-xs text-color-3"
-									:style="{width:'350rpx'}"
-									>
-										{{item.info.name}}
-									</text>
-									<text class="delete-line text-xs text-price margin-right-xs">{{((item.info.origin_price * 100 )*item.count)/100}}</text>
-									<text class="text-price text-color-price text-bold">{{goodsPriceFilter(item)}}</text>
-								</view>
-								
-								<view class="add-remove-box align-center">
-									<text 
-									@tap="cutFromCart(item.info)"
-									class="lg add-btn-blue text-xxl cuIcon-rounddown"></text>
-									
-									<text 
-									class="text-cut goods-number"
-									>{{item.count}}</text>
-									
-									<text 
-									@tap="add2cart(item.info)"
-									class="lg add-btn-blue text-xxl cuIcon-roundaddfill"
-									></text>
-								</view>
-								
-							</view>
-						
-						</view>
-					</scroll-view>
-					
-				</view>
-			</uni-popup>
-			<!-- 底部购物车弹窗 E -->
-			
-			<!-- 商品口味选择 S -->
-			<uni-popup
-			ref="foodTasteChoosePopup" 
-			:type="'bottom'"
-			@change="popupChange"
-			:animation="true"
-			>
-				<view 
-				v-if="goodsInfoPopupData"
-				class="food-taste-box flex-direction bg-white padding"
-				>
-				
-					<!-- 关闭弹窗按钮 -->
-					<text 
-					@tap="closePopup('foodTasteChoosePopup')"
-					class="food-taste-close-btn lg text-grey cuIcon-close text-xxl"></text>
-					
-					<!-- 商品基本情况 -->
-					<view class="margin-bottom">
-						<view class="food-cover-box margin-right-sm">
-							<image 
-							:src="goodsInfoPopupData.image_path,'w_95'|imgUrlFilter" 
-							mode="widthFix"></image>
-						</view>
-						
-						<view class="flex-direction justify-between">
-							<view class="flex-direction">
-								<!-- 商品名称 -->
-								<view class="margin-bottom-xs">
-									<text class="text-cut text-bold text-lg text-color-0"
-									:style="{width:'400rpx'}"
-									>{{goodsInfoPopupData.name}}</text>
-								</view>
-								<!-- 已选口味 -->
-								<view 
-								v-if="goodsInfoPopupData.attrs.length"
-								class="text-xs">
-									<text>已选：</text>
-									<text
-									v-for="(item,index) in goodsInfoPopupData.attrs"
-									:key="index"
-									>
-									{{item.values[goodsTasteData[index]]}}{{( (goodsInfoPopupData.attrs.length > 1) && ((goodsInfoPopupData.attrs.length - 1)>index) ) ? '/' : ''}}
-									</text>
-								</view>
-							</view>
-							
-							<text class="text-price text-bold text-color-price text-xxl">{{goodsInfoPopupData.price}}</text>
-						</view>
-					</view>
-					
-					<!-- 商品种类列表 -->
-					<scroll-view 
-					:scroll-y="true"
-					v-if="goodsInfoPopupData.attrs.length"
-					class="flex-direction food-type-list"
-					>
-						
-						<view 
-						v-for="(item,index) in goodsInfoPopupData.attrs"
-						:key="index"
-						class="food-type-item flex-direction">
-						
-							<!-- 种类名称 -->
-							<text class="margin-bottom-sm">{{item.name}}</text>
-							
-							<!-- 口味列表 -->
-							<view 
-							class="food-taste-list flex-wrap">
-							
-								<!-- 
-								口味是否被选中机制
-									1.如果当前商品存在购物车中那么直接读取购物车中的索引值判断与当前的索引值匹配
-									2.如果商品不在购物车中则默认每个商品的第一种口味被选中
-									-->
-								<view 
-								v-for="(ele,i) in item.values"
-								:key="i"
-								@tap="tasteChoose(index,i)"
-								class="food-taste-item padding-lr-xl padding-tb-xs border-color-3 bg-grey-f5 margin-lr-xs margin-bottom-sm"
-								:class="i==goodsTasteData[index] ? 'cur' : ''"
-								>
-									<text>{{ele}}</text>
-								</view>
-							</view>
-							
-						</view>
-						
-					</scroll-view>
-					
-					<!-- 确定按钮 -->
-					<button
-						@click="confirmTaste(goodsInfoPopupData)"
-					class="confirm-taste-btn margin"
-						:style="{backgroundColor: 'rgb(35, 149, 255)',color:'#fff'}"
-					type="default">选好了</button>
-					
-				</view>
-			</uni-popup>
-			<!-- 商品口味选择 E -->
-		</view>
-		<!-- 页面弹窗组件 E -->
-		
+		<!-- 店铺主页相关弹窗组件 S -->
+		<storeIndexPopup 
+		@popupChange="popupChange" 
+		@exchangeRedpack="exchangeRedpack"
+		@openSvip="openSvip"
+		@add2cart="add2cart"
+		:lodingEnd="lodingEnd"
+		:storeData="storeData"
+		:shopCart="shopCart"
+		:goodsInfoPopupData="goodsInfoPopupData"
+		:goodsTasteData="goodsTasteData"
+		ref="popBox"
+		></storeIndexPopup>
+		<!-- 店铺主页相关弹窗组件 E -->
+
 	</view>
 </template>
 
@@ -1704,11 +1023,20 @@
 	 */
 
 	// import "./storeIndex.scss";
+	import {mapState,mapMutations} from 'vuex';
 	
 	// 引入官方组件
 	import uniPopup from '@/components/uni-popup/uni-popup.vue';
 	
-	import {mapState,mapMutations} from 'vuex';
+
+	// 引入相关组件
+	// 商家推荐区域组件
+	import recommend from "./recommend.vue";
+	// 页面弹窗组件
+	import storeIndexPopup from './storeIndexPopup.vue';
+
+	// 引入购物车 和 弹窗组件相关的 mixin
+	import {shopcartMixin,popupMixin} from "@/common/mixinMain.js";
 	
 	export default {
 		data() {
@@ -1726,35 +1054,12 @@
 					showBannercontent: false, // 是否显示banner内容区域
 					shopCartOpenState: false, // 当前底部购物车是否处于打开状态
 				}, // 页面状态
-				popupStack:[], // 弹窗栈
 				commentHasNext:false, // 是否还有更多评论
 				bannerDataHasNext:false, // 是否还有更多banner商品数据
 				foodsCategoryTabCur: 0, // 当前被选中的商品列表的分类导航
 				mainCur: null, // 用于控制商品列表滑动到哪个位置的参数，记录的值与foodsCategoryTabCur一致
 				verticalNavTop: 0, // 存储商品列表的分类导航滑动距离的参数
 				load: true, // 记录滑动动画是否执行完毕的参数
-				shopCart:{
-					foodsList:{}, // 购物车商品数据详情
-					/*
-					商品列表的数据格式如下
-					foodList: {
-						foodId:{
-							info:{商品的详细数据},
-							count:Number, // 该商品id下商品的总数量
-							taste:{
-								goodsTasteData.join(''):{
-									index:[], // 该商品的口味，数组长度与info中attrs的长度一致，值为用户选择的口味的索引值
-									count:Number, // 当前口味的商品数量
-								}
-							}, // 用户选择的口味列表，不同口味视为不同商品，当该商品无口味选项时此对象为空
-						}
-					}
-					*/
-					redpackList:[], // 用户兑换的红包
-					count:null, // 当前购物车的商品总数量
-				}, // 店铺私有购物车数据，加入数据后会同步到总购物车中
-				goodsInfoPopupData:null, // 临时存储商品详情弹窗所需的数据
-				goodsTasteData:[], // 临时存储用户选择的商品口味
 				// 拆解后的数据
 				foodsData:{
 					list:[], // 商品数据
@@ -1769,6 +1074,7 @@
 				foodsListScrollBoundary:2000,
 			}
 		},
+		mixins:[shopcartMixin,popupMixin],
 		watch:{
 			/**
 			 * 监听页面状态变化，根据状态设置对应的操作
@@ -1776,37 +1082,6 @@
 			 * @param {Object} o
 			 */
 			pageState(n,o){},
-			shopCart:{
-				handler(n,o){
-					if(this._.isEmpty(n.foodsList)){
-						this.showShopCartPopup();
-					}
-
-					let len = 0;
-					
-					for (let key in n.foodsList) {
-						len += n.foodsList[key].count;
-					}
-					this.shopCart.count = len;
-					
-					// 购物车无商品 且 无红包数据 直接返回
-					if(this._.isEmpty(n.foodsList) && !n.redpackList.length) {
-						if(this.cartList[this.storeData.rst.id]){
-							this.REMOVE_CART(this.storeData.rst.id);
-						}
-						return;
-					};
-
-					// 将商品数据存入公共购物车
-					let shopId = this.storeData.rst.id;
-					this.ADD_CART({
-						shopId,
-						cartInfo:this.shopCart
-					});
-
-				},
-				deep:true
-			},
 			TabCur(n){
 				if(parseInt(n) === 0){
 					this.foodsPage()
@@ -1815,6 +1090,11 @@
 					this.foodsData.end = this.foodsListDefaultEnd;
 				}
 			}
+		}
+		,
+		components: {
+			recommend,
+			storeIndexPopup
 		}
 		,
 		computed:{
@@ -1856,58 +1136,6 @@
 					
 				} // end for
 				
-				return res;
-			}
-			,
-			/**
-			 * 统计购物车价格
-			 */
-			shopCartPriceCount(){
-				let res = {
-					origin_price:0,
-					price:0,
-					save_money:0
-				};
-				
-				for (let key in this.shopCart.foodsList) {
-					
-					let curGoodsObj = this.shopCart.foodsList[key],
-					price = curGoodsObj.info.price * 100,
-					origin_price = curGoodsObj.info.origin_price * 100
-					;
-					
-					// 有优惠活动
-					if(curGoodsObj.info.activity){
-					
-						// 当前商品数量超过了最大优惠数
-						if(curGoodsObj.count > curGoodsObj.info.activity.applicable_quantity){
-							// 当前价格计算 (总数量 - 活动上限数量) * 原始价格 + (活动上限数量 * 当前价格)
-							let overPrice = (
-										curGoodsObj.count - 
-										curGoodsObj.info.activity.applicable_quantity
-							) * origin_price;
-							
-							let salePrice = curGoodsObj.info.activity.applicable_quantity * price;
-							
-							res.price += (overPrice + salePrice);
-						} // end if
-						
-					} // end if
-					
-					if(!curGoodsObj.info.activity || 
-						(curGoodsObj.count <=
-						curGoodsObj.info.activity.applicable_quantity)
-					){
-						res.price += curGoodsObj.count * price;
-					} // end if
-					
-					res.origin_price += curGoodsObj.count * origin_price;
-				} // end for
-				
-				res.save_money = res.origin_price - res.price;
-				res.price /= 100;
-				res.origin_price /= 100;
-				res.save_money /= 100;
 				return res;
 			}
 			,
@@ -2075,380 +1303,6 @@
 			}
 			,
 			/**
-			 * 从购物车中删除某种口味类型的商品
-			 * @param {Object} foodId 该商品id
-			 * @param {Object} tasteId 该口味类型的键
-			 */
-			cutTasteGoodsFromCart(foodId,tasteId){
-				let curGoodsObj = this.shopCart.foodsList[foodId],
-				minPurchase = curGoodsObj.info.min_purchase,
-				tasteObj = this.shopCart.foodsList[foodId].taste
-				;
-				
-				// 只剩下一种口味
-				// 其数量小于等于最低起购量直接删除整个商品对象
-				// 其数量大于最低起购量则数量-1
-				
-				// 还有多种口味
-				// 该口味数量小于等于最低起购量直接删除这个口味对象
-				// 其数量大于最低起购量则数量-1
-				
-				// 当前口味删除后是否小于等于最低起购量
-				if(curGoodsObj.taste[tasteId].count <= minPurchase){
-					
-					// 多种口味
-					if(this._.keys(tasteObj).length > 1) {
-						this.$set(curGoodsObj,'count',curGoodsObj.count - curGoodsObj.taste[tasteId].count);
-						this.$delete(curGoodsObj.taste,tasteId);
-					}else{
-					// 只有一种口味
-						this.$delete(this.shopCart.foodsList,foodId);
-					} // end if 口味类型数量
-					
-					return;
-				} // end if 小于等于最低起购量
-				
-				// 不小于最低起购量
-				this.$set(curGoodsObj,'count',curGoodsObj.count-1);
-				this.$set(tasteObj[tasteId],'count',tasteObj[tasteId].count-1);
-			}
-			,
-			/**
-			 * 在购物车弹窗中向购物车中添加某种口味类型的商品
-			 * @param {Object} foodId 该商品id
-			 * @param {Object} tasteId 该口味类型的键
-			 */
-			addTasteGoods2Cart(foodId,tasteId){
-				let curGoodsObj = this.shopCart.foodsList[foodId];
-				
-				this.$set(curGoodsObj,'count',curGoodsObj.count + 1);
-				this.$set(curGoodsObj.taste[tasteId],'count',curGoodsObj.taste[tasteId].count + 1);
-				
-				// 该商品有优惠活动
-				if(curGoodsObj.info.activity){
-					if(curGoodsObj.count > curGoodsObj.info.activity.max_quantity){
-						// 提示用户已经超出活动限定
-						uni.showToast({
-							title:curGoodsObj.info.activity.applicable_quantity_detail_text,
-							icon:'none'
-						});
-					}// end if 商品数量超出活动上限
-				}; // end if 商品存在活动
-			}
-			,
-			/**
-			 * 从购物车中删除
-			 * @param {Object} food 商品对象
-			 */
-			cutFromCart(food){
-				this.$utils.log('cutFromCart','从购物车中删除');
-				let curInShopcartObj = this.shopCart.foodsList[food.item_id];
-				
-				// 该对象不存在
-				if(!curInShopcartObj) return false;
-				
-				// 该对象存在多种口味和规格，提示用户只能在购物车中删除
-				if(this._.keys(curInShopcartObj.taste).length >= 2) {
-					
-					uni.showToast({
-						title:this.$c_t.store_index.has_more_taste,
-						icon:'none'
-					})
-					
-					return false;
-				}
-				
-				// 该对象数量超过最低购买数量
-				if(curInShopcartObj.count > food.min_purchase){
-					// 商品数量-1
-					this.$set(curInShopcartObj,'count',curInShopcartObj.count-1);
-					// 存在口味参数，当前口味参数的数量-1
-					if(!this._.isEmpty(curInShopcartObj.taste)){
-						this.$set(
-							curInShopcartObj.taste[this._.keys(curInShopcartObj.taste)[0]],
-							'count',
-							curInShopcartObj.count
-						)
-					}
-					
-					// 检查其数量是否仍然超过最大优惠数量。超过了就给予提示
-					if(food.activity){
-						
-						if(
-							curInShopcartObj.count >
-							food.activity.applicable_quantity
-						){
-							uni.showToast({
-								title:food.activity.applicable_quantity_detail_text,
-								icon:'none'
-							});
-						} // end if
-						
-					} // end if
-					
-					// 检查该商品是否存在多种口味
-					
-					
-					return;
-				}
-				
-				// 将该对象从购物车中删除
-				this.$delete(this.shopCart.foodsList,food.item_id);
-			}
-			,
-			/**
-			 * 添加到购物车
-			 * @param {Object} food 商品对象
-			 */
-			add2cart(food){
-				this.$utils.log('add2cart','添加到购物车');
-				
-				/*
-				商品列表的数据格式如下
-				foodList: {
-					foodId:{
-						info:{商品的详细数据},
-						count:Number, // 该商品的数量
-						taste:[], // 该商品的口味，数组长度与info中attrs的长度，值为用户选择的口味的索引值
-					}
-				}
-				*/
-			   
-				
-				// ==============该商品存在购物车中================
-				
-				if(this.shopCart.foodsList[food.item_id]){
-					
-					// 该商品有活动限制
-					if(food.activity){
-						
-						// 商品数量是否超过了活动中规定的限定优惠数量
-						if(
-							this.shopCart.foodsList[food.item_id].count >=
-							food.activity.applicable_quantity
-						){
-							// 提示用户已经超出活动限定
-							uni.showToast({
-								title:food.activity.applicable_quantity_detail_text,
-								icon:'none'
-							});
-						} // end if
-						
-					} // end if
-					
-					// 修改商品总数量
-					// 追加购物车中该商品数量
-					this.$set(
-						this.shopCart.foodsList[food.item_id],
-						'count',
-						this.shopCart.foodsList[food.item_id].count+1
-					);
-					
-					// 如果不存在口味选项则直接跳过后续的口味类型商品数量计算
-					if(!food.attrs.length) return;
-					
-					
-					// 判断口味是否为新的
-					let curTasteObj = this.shopCart.foodsList[food.item_id].taste[this.goodsTasteData.join('')];
-					
-					// 该口味存在其中,使其数量+1
-					if(curTasteObj){
-						this.$set(curTasteObj,'count',curTasteObj.count + 1);
-						
-					}else{
-						// 该口味不存在，新增一个口味，数量设置为最低起购数量
-						this.$set(
-							this.shopCart.foodsList[food.item_id].taste,
-							this.goodsTasteData.join(''),
-							{
-							index:this.goodsTasteData,
-							count:food.min_purchase
-							}
-						);
-						
-						// 重新设置商品总数量
-						this.$set(
-							this.shopCart.foodsList[food.item_id],
-							'count',
-							this.shopCart.foodsList[food.item_id].count-1+food.min_purchase
-						);
-						
-					} // end if 当前口味是否存在购物车中
-					
-					
-					return;
-				} // end if
-				
-				
-				// ==============该商品不存在购物车中==============
-				
-				// 向购物车中新增商品
-				this.$set(this.shopCart.foodsList,food.item_id,{
-					info:food,
-					count:food.min_purchase,
-					taste:{}
-				});
-				
-				// 判断商品数量是否超出了优惠限制数量
-				if(food.activity){
-					
-					if(
-						this.shopCart.foodsList[food.item_id].count >
-						food.activity.applicable_quantity
-					){
-						uni.showToast({
-							title:food.activity.applicable_quantity_detail_text,
-							icon:'none'
-						});
-					} // end if
-				} // end if
-				
-				// 判断是否有口味选项
-				if(food.attrs.length) {
-					// 当前商品有口味选项，根据用户选择的口味设置口味属性
-					let tasteId = this.goodsTasteData.join('');
-					this.$set(
-						this.shopCart.foodsList[food.item_id].taste,
-						tasteId,
-						{
-							index:this.goodsTasteData,
-							count:food.min_purchase
-						}
-					);
-				} // end if 存在口味选项
-				
-			}
-			,
-			/**
-			 * 清空购物车
-			 */
-			clearShopcart(){
-				this.$set(this.shopCart,'foodsList',{});
-				this.showShopCartPopup();
-			}
-			,
-			/**
-			 * 无口味选项的：输入商品的数据及其在购物车中的索引值计算该商品总价
-			 * @param {Object} goods 购物车中的商品对象
-			 */
-			goodsPriceFilter(goods){
-				let res = 0,
-				price = goods.info.price * 100,
-				origin_price = goods.info.origin_price * 100
-				;
-				
-				// 当前商品有优惠活动
-				if(goods.info.activity){
-					// 商品总量超过了优惠活动上限
-					if(goods.count > goods.info.activity.max_quantity){
-						res += price * goods.info.activity.max_quantity;
-						res += origin_price * (goods.count - goods.info.activity.max_quantity);
-						
-						return res/100;
-					} // end if 商品数量超出活动上限
-				} // end if 优惠活动
-				
-				
-				// 当前商品无优惠活动
-				res += price * goods.count;
-				
-				return res/100;
-			}
-			,
-			/**
-			 * 有口味选项的：输入商品的数据及其在购物车中的索引值计算该商品总价
-			 * @param {Object} goods 购物车中的商品对象
-			 * @param {String} key 该商品在口味列表中的键值
-			 * @param {Number} index 该商品在口味类型列表中的索引值
-			 */
-			goodsTastePriceFilter(goods,key,index){
-				let res = 0,
-				price = goods.info.price * 100,
-				origin_price = goods.info.origin_price * 100
-				;
-				
-				// 当前商品有优惠活动
-				if(goods.info.activity){
-					// 当前商品是口味类型中的第一种，并且商品总量超过了优惠活动上限
-					if(index == 0 && goods.count > goods.info.activity.max_quantity){
-						res += price * goods.info.activity.max_quantity;
-						res += origin_price * (goods.taste[key].count-goods.info.activity.max_quantity);
-						
-						return res/100;
-					} // end if 商品数量超出活动上限
-				} // end if 优惠活动
-				
-				
-				// 当前商品无优惠活动
-				res += price * goods.taste[key].count;
-				
-				return res/100;
-			}
-			,
-			/**
-			 * 前往支付页面
-			 */
-			gotoPayPage(){
-				this.$utils.log('gotoPayPage','前往支付页面');
-				
-				// 向后台发送购物车数据生成对应的订单
-
-				// 跳转到订单确定页
-				uni.navigateTo({
-					url:this.$pages_path.order_confirm + '?order_id=' + this.storeData.rst.id,
-					fail(e) {
-						console.log('跳转失败',e);
-					}
-				})
-			}
-			,
-			/**
-			 * 显示购物车弹窗
-			 */
-			showShopCartPopup(){
-				if(this.pageState.shopCartOpenState){
-					this.closePopup('shopCartPopup');
-				}else{
-					this.openPopup('shopCartPopup');
-				}
-				
-				this.pageState.shopCartOpenState = !this.pageState.shopCartOpenState;
-			}
-			,
-			/**
-			 * 用户确定了当前商品的口味，将其加入购物车
-			 * @param {Object} goods 商品数据
-			 */
-			confirmTaste(goods){
-				this.$utils.log('confirmTaste','用户确定了当前商品的口味，将其加入购物车');
-				this.add2cart(goods);
-				this.closePopup('foodTasteChoosePopup');
-			}
-			,
-			/**
-			 * 记录当前用户选择的是哪种口味
-			 * @param {Number} index 当前要修改哪个类别的口味
-			 * @param {Number} value 口味的索引值
-			 */
-			tasteChoose(index,value){
-				this.$utils.log('tasteChoose','记录当前用户选择的是哪种口味');
-				this.$set(this.goodsTasteData,index,value);
-			}
-			,
-			/**
-			 * 跳转到价格说明页
-			 */
-			goToPriceDescription(){
-				this.$utils.log('goToPriceDescription','跳转到价格说明页');
-				uni.navigateTo({
-					url:this.$pages_path.add_address,
-					fail(e) {
-						console.log('跳转失败',e);
-					}
-				})
-			}
-			,
-			/**
 			 * 查看商品口味选择弹窗
 			 * @param {Object} goods 商品数据
 			 */
@@ -2491,19 +1345,6 @@
 						console.log('跳转失败:',e);
 					}
 				})
-			}
-			,
-			/**
-			 * 检查当前这个红包是否已经加入了购物车中
-			 * @param {Object} redpackObj 红包对象
-			 */
-			redpackInShopcart(redpackObj){
-				// this.$utils.log('redpackInShopcart','检查当前这个红包是否已经加入了购物车中');
-				return JSON.stringify(
-						this.shopCart.redpackList
-					).includes(
-						JSON.stringify(redpackObj)
-					);
 			}
 			,
 			/**
@@ -2554,20 +1395,6 @@
 			}
 			,
 			/**
-			 * 将红包数据拆分为普通和超级会员两种
-			 * @param {Array} data 红包列表
-			 */
-			redpackFilter(data){
-				// this.$utils.log('redpackFilter','将红包数据拆分为普通和超级会员两种');
-				let res = {};
-				
-				res.member = data.filter(ele => ele.type == 1);
-				res.normal = data.filter(ele => ele.type == 0);
-				
-				return res;
-			}
-			,
-			/**
 			 * 点赞商品过滤器，将点赞商品中5星的过滤出来
 			 * @param {Array} foodList 点赞食品列表
 			 */
@@ -2588,42 +1415,6 @@
 			changePageState(state){
 				this.$utils.log('changePageState','改变页面状态',state);
 				this.pageState = Object.assign({},this.pageState,state);
-			}
-			,
-			/**
-			 * 弹窗状态变化完成时触发的方法
-			 * @param {Object} e 事件参数对象
-			 */
-			popupChange(e){
-				this.$utils.log('popupChange','弹窗状态改变==>' + (e.show?'开':'关'),e);
-				let popData = '';
-				if(e.show == false){
-					popData = this.popupStack.pop();
-					if(popData == 'shopCartPopup'){
-						this.pageState.shopCartOpenState = false;
-					}
-				}
-			}
-			,
-			/**
-			 * 打开弹窗
-			 * @param {String} ref 弹窗的ref值
-			 */
-			openPopup(ref){
-				this.$utils.log('openPopup','打开弹窗'+ref);
-				if(this.popupStack.includes(ref)) return;
-				
-				this.popupStack.push(ref);
-				this.$refs[ref].open();
-			}
-			,
-			/**
-			 * 关闭弹窗
-			 * @param {String} ref 弹窗的ref值
-			 */
-			closePopup(ref){
-				this.$utils.log('closePopup','关闭弹窗'+ref);
-				this.$refs[ref].close();
 			}
 			,
 			/**

@@ -34,23 +34,10 @@
 		
 		
 			<!-- nav S -->
-			<view class="store-index-nav">
-				<view class="store-cover-bg-box">
-					<image 
-					class="store-cover-bg"
-					:src="storeData.rst.shop_sign.image_hash,'w_750'|imgUrlFilter"
-					mode="widthFix"></image>
-				</view>
-				<view class="store-cover-box">
-					<image 
-					class="store-cover"
-					:src="storeData.rst.image_path|imgUrlFilter" 
-					mode="widthFix"></image>
-				</view>
-				<text 
-				@tap="goBack"
-				class="nav-back-btn lg text-white cuIcon-back text-xxl padding-xs"></text>
-			</view>
+			<storeIndexNav
+			:storeData="storeData"
+			@goBack="goBack"
+			></storeIndexNav>
 			<!-- nav E -->
 			
 			<!-- 店铺基础信息 S -->
@@ -749,6 +736,8 @@
 	import bottomShopcart from './bottomShopcart.vue';
 	// banner弹窗组件
 	import bannerPopup from './bannerPopup.vue';
+	// 店铺主页nav
+	import storeIndexNav from './storeIndexNav.vue';
 
 	// 引入购物车 和 弹窗组件相关的 mixin
 	import {shopcartMixin,popupMixin} from "@/common/mixinMain.js";
@@ -811,7 +800,8 @@
 			recommend,
 			storeIndexPopup,
 			bottomShopcart,
-			bannerPopup
+			bannerPopup,
+			storeIndexNav
 		}
 		,
 		computed:{

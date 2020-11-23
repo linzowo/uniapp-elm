@@ -87,7 +87,12 @@ export default {
     return{}
   },
   props:['recommendData','shopCart'],
-  mixins:[shopcartMethodsMixin,popupMixin]
+  mixins:[shopcartMethodsMixin,popupMixin],
+  methods:{
+    showGoodsInfoPopup(item){
+      this.$emit('showGoodsInfoPopup',item)
+    }
+  }
 };
 </script>
 

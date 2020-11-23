@@ -21,13 +21,13 @@
 		
 		<!-- 数据加载完成后显示 S -->
 			<!--  #ifndef  MP-WEIXIN -->
-			<view 
+		<view 
 		v-if="lodingEnd"
 		v-show="!pageState.showBannercontent"
 		class="loding-end flex-direction">
 			<!--  #endif -->
 			<!--  #ifdef  MP-WEIXIN -->
-			<view 
+		<view 
 		v-if="lodingEnd && !pageState.showBannercontent"
 		class="loding-end flex-direction">
 			<!--  #endif -->
@@ -332,119 +332,6 @@
 								
 							</view>
 							<!-- 商铺菜单 E -->
-							
-							<!-- 底部购物车 S -->
-							<view 
-							@tap="shopCart.count?showShopCartPopup():''"
-							class="shopping-cart-box justify-end align-center"
-							:style="{zIndex:11}"
-							>
-								<!-- 
-								 存在两种状态
-								 1.无商品状态
-								 2.有商品状态
-								 -->
-								 
-								<!-- 节省金额提示 S -->
-								
-								<!--  #ifndef  MP-WEIXIN -->
-								<view 
-								v-show="shopCartPriceCount.save_money&&!pageState.shopCartOpenState"
-								class="save-money-tips flex-sub align-center justify-center text-xs text-color-3">
-								<!--  #endif -->
-								<!--  #ifdef  MP-WEIXIN -->
-								<view 
-								v-if="shopCartPriceCount.save_money&&!pageState.shopCartOpenState"
-								class="save-money-tips flex-sub align-center justify-center text-xs text-color-3">
-								<!--  #endif -->
-								
-									<text>已减{{shopCartPriceCount.save_money}}元</text>
-								</view>
-								<!-- 节省金额提示 E -->
-								
-								<!-- 购物车图标 -->
-								<view 
-								class="shopping-cart-icon-box round border border-xl align-center justify-center"
-								:style="{backgroundColor:shopCart.count?'':'#363636'}"
-								>
-									<text 
-									class="lg text-xxl cuIcon-cartfill"
-									:class="shopCart.count?'text-white':'text-color-6'"
-									></text>
-									
-									<!--  #ifndef  MP-WEIXIN -->
-									
-									<view 
-									v-show="shopCart.count"
-									class="cu-tag badge">
-									<!--  #endif -->
-									<!--  #ifdef  MP-WEIXIN -->
-									
-									<view 
-									v-if="shopCart.count"
-									class="cu-tag badge">
-									<!--  #endif -->
-									{{shopCart.count}}</view>
-								</view>
-								
-								<!-- 选购商品提示 -->
-								<view 
-								class="shopping-cart-tips-box flex-direction text-scale-9"
-								:class="'text-color-9'"
-								>
-								
-									<view 
-									v-if="shopCart.count"
-									class="align-center">
-										<text class="text-price text-bold text-white text-xl margin-right">{{shopCartPriceCount.price}}</text>
-										<text class="text-price delete-line text-color-9">{{shopCartPriceCount.origin_price}}</text>
-									</view>
-									
-									<text 
-									v-if="!shopCart.count"
-									class="text-lg"
-									>
-										未选购商品
-									</text>
-									
-									
-									<text class="text-xs">另需配送费{{parseInt(storeData.rst.float_delivery_fee)}}元</text>
-								</view>
-								
-								<!-- 结算按钮 -->
-								<view 
-								@tap.stop.prevent="
-									shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount ? 
-									gotoPayPage() : '' "
-								class="shopping-cart-pay-btn-box text-white align-center justify-center"
-								:style="{backgroundColor:shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount?'':'#535356'}"
-								>
-								
-									<!--  #ifndef  MP-WEIXIN -->
-									<text 
-									v-show="shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount"
-									class="text-lg">去结算</text>
-									
-									<text 
-									v-show="shopCartPriceCount.price < storeData.rst.float_minimum_order_amount"
-									class="text-lg"
-									>
-									<!--  #endif -->
-									<!--  #ifdef  MP-WEIXIN -->
-									<text 
-									v-if="shopCartPriceCount.price >= storeData.rst.float_minimum_order_amount"
-									class="text-lg">去结算</text>
-									
-									<text 
-									v-if="shopCartPriceCount.price < storeData.rst.float_minimum_order_amount"
-									class="text-lg"
-									>
-									<!--  #endif -->
-									{{shopCartPriceCount.price?'差':''}}¥{{parseInt(storeData.rst.float_minimum_order_amount - shopCartPriceCount.price)}}起送</text>
-								</view>
-								
-							</view>
-							<!-- 底部购物车 E -->
 							
 						</view>
 						
@@ -796,11 +683,18 @@
 				
 			</view>
 			<!-- 商家餐点、评价、详细信息 E -->
-			
-			
+
+			<!-- 底部购物车 S -->
+			<bottomShopcart
+			:shopCart="shopCart"
+			:pageState="pageState"
+			:storeData="storeData"
+			></bottomShopcart>
+			<!-- 底部购物车 E -->
 			
 		</view>
 		<!-- 数据加载完成后显示 E -->
+		
 		
 		<!-- banner弹窗 S -->
 		<view 
@@ -887,9 +781,6 @@
 			</view>
 			<!-- 加载提示 E -->
 			
-			<!-- 底部购物车 S -->
-			<bottomShopcart></bottomShopcart>
-			<!-- 底部购物车 E -->
 			
 		</view>
 		<!-- banner弹窗 E -->
@@ -992,7 +883,7 @@
 		,
 		components: {
 			recommend,
-			storeIndexPopup
+			storeIndexPopup,bottomShopcart
 		}
 		,
 		computed:{
@@ -1198,18 +1089,6 @@
 
 				this.commentInfoList = this.storeCommentData.comments;
 				
-			}
-			,
-			/**
-			 * 查看商品口味选择弹窗
-			 * @param {Object} goods 商品数据
-			 */
-			showFoodTasteChoosePopup(goods){
-				this.$utils.log('showFoodTasteChoosePopup','查看商品口味选择弹窗');
-				this.goodsInfoPopupData = goods;
-				this.goodsTasteData = Array(goods.attrs.length).fill(0);
-				
-				this.openPopup('foodTasteChoosePopup');
 			}
 			,
 			/**

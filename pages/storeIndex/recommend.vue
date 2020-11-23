@@ -78,6 +78,8 @@
 </template>
 
 <script>
+// 引入购物车方法mixin
+import {shopcartMethodsMixin,popupMixin} from "@/common/mixinMain.js";
 
 export default {
   name:"recommend",
@@ -85,11 +87,7 @@ export default {
     return{}
   },
   props:['recommendData','shopCart'],
-  methods:{
-    add2cart(food){
-      this.$emit('add2cart',food)
-    }
-  }
+  mixins:[shopcartMethodsMixin,popupMixin]
 };
 </script>
 

@@ -632,7 +632,7 @@
 import uniPopup from "@/components/uni-popup/uni-popup.vue";
 // import {mapState,mapMutations} from 'vuex';
 
-	// 引入购物车mixin
+// 引入购物车方法mixin
 import {shopcartMethodsMixin} from "@/common/mixinMain.js";
 
 export default {

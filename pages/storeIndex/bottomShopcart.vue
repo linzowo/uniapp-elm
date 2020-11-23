@@ -1,9 +1,10 @@
 <template>
   <view
-    @tap="shopCart.count ? showShopCartPopup() : ''"
-    class="shopping-cart-box justify-between align-center"
+  @tap="shopCart.count ? showShopCartPopup() : ''"
+  class="shopping-cart-box justify-between align-center"
   >
-    <!-- 
+
+        <!-- 
 				 存在两种状态
 				 1.无商品状态
 				 2.有商品状态
@@ -141,8 +142,14 @@
 </template>
 
 <script>
+
+	// 引入购物车mixin
+import {shopcartMethodsMixin,popupMixin} from "@/common/mixinMain.js";
+
 export default {
-  name:"bottomShopcart"
+  name:"bottomShopcart",
+  props:['shopCart','pageState','storeData'],
+  mixins:[shopcartMethodsMixin,popupMixin]
 };
 </script>
 

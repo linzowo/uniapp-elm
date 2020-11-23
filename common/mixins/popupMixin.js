@@ -33,9 +33,10 @@ export const popupMixin = {
       this.$utils.log("openPopup", "打开弹窗" + ref);
       if (this.popupStack.includes(ref)) return;
 
-      this.$refs.popBox.openPopup(ref);
       this.popupStack.push(ref);
+      // this.$refs.popBox.openPopup(ref);
       // this.$refs[ref].open();
+      this.$root.$refs.popBox.openPopup(ref);
     },
     /**
      * 关闭弹窗
@@ -45,5 +46,22 @@ export const popupMixin = {
       this.$utils.log("closePopup", "关闭弹窗" + ref);
       this.$refs[ref].close();
     },
+    /**
+     * 查看商品口味选择弹窗
+     * @param {Object} goods 商品数据
+     */
+    showFoodTasteChoosePopup(goods){
+      this.$utils.log('showFoodTasteChoosePopup','查看商品口味选择弹窗');
+      if(this.goodsInfoPopupData){
+        this.goodsInfoPopupData = goods;
+      }else{
+        // console.log();
+        this.$root.$data.goodsInfoPopupData = goods
+      }
+      this.goodsTasteData = Array(goods.attrs.length).fill(0);
+      
+      this.openPopup('foodTasteChoosePopup');
+    }
+    ,
   },
 };

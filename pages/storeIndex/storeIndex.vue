@@ -268,340 +268,35 @@
 					
 					<!-- 评价 S -->
 					<!--  #ifndef  MP-WEIXIN -->
-					<view 
-					v-show="TabCur == 1"
-					class="flex-sub flex-direction bg-grey-f5">
+					<view v-show="TabCur == 1">
 					<!--  #endif -->
 					<!--  #ifdef  MP-WEIXIN -->
-					<view 
-					v-if="TabCur == 1"
-					class="flex-sub flex-direction bg-grey-f5">
+					<view v-if="TabCur == 1">
 					<!--  #endif -->
 					
-					
-						<!-- 顶部店铺评分栏 S -->
-						<view class="align-center justify-around flex-sub text-color-6 padding-top-lg padding-bottom-xl bg-white margin-bottom-sm">
-							<!-- 店铺评分 -->
-							<text class="rating text-sl text-color-orange"
-							>
-								{{storeCommentData.rating.fixedShopScore}}
-							</text>
-							
-							<!-- 店铺星级 -->
-							<view class="flex-direction">
-								<text class="margin-bottom-xs">商家评分</text>
-								
-								<!-- star S -->
-								<view class="star-box star-size">
-									<view class="star-bg">
-										<image class="star-size" :src="$i_u.star_bg" mode="left"></image>
-									</view>
-									<view 
-									class="star"
-									:style="{width:parseInt(120 * (parseFloat(storeCommentData.rating.fixedShopScore).toFixed(1)/5)) + 'rpx'}"
-									>
-										<image 
-										class="star-size" 
-										:src="$i_u.star" 
-										mode="left"
-										></image>
-									</view>
-								</view>
-								<!-- star E -->
-								
-							</view>
-							
-							<view class="border-right border-color-e">
-								<!-- 味道评分 -->
-								<view class="flex-direction align-center padding-lr">
-									<text class="text-xs margin-bottom-xs">味道</text>
-									<text class="text-xxl">{{storeCommentData.rating.fixedTasteScore}}</text>
-								</view>
-								
-								<!-- 包装评分 -->
-								<view class="flex-direction align-center padding-lr">
-									<text class="text-xs margin-bottom-xs">包装</text>
-									<text class="text-xxl">{{storeCommentData.rating.fixedPackageScore}}</text>
-								</view>
-							</view>
-							
-							<!-- 配送评分 -->
-							<view class="flex-direction align-cente padding-lr">
-								<text class="text-xs margin-bottom-xs">配送</text>
-								<text class="text-xxl">{{storeCommentData.rating.fixedRiderScore}}</text>
-							</view>
-						</view>
-						<!-- 顶部店铺评分栏 E -->
-						
-						<!-- 用户评论区 S -->
-						<view class="comment-content-box bg-white flex-direction">
-							
-							<!-- 评论标签 S -->
-							<view class="comment-tag-list padding-sm flex-wrap">
-								
-								<view 
-								@tap="switchComment(index)"
-								class="comment-tag-item padding-tb-xs padding-lr-sm comment-tag-bg border-radius-6 text-sm"
-								v-for="(item,index) in storeCommentData.tags"
-								:key="index"
-								:class="[
-									index == pageState.commentTagCur ? 'cur' : '',
-									item.unsatisfied ? 'bad' : ''
-								]"
-								>
-									<text>{{item.name}} {{item.count > 0 ? item.count : ''}}</text>
-								</view>
-								
-							</view>
-							<!-- 评论标签 E -->
-							
-							<!-- 查看有内容评价开关 S -->
-							<view class="padding-tb-sm padding-lr border-top border-color-e align-center">
-								<text 
-								class="lg cuIcon-roundcheckfill margin-right-xs"
-								:class="pageState.showHasContentCommentOnly ? 'icon-color-76d572' : 'icon-color-e8'"
-								></text>
-								<text class="">只看有内容的评价</text>
-							</view>
-							<!-- 查看有内容评价开关 E -->
-							
-							<!-- 用户评论列表 S -->
-							<view class="comment-list flex-direction">
-								
-								<view 
-								v-for="(item,index) in commentInfoList"
-								:key="index"
-								class="comment-item border-top border-color-e padding-sm flex-sub"
-								:class="foodsFilter(item.food_ratings)?'':'padding-bottom-xl'"
-								>
-									
-									<!-- 用户头像 -->
-									<view class="user-avatar-box margin-right round">
-										<image 
-										class="user-avatar"
-										:src="item.avatar|userAvatarUrlFilter" 
-										mode="widthFix"
-										></image>
-									</view>
-									
-									<!-- 评论内容 -->
-									<view class="comment-content flex-direction flex-sub">
-										
-										<view class="comment-content-head flex-direction margin-bottom-xs">
-											
-											<view class="justify-between margin-bottom-xs">
-												<text>{{item.username}}</text>
-												<text class="text-color-9 text-sm">{{item.rated_at}}</text>
-											</view>
-											
-											<view class="align-center">
-												
-												<!-- star S -->
-												<view class="star-box star-size margin-right-xs">
-													<view class="star-bg">
-														<image class="star-size" :src="$i_u.star_bg" mode="left"></image>
-													</view>
-													<view 
-													class="star"
-													:style="{
-														width:parseInt((120 * item.rating)/5) + 'rpx'
-													}"
-													>
-														<image 
-														class="star-size" 
-														:src="$i_u.star" 
-														mode="left"
-														></image>
-													</view>
-												</view>
-												<!-- star E -->
-												
-												<text
-												class="text-sm"
-												:class="item.rating<5?'bad':'super-good'"
-												>
-													{{item.rating|rating2text}}
-												</text>
-											</view>
-											
-										</view>
-										
-										<view class="comment-content-body flex-direction">
-											<!-- 文本评论 -->
-											<view class="comment-content-text margin-bottom-xs">
-												<text>{{item.rating_text}}</text>
-											</view>
-											
-											<!-- 商家回复 -->
-											<view 
-											v-if="item.reply"
-											class="store-reply-box padding-sm text-sm margin-tb-sm border-radius-6">
-												<text>商家回复：{{item.reply.content}}</text>
-											</view>
-											
-											<!-- 图片列表 -->
-											<view 
-											v-if="item.order_images"
-											class="comment-content-img-list flex-wrap flex-sub">
-												<view 
-												v-for="(ele,i) in item.order_images"
-												:key="i"
-												:style="{
-													height:item.order_images.length > 4 ? '196rpx' : '300rpx',
-													width:item.order_images.length > 4 ? '196rpx' : '300rpx'
-												}"
-												class="comment-content-img-item margin-right-xs margin-bottom-xs">
-													<image 
-													:src="ele.image_hash,(item.order_images.length > 4?'w_196':'w_300')|imgUrlFilter" 
-													mode="widthFix"></image>
-												</view>
-											</view>
-											
-											<!-- 单件商品点赞 -->
-											<view 
-											v-if="foodsFilter(item.food_ratings)"
-											class="good-goods-tag-list align-center flex-wrap">
-												<text class="lg text-gray cuIcon-appreciate"></text>
-												<view 
-												v-for="(ele,i) in foodsFilter(item.food_ratings)"
-												:key="i"
-												class="good-goods-tag-item padding-xs text-sm border-radius-6">
-													<text>{{ele.rate_name}}</text>
-												</view>
-											</view>
-											
-										</view>
-										
-									</view>
-									
-								</view>
-								
-							</view>
-							
-							<!-- 加载提示 S -->
-							<view 
-							class="list-end align-center justify-center">
-								<view class="cu-load" :class="commentHasNext?'loading':'over'"></view>
-							</view>
-							<!-- 加载提示 E -->
-							<!-- 用户评论列表 E -->
-							
-						</view>
-						<!-- 用户评论区 E -->
+					<storeComment
+					:storeCommentData="storeCommentData"
+					:pageState="pageState"
+					:commentInfoList="commentInfoList"
+					:commentHasNext="commentHasNext"
+					@switchComment="switchComment"
+					></storeComment>
 						
 					</view>
 					<!-- 评价 E -->
 					
 					<!-- 详细信息 S -->
 					<!--  #ifndef  MP-WEIXIN -->
-					<view 
-					v-show="TabCur == 2"
-					class="flex-sub flex-direction bg-grey-f5">
+					<view v-show="TabCur == 2">
 					<!--  #endif -->
 					<!--  #ifdef  MP-WEIXIN -->
-					<view 
-					v-if="TabCur == 2"
-					class="flex-sub flex-direction bg-grey-f5">
+					<view v-if="TabCur == 2">
 					<!--  #endif -->
 					
-					
-						<!-- 配送信息 -->
-						<view class="margin-bottom bg-white padding flex-direction">
-							<text class="text-bold text-color-0 margin-bottom-sm">配送信息</text>
-							<view class="flex-direction">
-								<text class="margin-bottom-xs">由商家配送提供配送，约{{storeData.rst.order_lead_time}}分钟送达，距离{{storeData.rst.distance_text}}</text>
-								<text class="margin-bottom-sm">配送费￥{{storeData.rst.float_delivery_fee}}</text>
-							</view>
-						</view>
+					<storeInfoTab
+					:storeData="storeData"
+					></storeInfoTab>
 						
-						<!-- 商家服务 -->
-						<view class="margin-bottom bg-white padding flex-direction padding-bottom-xl">
-							<text class="text-bold text-color-0 margin-bottom-sm">商家服务</text>
-							<view class="supports-list">
-								
-								<view 
-								v-for="(item,index) in storeData.rst.supports"
-								:key="index"
-								class="supports-item marging-bottom-xs align-center"
-								:style="{color:'#'+item.icon_color}"
-								>
-									<text 
-									class="supports-tag padding-lr-xs border border-color-9 text-xs margin-right-xs"
-									>
-										{{item.icon_name}}
-									</text>
-									<text>{{item.description}}</text>
-								</view>
-								
-							</view>
-						</view>
-						
-						<!-- 商家实景 -->
-						<view class="margin-bottom bg-white padding flex-direction">
-							<text class="text-bold text-color-0 margin-bottom-sm">商家实景</text>
-							<view class="store-img-list">
-								
-								<view 
-								v-for="(item,index) in storeData.rst.albums"
-								:key="index"
-								class="store-img-box">
-									<image 
-									class="store-img"
-									:src="item.photos[0].image_hash|imgUrlFilter" 
-									mode="widthFix"
-									></image>
-									<text class="store-img-tips text-white">{{item.name}}{{item.count}}张</text>
-								</view>
-								
-							</view>
-							
-						</view>
-						
-						<!-- 商家信息 -->
-						<view class="margin-bottom bg-white padding flex-direction">
-							<text class="text-bold text-color-0 margin-bottom-sm">商家信息</text>
-							<view class="padding-bottom-sm border-bottom border-color-e">
-								<text>{{storeData.rst.description}}</text>
-							</view>
-							
-							<view class="padding-tb border-bottom border-color-e justify-between">
-								<text class="text-bold text-color-3">品类</text>
-								<text>{{storeData.rst.flavors[0].name}}</text>
-							</view>
-							
-							<view 
-							@tap="makePhoneCall(storeData.rst.id)"
-							class="padding-tb border-bottom border-color-e justify-between">
-								<text class="text-bold text-color-3">商家电话</text>
-								<view class="text-color-blue-0 align-center">
-									<text class="lg cuIcon-phone margin-right-xs text-xl"></text>
-									<text>联系商家</text>
-								</view>
-							</view>
-							
-							<view class="padding-tb border-bottom border-color-e justify-between">
-								<text class="text-bold text-color-3">地址</text>
-								<view class="store-address">
-									<text class="text-right text-xs">{{storeData.rst.address}}</text>
-								</view>
-							</view>
-							
-							<view class="padding-tb border-bottom border-color-e justify-between">
-								<text class="text-bold text-color-3">营业时间</text>
-								<view class="">
-									<text>{{storeData.rst.opening_hours[0].replace('/','-')}}</text>
-								</view>
-							</view>
-							
-							
-						</view>
-						
-						<!-- 营业资质 -->
-						<view 
-						@tap="gotoCertificatesPage"
-						class="margin-bottom bg-white padding flex-direction">
-							<text class="text-bold text-color-0">营业资质</text>
-						</view>
 							
 					</view>
 					<!-- 详细信息 E -->
@@ -681,9 +376,14 @@
 	import storeIndexNav from './storeIndexNav.vue';
 	// 店铺主页nav
 	import storeInfo from './storeInfo.vue';
+	// 店铺评论区
+	import storeComment from './storeComment.vue';
+	// 店铺详情页
+	import storeInfoTab from './storeInfoTab.vue';
+	
 
 	// 引入购物车 和 弹窗组件相关的 mixin
-	import {shopcartMixin,popupMixin} from "@/common/mixinMain.js";
+	import {shopcartMixin,popupMixin,storeIndexMethodsMixin} from "@/common/mixinMain.js";
 	
 	export default {
 		data() {
@@ -722,7 +422,7 @@
 				foodsListScrollBoundary:2000,
 			}
 		},
-		mixins:[shopcartMixin,popupMixin],
+		mixins:[shopcartMixin,popupMixin,storeIndexMethodsMixin],
 		watch:{
 			/**
 			 * 监听页面状态变化，根据状态设置对应的操作
@@ -746,7 +446,9 @@
 			bottomShopcart,
 			bannerPopup,
 			storeIndexNav,
-			storeInfo
+			storeInfo,
+			storeComment,
+			storeInfoTab,
 		}
 		,
 		computed:{
@@ -852,21 +554,6 @@
 				this.storeCommentData = res;
 				this.commentInfoList = res.comments;
 			},(err)=>{console.log('请求失败：',err);});
-		},
-		filters:{
-			userAvatarUrlFilter(imgHash,size='w_30,h_30,m_fixed'){
-				
-				if(imgHash){
-					return 'https://cube.elemecdn.com/' + imgHash[0] + '/' + imgHash.slice(1, 3) + '/' + imgHash.slice(3) + '.' + (imgHash.slice(-3) == 'png' ? 'png' : imgHash.slice(-4)) +'?x-oss-process=image/format,webp/resize,' + size;
-				}else{
-					return '//shadow.elemecdn.com/faas/h5/static/sprite.3ffb5d8.png';
-				}
-			},
-			rating2text(rating){
-				let ratingTextList = ['吐槽','较差','一般','很好','超赞'];
-				
-				return ratingTextList[parseInt(rating)-1];
-			}
 		}
 		,
 		methods: {
@@ -893,40 +580,6 @@
 						 }
 					});
 				}
-			}
-			,
-			/**
-			 * 跳转至店铺资质页
-			 */
-			gotoCertificatesPage(){
-				uni.navigateTo({
-					 url: this.$pages_path.file,
-					 fail(e) {
-						 console.log('跳转失败',e);
-					 }
-				});
-			}
-			,
-			/**
-			 * 唤起拨号键盘准备打电话给商家
-			 * @param {String} storeId 商品id
-			 */
-			makePhoneCall(storeId){
-				// 模拟查询过程
-				setTimeout(()=>{
-					let phoneNumber = '123456';
-
-					uni.makePhoneCall({
-						phoneNumber,
-						fail(e) {
-							console.log('唤起失败',e);
-							uni.showToast({
-								title: '调用电话功能失败请手动呼叫商家',
-								icon:'none'
-							});
-						}
-					})
-				},200)
 			}
 			,
 			/**
@@ -972,19 +625,6 @@
 			controlBannerPage(status){
 				this.$utils.log('controlBannerPage','控制店铺中的banner展示区的开关');
 				this.pageState.showBannercontent = status;
-			}
-			,
-			/**
-			 * 用户选择开通超级vip
-			 */
-			openSvip(){
-				this.$utils.log('openSvip','用户选择开通超级vip');
-				uni.navigateTo({
-					url:this.$pages_path.member,
-					fail(e) {
-						console.log('跳转失败:',e);
-					}
-				})
 			}
 			,
 			/**
@@ -1034,17 +674,6 @@
 				} // end if normal 
 			}
 			,
-			/**
-			 * 点赞商品过滤器，将点赞商品中5星的过滤出来
-			 * @param {Array} foodList 点赞食品列表
-			 */
-			foodsFilter(foodList){
-				// this.$utils.log('foodsFilter','点赞商品过滤器，将点赞商品中5星的过滤出来');
-				let res = foodList.filter((ele)=>{
-					return ele.rating >= 5;
-				});
-				return res.length?res:null;
-			},
 			tabSelect(e) {
 				this.TabCur = e.currentTarget.dataset.id;
 			},

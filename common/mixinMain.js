@@ -11,4 +11,13 @@ import { shopcartMethodsMixin, shopcartMixin } from "./mixins/shopCartMixin";
 // 过滤器 mixin
 import { filtersMixin } from "./mixins/filtersMixin.js";
 
-export { popupMixin, shopcartMixin, shopcartMethodsMixin, filtersMixin };
+// 商品主页 公共方法 mixin，无数据依赖
+import { storeIndexMethodsMixin } from "./mixins/storeIndexMethods.js";
+
+export {
+  popupMixin,
+  shopcartMixin,
+  shopcartMethodsMixin,
+  filtersMixin,
+  storeIndexMethodsMixin,
+};
